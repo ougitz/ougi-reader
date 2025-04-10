@@ -44,7 +44,7 @@ export async function dbReset() {
 
 export async function dbListTable<T extends Model>(
     table: string,
-    callbackfn: (value: any) => any
+    callbackfn: (value: T) => any
 ) {
     const items = await database
         .collections
@@ -171,6 +171,7 @@ export async function dbUpsertGenres() {
 
 
 export async function dbUpsertChapters(data: Chapter[]) {
+    console.log("upserting chapters")
     await database.write(async () => {
     
         const itemsCollection = database
@@ -215,7 +216,7 @@ export async function dbUpsertChapters(data: Chapter[]) {
 
 
 export async function dpUpsertManhwas() {
-    
+    console.log("upserting manhwas")
     const data: Manhwa[] = await spFetchAllManhwas()
     const chapters: Chapter[] = []
 
@@ -248,6 +249,7 @@ export async function dpUpsertManhwas() {
                     r.cover_image_url = manhwa.cover_image_url
                     r.color = manhwa.color
                     r.status = manhwa.status
+                    r.views = manhwa.views
                     r.updated_at = manhwa.updated_at
                 });
             } else {
@@ -259,6 +261,7 @@ export async function dpUpsertManhwas() {
                     r.color = manhwa.color
                     r.status = manhwa.status
                     r.updated_at = manhwa.updated_at
+                    r.views = manhwa.views
                 });
             }
         });
@@ -270,3 +273,88 @@ export async function dpUpsertManhwas() {
     await dbUpsertChapters(chapters)
 }
 
+
+export async function dbUpsertManhwaViews(manhwa_id: number) {
+    await database.write(async () => {
+    
+        const items: ManhwaModel[] = await database
+            .collections
+            .get<ManhwaModel>('manhwas')
+            .query(Q.where('manhwa_id', manhwa_id))
+            .fetch()
+
+        if (items.length > 0) {
+            await items[0].update(r => {r.views += 1})
+        }
+        
+    }).catch(error => console.log(error))
+}
+
+
+export async function dbSortManhwas(compareFn: (a: ManhwaModel, b: ManhwaModel) => number) {
+    const manhwas: ManhwaModel[] = await dbGetAll<ManhwaModel>('manhwas')
+    return manhwas
+        .sort(compareFn)
+        .map(m => {
+            return {
+                manhwa_id: m.manhwa_id,
+                title: m.title,
+                descr: m.descr,
+                status: m.status,
+                updated_at: m.updated_at,
+                color: m.color,
+                views: m.views,
+                chapters: [],
+                cover_image_url: m.cover_image_url
+            }
+        })
+}
+
+export async function dbSortManhwasByViews(): Promise<Manhwa[]> {
+    return await dbSortManhwas(
+        (a: ManhwaModel, b: ManhwaModel) => {
+            if (a.views < b.views) {
+                return 1
+            } else if (a.views > b.views) {
+                return -1;
+            }
+            return a.manhwa_id < b.manhwa_id ? 1 : -1
+        }
+    )
+}
+
+
+export async function dbSortManhwasByLastUpdate(): Promise<Manhwa[]> {
+    return await dbSortManhwas(
+        (a: ManhwaModel, b: ManhwaModel) => {
+            const d1 = new Date(a.updated_at)
+            const d2 = new Date(b.updated_at)
+            if (d1 < d2) {
+                return 1
+            } else if (d1 > d2) {
+                return -1
+            }
+            return 0
+        }
+    )
+}
+
+
+export async function dpFetchLast3Chapters(manhwa_id: number): Promise<Chapter[]> {
+
+    const items = await database
+        .collections
+        .get<ChapterModel>('chapters')
+        .query(Q.where('manhwa_id', manhwa_id), Q.sortBy('chapter_num', Q.desc))
+        .fetch()
+    
+    return items.slice(0, 3).map(
+        c => {return {
+            chapter_id: c.chapter_id,
+            chapter_num: c.chapter_num,
+            created_at: c.created_at,
+            manhwa_id: c.manhwa_id
+        }}
+    )
+    
+}

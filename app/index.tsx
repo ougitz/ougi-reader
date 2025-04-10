@@ -30,10 +30,13 @@ import {
   dbListTable, 
   dpUpsertManhwas, 
   dbShouldUpdateTable, 
-  dbUpsertGenres 
+  dbUpsertGenres, 
+  dbUpsertManhwaViews,
+  dbSortManhwasByLastUpdate
 } from '@/database/db';
 import ManhwaModel from '@/database/models/ManhwaModel';
 import ChapterModel from '@/database/models/ChapterModel';
+import { Manhwa } from '@/model/Manhwa';
 
 const App = () => {
   
@@ -67,7 +70,7 @@ const App = () => {
 
     if (await dbShouldUpdateTable('manhwas')) {
       await dpUpsertManhwas()
-    }    
+    }        
 
     const session = await spGetSession()
 

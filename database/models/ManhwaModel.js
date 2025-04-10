@@ -10,6 +10,7 @@ export default class ManhwaModel extends Model {
   @field('title') title
   @field('descr') descr
   @field('cover_image_url') cover_image_url
+  @field('views') views
   @text('status') status
   @date('created_at') created_at
   @date('updated_at') updated_at

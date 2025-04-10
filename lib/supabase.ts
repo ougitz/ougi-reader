@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ManhwaComment } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
+import { Chapter } from '@/model/Chapter';
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
@@ -130,6 +131,23 @@ export async function spFetchAllManhwas(
     if (error) {
         console.error('error spFetchAllManhwas', error);
         return [];
+    }
+
+    return data
+}
+
+export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> {
+    
+    const { data, error } = await supabase
+        .from("chapters")
+        .select("chapter_id, manhwa_id, chapter_num, created_at")
+        .eq("manhwa_id", manhwa_id)
+        .order("chapter_num", {ascending: true})        
+        .overrideTypes<Chapter[]>()    
+
+    if (error) {
+        console.log("error spFetchChapterList", error)
+        return []
     }
 
     return data

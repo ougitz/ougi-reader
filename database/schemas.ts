@@ -6,7 +6,7 @@ import { genreSchema } from './schemas/GenreSchema'
 
 
 export const schemas = appSchema({
-  version: 1,
+  version: 2,
   tables: [
     manhwaSchema,
     chapterSchema,

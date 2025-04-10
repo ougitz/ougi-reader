@@ -15,10 +15,13 @@ const _layout = () => {
             <Stack.Screen name='(auth)/SignIn' options={{headerShown: false}} />
             <Stack.Screen name='(auth)/SignUp' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/Manhwa' options={{headerShown: false}} />
+            <Stack.Screen name='(pages)/Chapter' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/Account' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/ReadHistory' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/Library' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/SearchManhwa' options={{headerShown: false}} />
+            <Stack.Screen name='(pages)/MostView' options={{headerShown: false}} />
+            <Stack.Screen name='(pages)/LastUpdate' options={{headerShown: false}} />
         </Stack>
         <Toast.Component/>
       </View>

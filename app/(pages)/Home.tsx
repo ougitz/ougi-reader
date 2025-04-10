@@ -1,14 +1,16 @@
-import { SafeAreaView, Pressable, Animated, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, Pressable, Animated, StyleSheet, View, ScrollView } from 'react-native'
+import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
+import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
-import { AppConstants } from '@/constants/AppConstants'
 import TopBar from '@/components/TopBar'
 import React, { useRef } from 'react'
 import { router } from 'expo-router'
 import { wp } from '@/helpers/util'
-import GenreGrid from '@/components/GenreGrid'
+import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
 
 
 const MENU_WIDTH = wp(60)
@@ -61,6 +63,12 @@ const Home = () => {
                 </View>
             </TopBar>
             <GenreGrid/>
+            <ScrollView style={{flex: 1}} >
+                <View style={{width: '100%', gap: 20, marginTop: 20}} >
+                    <ManhwasLastUpdateGrid/>
+                    <MostViewedManhwasComponent/>
+                </View>
+            </ScrollView>
             <Animated.View style={[styles.sideMenu, { width: MENU_WIDTH, transform: [{ translateX: menuAnim }] }]}>
                 <LateralMenu closeMenu={closeMenu}/>
             </Animated.View>

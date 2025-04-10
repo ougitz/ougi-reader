@@ -1,0 +1,125 @@
+import { 
+    Pressable, 
+    StyleProp, 
+    StyleSheet, 
+    Text, 
+    View, 
+    ViewStyle 
+} from 'react-native'
+import React, { 
+    useCallback, 
+    useEffect, 
+    useState 
+}  from 'react'
+import ManhwaStatusComponent from './ManhwaStatusComponent';
+import { AppConstants } from '@/constants/AppConstants';
+import { useReadingState } from '@/store/readingStore';
+import { dpFetchLast3Chapters } from '@/database/db';
+import { AppStyle } from '@/styles/AppStyles';
+import { Colors } from '@/constants/Colors';
+import { Chapter } from '@/model/Chapter';
+import { Manhwa } from '@/model/Manhwa';
+import ChapterLink from './ChapterLink';
+import { router } from 'expo-router';
+import { Image } from 'expo-image';
+
+
+
+interface ManhwaCoverProps {
+    manhwa: Manhwa
+    width?: number
+    height?: number
+    marginRight?: number
+    marginBottom?: number
+    styleProp?: StyleProp<ViewStyle>
+    showChaptersPreview?: boolean
+    shouldShowChapterDate?: boolean
+}
+
+
+const ManhwaCover = ({
+    manhwa, 
+    width = AppConstants.ManhwaCoverDimension.width, 
+    height = AppConstants.ManhwaCoverDimension.height, 
+    marginRight = 10,
+    marginBottom = 0,
+    styleProp = false,
+    showChaptersPreview = true,
+    shouldShowChapterDate = true    
+}: ManhwaCoverProps) => {
+
+    const { setManhwa } = useReadingState()
+    const [lastChapters, setLastChapters] = useState<Chapter[]>([])
+    
+    const manhwaStatusColor = manhwa.status == "Completed" ? 
+        Colors.orange : 
+        Colors.backgroundColor
+    
+    const onPress = () => {
+        setManhwa(manhwa)
+        router.navigate("/(pages)/Manhwa")
+    }    
+
+    const init = async () => {
+        if (lastChapters.length == 0) {
+            await dpFetchLast3Chapters(manhwa.manhwa_id)
+                .then(values => setLastChapters(values))
+        }
+    }
+
+    useEffect(
+        useCallback(() => {
+            init()
+        }, []),
+        []
+    )
+
+    return (
+        <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
+            <Image 
+                source={manhwa.cover_image_url} 
+                contentFit='cover'
+                style={[{borderRadius: 22, width, height}]}/>
+            <View style={styles.container} >
+                <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
+                {
+                    showChaptersPreview && 
+                    lastChapters.map(
+                        (item) => 
+                            <ChapterLink 
+                                shouldShowChapterDate={shouldShowChapterDate} 
+                                key={item.chapter_num} 
+                                manhwa={manhwa} 
+                                chapter={item} />
+                )}                
+            </View>
+            <ManhwaStatusComponent
+                style={{position: 'absolute', left: 10, top: 10,}}
+                status={manhwa.status}
+                paddingHorizontal={10}
+                paddingVertical={8}
+                fontSize={12}
+                backgroundColor={manhwaStatusColor}
+                borderRadius={22}
+            />
+        </Pressable>
+    )
+}
+
+export default ManhwaCover
+
+const styles = StyleSheet.create({    
+    container: {
+        paddingVertical: 10,  
+        width: '100%',
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4        
+    },
+    shadow: {
+        shadowColor: 'black',
+        shadowOffset: { width: 8, height: 8 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 5    
+    }
+})
