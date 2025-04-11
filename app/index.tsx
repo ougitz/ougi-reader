@@ -23,6 +23,7 @@ import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import {   
   spFetchUser,
+  spGetCacheUrl,
   spGetSession  
 } from '@/lib/supabase';
 import { 
@@ -37,6 +38,8 @@ import {
 import ManhwaModel from '@/database/models/ManhwaModel';
 import ChapterModel from '@/database/models/ChapterModel';
 import { Manhwa } from '@/model/Manhwa';
+import { fetchJson } from '@/helpers/util';
+import { Chapter } from '@/model/Chapter';
 
 const App = () => {
   
@@ -68,8 +71,10 @@ const App = () => {
       await dbUpsertGenres()
     }
 
-    if (await dbShouldUpdateTable('manhwas')) {
-      await dpUpsertManhwas()
+    if (await dbShouldUpdateTable('manhwas'), true) {      
+      const cacheUrls: Map<string, string> = await spGetCacheUrl()
+      const manhwas: Manhwa[] = await fetchJson(cacheUrls.get('manhwas')!)
+      await dpUpsertManhwas(manhwas)
     }        
 
     const session = await spGetSession()

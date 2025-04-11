@@ -77,3 +77,16 @@ export function organizeComments(comments: ManhwaComment[]): ManhwaComment[] {
     return topLevelComments;
 }
 
+
+export async function fetchJson(url: string): Promise<any> {
+    return await fetch(url)
+      .then((resposta) => {
+        if (!resposta.ok) {
+          throw new Error('Fetch error');
+        }
+        return resposta.json();
+      })
+      .catch((error) => {
+        console.log("error fetchJson", error)
+      });
+}

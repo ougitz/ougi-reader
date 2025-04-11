@@ -152,3 +152,21 @@ export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> 
 
     return data
 }
+
+
+export async function spGetCacheUrl(): Promise<Map<string, string>> {
+    const { data, error } = await supabase
+        .from("cache")
+        .select("name, url")
+        .overrideTypes<{name: string, url: string}[]>()
+    
+    if (error) {
+        console.log("error spGetCacheUrl", error)
+        return new Map()
+    }
+
+    const m = new Map()
+    data?.forEach(item => m.set(item.name, item.url))
+
+    return m
+}

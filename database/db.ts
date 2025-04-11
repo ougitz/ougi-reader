@@ -215,9 +215,8 @@ export async function dbUpsertChapters(data: Chapter[]) {
 }
 
 
-export async function dpUpsertManhwas() {
+export async function dpUpsertManhwas(data: Manhwa[]) {
     console.log("upserting manhwas")
-    const data: Manhwa[] = await spFetchAllManhwas()
     const chapters: Chapter[] = []
 
     await database.write(async () => {
@@ -291,7 +290,9 @@ export async function dbUpsertManhwaViews(manhwa_id: number) {
 }
 
 
-export async function dbSortManhwas(compareFn: (a: ManhwaModel, b: ManhwaModel) => number) {
+export async function dbSortManhwas(
+    compareFn: (a: ManhwaModel, b: ManhwaModel) => number
+): Promise<Manhwa[]> {
     const manhwas: ManhwaModel[] = await dbGetAll<ManhwaModel>('manhwas')
     return manhwas
         .sort(compareFn)
@@ -304,6 +305,10 @@ export async function dbSortManhwas(compareFn: (a: ManhwaModel, b: ManhwaModel) 
                 updated_at: m.updated_at,
                 color: m.color,
                 views: m.views,
+                genres: [],
+                authors: [],
+                rating: null,
+                titles: [],
                 chapters: [],
                 cover_image_url: m.cover_image_url
             }
