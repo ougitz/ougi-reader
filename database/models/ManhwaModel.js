@@ -13,7 +13,6 @@ export default class ManhwaModel extends Model {
   @field('views') views
   @field('ratings') ratings
   @text('status') status
-  @date('created_at') created_at
   @date('updated_at') updated_at
   @text('color') color
 

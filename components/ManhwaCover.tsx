@@ -53,7 +53,7 @@ const ManhwaCover = ({
     
     const manhwaStatusColor = manhwa.status == "Completed" ? 
         Colors.orange : 
-        Colors.backgroundColor
+        Colors.white
     
     const onPress = () => {
         setManhwa(manhwa)

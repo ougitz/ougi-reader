@@ -1,15 +1,15 @@
-import { useLastUpdateManhwasState } from '@/store/lastUpdateManhwasStore'
+import { useMostViewManhwasState } from '@/store/mostViewManhwasStore';
 import React, { useCallback, useEffect, useState } from 'react'
-import { dbSortManhwasByLastUpdate, dbSortManhwasByViews } from '@/database/db';
+import { dbSortManhwasByViews } from '@/database/db';
 import { SafeAreaView, StyleSheet} from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
-import { useMostViewManhwasState } from '@/store/mostViewManhwasStore';
 
 
 const MANHWAS_PER_PAGE = 60
+
 
 const MostView = () => {
 
@@ -46,8 +46,7 @@ const MostView = () => {
         manhwas={manhwas.slice(0, page * MANHWAS_PER_PAGE)}
         numColumns={2}
         shouldShowChapterDate={false}
-        onEndReached={onEndReached}
-      />      
+        onEndReached={onEndReached}/>
     </SafeAreaView>
   )
 }

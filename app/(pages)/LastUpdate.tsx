@@ -46,7 +46,7 @@ const LastUpdate = () => {
         numColumns={2}
         shouldShowChapterDate={false}
         onEndReached={onEndReached}
-      />      
+      />
     </SafeAreaView>
   )
 }

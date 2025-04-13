@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { useAuthState } from '@/store/authStore'
 import { Image } from 'expo-image';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import {
   useFonts,
   LeagueSpartan_100Thin,
@@ -36,6 +37,8 @@ import {
   dbUpdateDB,
   dbInit
 } from '@/database/db';
+import Toast from '@/components/Toast';
+import { sleep } from '@/helpers/util';
 
 
 const App = () => {
@@ -65,10 +68,15 @@ const App = () => {
 
     await dbInit()
 
-    if (await dbShouldUpdateTable('manhwas')) {
-      setUpdatingDB(true)
-      await dbUpdateDB()
-      setUpdatingDB(false)
+    const state: NetInfoState = await NetInfo.fetch()
+
+    if (!state.isConnected) {
+      Toast.show({title: 'Warning', message: 'You dont have connection to internet', type: 'info'})
+      await sleep(1500)
+    } else if (await dbShouldUpdateTable('manhwas')) {
+        setUpdatingDB(true)
+        await dbUpdateDB()
+        setUpdatingDB(false)
     }
 
     const session = await spGetSession()

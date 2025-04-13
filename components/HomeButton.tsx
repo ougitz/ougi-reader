@@ -12,7 +12,7 @@ const HomeButton = () => {
       onPress={() => router.replace('/(pages)/Home')} 
       hitSlop={AppConstants.hitSlopLarge} 
       style={styles.container} >
-        <Ionicons name='home' size={20} color={Colors.white} />
+        <Ionicons name='home' size={22} color={Colors.white} />
     </Pressable>
   )
 }
@@ -21,8 +21,8 @@ export default HomeButton
 
 const styles = StyleSheet.create({
   container: {
-    padding: 7, 
+    padding: 10, 
     borderRadius: 32, 
-    backgroundColor: Colors.accentColor
+    backgroundColor: Colors.almostBlack
   }
 })

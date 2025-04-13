@@ -6,7 +6,7 @@ import React from 'react'
 const Account = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-
+      
     </SafeAreaView>
   )
 }

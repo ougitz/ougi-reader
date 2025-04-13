@@ -4,6 +4,7 @@ import { dbGetAll } from '@/database/db'
 import GenreModel from '@/database/models/GenreModel'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
+import { router } from 'expo-router'
 
 
 const GenreGrid = () => {
@@ -23,6 +24,9 @@ const GenreGrid = () => {
         []
     )
 
+    const onPress = (genre: string) => {
+        router.navigate({pathname: '/(pages)/ManhwaByGenre', params: {genre}})
+    }
 
     return (
         <View style={styles.container} >
@@ -32,7 +36,7 @@ const GenreGrid = () => {
                 keyExtractor={(item, index) => index.toString()}
                 horizontal={true}
                 renderItem={({item, index}) => 
-                    <Pressable style={styles.button} >
+                    <Pressable onPress={() => onPress(item)} style={styles.button} >
                         <Text style={AppStyle.textRegular}>{item}</Text>
                     </Pressable>
                 }

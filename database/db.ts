@@ -273,8 +273,7 @@ export async function dpUpsertManhwas(manhwas: Manhwa[]) {
             });
         }
     });
-
-    console.log("rr", operations)
+    
     await database.write(async () => {
         await dbBatch(operations)
     }).catch(error => console.log("error dpUpsertManhwas", error))
@@ -314,10 +313,7 @@ export async function dbSortManhwas(
                 updated_at: m.updated_at,
                 color: m.color,
                 views: m.views,
-                genres: [],
-                authors: [],
                 rating: null,
-                titles: [],
                 chapters: [],
                 cover_image_url: m.cover_image_url
             }
@@ -416,8 +412,7 @@ export async function dbUpsertAuthors(authors: Author[]) {
     );
 
     const operations: AuthorModel[] = []
-        
-                                              
+                                            
     authors.forEach(author => {        
         if (!existingById.get(author.author_id)) {
             operations.push(itemsCollection.prepareCreate(r => {
@@ -472,4 +467,105 @@ export async function dbUpdateDB() {
     await dbUpsertManhwaGenres(db.manhwa_genres)
     await dbUpsertAuthors(db.authors)
     await dbUpsertManhwaAuthors(db.manhwa_authors)    
+}
+
+
+export async function dbGetManhwasByGenre(genre: string): Promise<Manhwa[]> {
+    
+    const items: ManhwaGenreModel[] = await database
+        .collections
+        .get<ManhwaGenreModel>('manhwa_genres')
+        .query(Q.where('genre', genre))
+        .fetch()
+
+    const manhwasIds: number[] = items.map(item => item.manhwa_id)
+
+    const manhwas: ManhwaModel[] = await database
+        .collections
+        .get<ManhwaModel>('manhwas')
+        .query(Q.where('manhwa_id', Q.oneOf(manhwasIds)))
+        .fetch()
+
+    return manhwas.map(r => {return {
+        manhwa_id: r.manhwa_id,
+        title: r.title,
+        descr: r.descr,
+        cover_image_url: r.cover_image_url,
+        status: r.status,
+        color: r.color,
+        updated_at: r.updated_at,
+        views: r.views,
+        rating: r.ratings,
+        chapters: []
+    }})
+
+}
+
+
+export async function dbGetManhwaGenres(manhwa_id: number): Promise<string[]> {
+    
+    const items: ManhwaGenreModel[] = await database
+        .collections
+        .get<ManhwaGenreModel>('manhwa_genres')
+        .query(Q.where('manhwa_id', manhwa_id))
+        .fetch()
+
+    return items.map(item => item.genre)
+}
+
+
+export async function dbGetManhwaAuthors(manhwa_id: number): Promise<Author[]> {
+
+    const items: ManhwaAuthorModel[] = await database
+        .collections
+        .get<ManhwaAuthorModel>('manhwa_authors')
+        .query(Q.where('manhwa_id', manhwa_id))
+        .fetch()
+    
+    const ids = items.map(item => item.author_id)
+
+    const authors: AuthorModel[] = await database
+        .collections
+        .get<AuthorModel>('authors')
+        .query(Q.where('author_id', Q.oneOf(ids)))
+    
+    return authors.map(item => {return {
+        author_id: item.author_id,
+        name: item.name,
+        role: item.role
+    }})
+    
+}
+
+
+export async function dbGetManhwasByAuthor(author_id: number): Promise<Manhwa[]> {
+    
+    const items: ManhwaAuthorModel[] = await database
+        .collections
+        .get<ManhwaAuthorModel>('manhwa_authors')
+        .query(Q.where('author_id', author_id))
+        .fetch()
+        
+    const ids: number[] = items.map(item => item.manhwa_id)
+
+    const manhwas: ManhwaModel[] = await database
+        .collections
+        .get<ManhwaModel>('manhwas')
+        .query(Q.where('manhwa_id', Q.oneOf(ids)))
+        .fetch()
+
+    return manhwas.map(r => {return {
+        manhwa_id: r.manhwa_id,
+        title: r.title,
+        descr: r.descr,
+        cover_image_url: r.cover_image_url,
+        status: r.status,
+        color: r.color,
+        updated_at: r.updated_at,
+        views: r.views,
+        rating: r.ratings,
+        chapters: []
+    }})
+
+    
 }
