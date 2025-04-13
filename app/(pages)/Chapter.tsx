@@ -29,7 +29,7 @@ const ChapterHeader = ({loading}: {loading: boolean}) => {
           <Pressable onPress={moveToPreviousChapter} hitSlop={AppConstants.hitSlop} >
             <Ionicons name='chevron-back' size={24} color={Colors.white} />
           </Pressable>
-          <View style={{width: 20, alignItems: "center", justifyContent: "center"}} >
+          <View style={{alignItems: "center", justifyContent: "center"}} >
             {
               loading ?
               <ActivityIndicator size={20} color={Colors.white} /> :
@@ -56,7 +56,7 @@ const ChapterFooter = ({loading}: {loading: boolean}) => {
             <Pressable onPress={moveToPreviousChapter} hitSlop={AppConstants.hitSlop} >
               <Ionicons name='chevron-back' size={24} color={Colors.white} />
             </Pressable>
-            <View style={{width: 20, alignItems: "center", justifyContent: "center"}} >
+            <View style={{alignItems: "center", justifyContent: "center"}} >
               {
                 loading ?
                 <ActivityIndicator size={20} color={Colors.white} /> :

@@ -11,6 +11,7 @@ import React, { useRef } from 'react'
 import { router } from 'expo-router'
 import { wp } from '@/helpers/util'
 import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
+import DailyManhwa from '@/components/DailyManhwa'
 
 
 const MENU_WIDTH = wp(60)
@@ -62,9 +63,10 @@ const Home = () => {
                     </Pressable>
                 </View>
             </TopBar>
-            <GenreGrid/>
             <ScrollView style={{flex: 1}} >
+                <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
+                    <DailyManhwa/>
                     <ManhwasLastUpdateGrid/>
                     <MostViewedManhwasComponent/>
                 </View>

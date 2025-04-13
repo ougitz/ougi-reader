@@ -41,7 +41,7 @@ const database = new Database({
         ManhwaGenreModel,
         AuthorModel,
         ManhwaAuthorModel,
-        DailyManhwaModel
+        DailyManhwaModel        
     ]
 })
 
@@ -174,44 +174,48 @@ export async function dbUpsertGenres(genres: string[]) {
     }).catch(error => console.log("error dbUpsertGenres", error))
 }
 
-export async function dbGetDailyManhwa(): Promise<{manhwa: Manhwa, cover_image: string} | null> {
-    const { data, error } = await supabase
-        .from("daily_manhwa")
-        .select("manhwa_id, image_url")
-        .range(0, 1)
-        .order('created_at', {ascending: false})
-        .single()
+export async function dbGetDailyManhwa(): Promise<{
+    manhwa: Manhwa, 
+    image_url: string,
+    width: number,
+    height: number
+} | null> {
     
-    if (error) {
-        console.log("error dgGetDailyManhwa", error)
-        return null
-    }
-    
-    const items: ManhwaModel[] = await database
+    const items = await database
         .collections
-        .get<ManhwaModel>("manhwas")
-        .query(Q.where("manhwa_id", data.manhwa_id))
+        .get<DailyManhwaModel>('daily_manhwa')
+        .query()
+        .fetch()    
+
+    const daily = items[0]
+
+    const manhwas = await database
+        .collections
+        .get<ManhwaModel>('manhwas')
+        .query(Q.where('manhwa_id', daily.manhwa_id))
         .fetch()
 
-    if (items.length > 0) {
-        const m = items[0]
-        return {
-            manhwa: {
-                manhwa_id: m.manhwa_id,
-                title: m.title,
-                descr: m.descr,
-                cover_image_url: m.cover_image_url,
-                status: m.status,
-                color: m.color,
-                updated_at: m.updated_at,
-                views: m.views,
-                rating: m.ratings,
-                chapters: []
-            },
-            cover_image: data.image_url
-        }
-    }
-    return null
+    if (manhwas.length == 0) { return null }
+
+    const m = manhwas[0]
+
+    return {
+        manhwa:  {
+            manhwa_id: m.manhwa_id,
+            title: m.title,
+            descr: m.descr,
+            cover_image_url: m.cover_image_url,
+            status: m.status,
+            color: m.color,
+            updated_at: m.updated_at,
+            views: m.views,
+            rating: m.ratings,
+            chapters: []
+        },
+        image_url: daily.image_url,
+        width: daily.width,
+        height: daily.height
+    }   
 }
 
 
@@ -471,23 +475,44 @@ export async function dbInit() {
     await dbCreateLastUpdate('manhwas', 4)
 }
 
-export async function dbUpdateDB() {
-    const { setDailyManhwa } = useDailyManhwaState()
+export async function dbUpdateDB() {    
     console.log("updating db")
     const cacheUrls: Map<string, string> = await spGetCacheUrl()
-    const db = await fetchJson(cacheUrls.get('db')!)
+    const db = await fetchJson(cacheUrls.get('db')!)    
 
-    const dailyManhwa = await dbGetDailyManhwa();
-    if (dailyManhwa?.manhwa && dailyManhwa.cover_image) {
-        setDailyManhwa(dailyManhwa.manhwa, dailyManhwa.cover_image)
-        console.log("daily manhwa setted!")
-    }
-
+    await dbUpdateDailyManhwa()
     await dpUpsertManhwas(db.manhwas)
     await dbUpsertGenres(db.genres)
     await dbUpsertManhwaGenres(db.manhwa_genres)
     await dbUpsertAuthors(db.authors)
     await dbUpsertManhwaAuthors(db.manhwa_authors)    
+}
+
+
+async function dbUpdateDailyManhwa() {
+
+    await dbDeleteItemsFromTable<DailyManhwaModel>('daily_manhwa')
+
+    const { data, error } = await supabase.rpc('get_last_daily_manhwa')
+
+    if (error) {
+        console.log("error dbAddDailyManhwa", error)
+        return
+    }
+    
+    const daily = data[0]
+
+    await database.write(async () => {
+        
+        await database.get<DailyManhwaModel>('daily_manhwa').create(d => {
+            d.manhwa_id = daily.manhwa_id
+            d.image_url = daily.image_url
+            d.width = daily.width
+            d.height = daily.height
+        })
+
+    }).catch(error => console.log("error dbAddDailyManhwa", error))
+
 }
 
 

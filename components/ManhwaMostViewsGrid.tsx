@@ -30,7 +30,7 @@ const MostViewedManhwasComponent = () => {
 
     return (
         <ManhwaHorizontalGrid 
-            title='Most View' 
+            title='Most Views ⚡' 
             manhwas={manhwas.slice(0, 30)}
             onPress={onPress}/>
     )

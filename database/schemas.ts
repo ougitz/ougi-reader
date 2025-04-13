@@ -9,7 +9,7 @@ import { manhwaAuthorSchema } from './schemas/manhwaAuthorSchema'
 import { dailyManhwaSchema } from './schemas/dailyManhwaSchema'
 
 export const schemas = appSchema({
-  version: 4,
+  version: 5,
   tables: [
     manhwaSchema,
     chapterSchema,

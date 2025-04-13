@@ -72,7 +72,7 @@ const App = () => {
   }
 
   const updateLocalDB = async () => {
-    if (await dbShouldUpdateTable('manhwas', true)) {
+    if (await dbShouldUpdateTable('manhwas')) {
       setUpdatingDB(true)
       await dbUpdateDB()
       setUpdatingDB(false)

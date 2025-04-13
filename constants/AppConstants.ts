@@ -28,5 +28,5 @@ export const AppConstants = {
         'None'
     ],
     GITHUB_URL: "https://github.com/VitorTz/ougi-reader",
-    PORNWHA_REDDIT_URL: "https://www.reddit.com/r/pornhwa/"
+    PORNWHA_REDDIT_URL: "https://www.reddit.com/r/pornhwa/"    
 }

@@ -90,3 +90,8 @@ export async function fetchJson(url: string): Promise<any> {
         console.log("error fetchJson", error)
       });
 }
+
+
+export function getRelativeHeight(width: number, originalWidth: number, originalHeight: number): number {
+    return width * (originalHeight / originalWidth)
+}
