@@ -6,9 +6,10 @@ import LastUpdateModel from './models/LastUpdateModel'
 import { Database, Q } from "@nozbe/watermelondb"
 import ChapterModel from './models/ChapterModel'
 import ManhwaModel from './models/ManhwaModel'
-import { spGetCacheUrl } from '@/lib/supabase'
+import { spGetCacheUrl, supabase } from '@/lib/supabase'
 import AuthorModel from './models/AuthorModel'
 import GenreModel  from './models/GenreModel'
+import DailyManhwaModel from './models/DailyManhwaModel'
 import { Model } from '@nozbe/watermelondb'
 import { fetchJson } from '@/helpers/util'
 import { Chapter } from '@/model/Chapter'
@@ -16,6 +17,8 @@ import { Manhwa } from '@/model/Manhwa'
 import { Platform } from "react-native"
 import migrations from './migrations'
 import { schemas } from "./schemas"
+import { sortBy } from 'lodash'
+import { useDailyManhwaState } from '@/store/dailyManhwaStore'
 
 
 const adapter = new SQLiteAdapter({
@@ -37,7 +40,8 @@ const database = new Database({
         LastUpdateModel,
         ManhwaGenreModel,
         AuthorModel,
-        ManhwaAuthorModel
+        ManhwaAuthorModel,
+        DailyManhwaModel
     ]
 })
 
@@ -153,70 +157,82 @@ export async function dbShouldUpdateTable(table: string, forceUpdate: boolean = 
 export async function dbUpsertGenres(genres: string[]) {
     console.log("upserting genres")
 
+    await dbDeleteItemsFromTable<GenreModel>('genres')
+
     const itemsCollection = database
         .collections
         .get<GenreModel>('genres')
-    
-    const existingRecords = await itemsCollection
-        .query(Q.where('genre', Q.oneOf(genres)))
-        .fetch()  
-    
-    const existingGenres = new Map<string, GenreModel>(
-        existingRecords.map(record => [record.genre, record])
-    );
-    
-    const operations: GenreModel[] = []
-    
-    genres.forEach(genre => {        
 
-        if (!existingGenres.get(genre)) {
-            operations.push(
-                itemsCollection.prepareCreate(r => {
-                r.genre = genre
-            }))
-        }
-    });
+    const operations: GenreModel[] = genres.map(genre => 
+        itemsCollection.prepareCreate(r => {
+            r.genre = genre
+        })
+    )    
 
     await database.write(async () => {
         await dbBatch<GenreModel>(operations)
     }).catch(error => console.log("error dbUpsertGenres", error))
 }
 
+export async function dbGetDailyManhwa(): Promise<{manhwa: Manhwa, cover_image: string} | null> {
+    const { data, error } = await supabase
+        .from("daily_manhwa")
+        .select("manhwa_id, image_url")
+        .range(0, 1)
+        .order('created_at', {ascending: false})
+        .single()
+    
+    if (error) {
+        console.log("error dgGetDailyManhwa", error)
+        return null
+    }
+    
+    const items: ManhwaModel[] = await database
+        .collections
+        .get<ManhwaModel>("manhwas")
+        .query(Q.where("manhwa_id", data.manhwa_id))
+        .fetch()
+
+    if (items.length > 0) {
+        const m = items[0]
+        return {
+            manhwa: {
+                manhwa_id: m.manhwa_id,
+                title: m.title,
+                descr: m.descr,
+                cover_image_url: m.cover_image_url,
+                status: m.status,
+                color: m.color,
+                updated_at: m.updated_at,
+                views: m.views,
+                rating: m.ratings,
+                chapters: []
+            },
+            cover_image: data.image_url
+        }
+    }
+    return null
+}
+
 
 export async function dbUpsertChapters(data: Chapter[]) {
     console.log("upserting chapters")
+
+    await dbDeleteItemsFromTable<ChapterModel>('chapters')
     
     const itemsCollection = database
         .collections
         .get<ChapterModel>('chapters')
     
-    const uniqueIds = data.map(item => item.chapter_id);
+    const operations: any = data.map(chapter => 
+        itemsCollection.prepareCreate(r => {
+            r.chapter_id = chapter.chapter_id
+            r.chapter_num = chapter.chapter_num
+            r.manhwa_id = chapter.manhwa_id
+            r.created_at = chapter.created_at
+        })
+    )
     
-    const existingRecords = await itemsCollection
-        .query(Q.where('chapter_id', Q.oneOf(uniqueIds)))
-        .fetch()  
-    
-    const existingById = new Map<number, ChapterModel>(
-        existingRecords.map(record => [record.chapter_id, record])
-    );
-    
-    const operations: any = []
-    
-    data.forEach(chapter => {
-
-        if (!existingById.get(chapter.chapter_id)) {
-                operations.push(
-                    itemsCollection.prepareCreate(r => {
-                        r.chapter_id = chapter.chapter_id
-                        r.chapter_num = chapter.chapter_num
-                        r.manhwa_id = chapter.manhwa_id
-                        r.created_at = chapter.created_at
-                })
-            )
-        }
-        
-    });
-
     await database.write(async () => {
         await database.batch(operations);
     }).catch(error => console.log(error))
@@ -287,8 +303,7 @@ export async function dbUpsertManhwaViews(manhwa_id: number) {
         .collections
         .get<ManhwaModel>('manhwas')
         .query(Q.where('manhwa_id', manhwa_id))
-        .fetch()    
-
+        .fetch()
 
     if (items.length > 0) {
         await database.write(async () => {
@@ -358,8 +373,7 @@ export async function dpFetchLast3Chapters(manhwa_id: number): Promise<Chapter[]
         .query(Q.where('manhwa_id', manhwa_id), Q.sortBy('chapter_num', Q.desc))
         .fetch()
     
-    return items.slice(0, 3).map(
-        c => {return {
+    return items.slice(0, 3).map(c => {return {
             chapter_id: c.chapter_id,
             chapter_num: c.chapter_num,
             created_at: c.created_at,
@@ -458,9 +472,16 @@ export async function dbInit() {
 }
 
 export async function dbUpdateDB() {
+    const { setDailyManhwa } = useDailyManhwaState()
     console.log("updating db")
     const cacheUrls: Map<string, string> = await spGetCacheUrl()
     const db = await fetchJson(cacheUrls.get('db')!)
+
+    const dailyManhwa = await dbGetDailyManhwa();
+    if (dailyManhwa?.manhwa && dailyManhwa.cover_image) {
+        setDailyManhwa(dailyManhwa.manhwa, dailyManhwa.cover_image)
+        console.log("daily manhwa setted!")
+    }
 
     await dpUpsertManhwas(db.manhwas)
     await dbUpsertGenres(db.genres)

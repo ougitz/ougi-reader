@@ -1,6 +1,6 @@
 import { createClient, PostgrestError, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ManhwaComment } from '@/helpers/types'
+import { ChapterImage } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
@@ -90,6 +90,24 @@ export async function spCreateUser(
 
     return error
 }
+
+
+export async function spFetchChapterImages(chapter_id: number): Promise<ChapterImage[]> {
+    const { data, error } = await supabase
+        .from("chapter_images")
+        .select("image_url, width, height")
+        .eq("chapter_id", chapter_id)
+        .order('index', {ascending: true})
+        .overrideTypes<ChapterImage[]>()
+
+    if (error) {
+        console.log("error spFetchChapterImages", error)
+        return []
+    }
+
+    return data
+}
+
 
 
 export async function spFetchRandomManhwa(

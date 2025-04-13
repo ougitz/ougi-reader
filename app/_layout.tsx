@@ -24,6 +24,7 @@ const _layout = () => {
             <Stack.Screen name='(pages)/LastUpdate' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/ManhwaByGenre' options={{headerShown: false}} />
             <Stack.Screen name='(pages)/ManhwaByAuthor' options={{headerShown: false}} />
+            <Stack.Screen name='(pages)/KoreanTerms' options={{headerShown: false}} />
         </Stack>
         <Toast.Component/>
       </View>

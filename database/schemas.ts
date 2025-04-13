@@ -6,9 +6,10 @@ import { genreSchema } from './schemas/GenreSchema'
 import { authorsSchema } from './schemas/authorSchema'
 import { manhwaGenreSchema } from './schemas/ManhwaGenreSchema'
 import { manhwaAuthorSchema } from './schemas/manhwaAuthorSchema'
+import { dailyManhwaSchema } from './schemas/dailyManhwaSchema'
 
 export const schemas = appSchema({
-  version: 3,
+  version: 4,
   tables: [
     manhwaSchema,
     chapterSchema,
@@ -16,6 +17,7 @@ export const schemas = appSchema({
     lastUpdateSchema,
     manhwaGenreSchema,
     authorsSchema,
-    manhwaAuthorSchema
+    manhwaAuthorSchema,
+    dailyManhwaSchema
   ]
 })

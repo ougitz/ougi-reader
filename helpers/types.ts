@@ -18,7 +18,11 @@ export type ManhwaComment = {
 }
 
 
-
+export type ChapterImage = {
+    image_url: string
+    width: number
+    height: number
+}
 
 
 export type ManhwaGenre = {

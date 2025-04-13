@@ -5,12 +5,13 @@ import { version } from 'react'
 export default schemaMigrations({  
   migrations: [
     {
-        toVersion: 3,
+        toVersion: 4,
         steps: [
-            addColumns({
-              table: 'manhwas',
+            createTable({
+              name: 'daily_manhwa',
               columns: [
-                { name: 'ratings', type: 'number' }
+                { name: 'manhwa_id', type: 'number', isIndexed: true },
+                { name: 'image_url', type: 'string' }
               ]
             })
         ]

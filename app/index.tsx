@@ -35,6 +35,7 @@ import {
 import {
   dbShouldUpdateTable,  
   dbUpdateDB,
+  dbGetDailyManhwa,
   dbInit
 } from '@/database/db';
 import Toast from '@/components/Toast';
@@ -43,7 +44,7 @@ import { sleep } from '@/helpers/util';
 
 const App = () => {
   
-  const { login, logout } = useAuthState()
+  const { login } = useAuthState()
   const [updatingDB, setUpdatingDB] = useState(false)
 
   const initialized = useRef(false)
@@ -60,6 +61,24 @@ const App = () => {
       LeagueSpartan_900Black,
   });
 
+  const connectSupabase = async () => {
+    const session = await spGetSession()
+    
+    if (!session) { return }
+
+    await spFetchUser(session.user.id)
+      .then(username => login(username, session))      
+    
+  }
+
+  const updateLocalDB = async () => {
+    if (await dbShouldUpdateTable('manhwas', true)) {
+      setUpdatingDB(true)
+      await dbUpdateDB()
+      setUpdatingDB(false)
+    }
+  }
+
   const init = async () => {
     
     if (initialized.current) { return }
@@ -73,21 +92,9 @@ const App = () => {
     if (!state.isConnected) {
       Toast.show({title: 'Warning', message: 'You dont have connection to internet', type: 'info'})
       await sleep(1500)
-    } else if (await dbShouldUpdateTable('manhwas')) {
-        setUpdatingDB(true)
-        await dbUpdateDB()
-        setUpdatingDB(false)
-    }
-
-    const session = await spGetSession()
-
-    if (session) {
-
-      await spFetchUser(session.user.id)
-        .then(username => login(username, session))
-        
     } else {
-      logout()
+        await connectSupabase()
+        await updateLocalDB()
     }
 
     router.replace("/(pages)/Home")
@@ -105,10 +112,12 @@ const App = () => {
       <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
       {
         updatingDB ?
+
         <View style={{alignItems: "center", justifyContent: "center", gap: 10}} >
-          <Image source={require("@/assets/images/loading1.gif")} style={styles.image} />
-          <Text style={AppStyle.textHeader}>updating database...</Text>
+          <Image source={require("@/assets/images/loading2.gif")} style={styles.image} />
+          <Text style={[AppStyle.textHeader, {fontSize: 22}]}>updating local database...</Text>
         </View> :
+
         <ActivityIndicator size={48} color={Colors.white}/>
       }
       </View>
@@ -122,6 +131,6 @@ const styles = StyleSheet.create({
   image: {
     width: 164,
     height: 164,
-    borderRadius: 12
+    borderRadius: 164
   }
 })

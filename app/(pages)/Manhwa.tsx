@@ -9,7 +9,7 @@ import { useReadingState } from '@/store/readingStore'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
-import { dbGetManhwaAuthors, dbGetManhwaGenres } from '@/database/db';
+import { dbGetManhwaAuthors, dbGetManhwaGenres, dbUpsertManhwaViews } from '@/database/db';
 import { router } from 'expo-router';
 import { Author } from '@/helpers/types';
 import { Chapter } from '@/model/Chapter';
@@ -63,10 +63,16 @@ const ManhwaChapterList = ({manhwa_id}: {manhwa_id: number}) => {
   
   const [chapters, setChapters] = useState<Chapter[]>([])
 
+  const { setChapterMap, setChapterNum } = useReadingState()
+
   const init = async () => {
     if (chapters.length == 0) {
       await spFetchChapterList(manhwa_id)
-        .then(values => setChapters([...values]))
+        .then(values => {
+          setChapterMap(values)
+          setChapters([...values])
+        })
+      
     }
   }
 
@@ -76,9 +82,31 @@ const ManhwaChapterList = ({manhwa_id}: {manhwa_id: number}) => {
     }, []),
     []
   )
+
+  const readFirst = () => {
+    if (chapters.length > 0) {
+      setChapterNum(chapters[0].chapter_num)
+      router.navigate("/(pages)/Chapter")
+    }
+  }
+
+  const readLast = () => {
+    if (chapters.length > 0) {
+      setChapterNum(chapters[chapters.length - 1].chapter_num)
+      router.navigate("/(pages)/Chapter")
+    }
+  }
   
   return (
-    <View style={{width: '100%', gap: 10, flexWrap: 'wrap', flexDirection: 'row', alignItems: "center", justifyContent: "flex-start"}} >
+    <View style={{width: '100%', gap: 10, flexWrap: 'wrap', flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
+      <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center"}} >
+        <Pressable onPress={readFirst} style={{flex: 1, backgroundColor: Colors.white, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
+          <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read First</Text>
+        </Pressable>
+        <Pressable onPress={readLast} style={{flex: 1, backgroundColor: Colors.white, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
+          <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read Last</Text>
+        </Pressable>
+      </View>
       {
         chapters.map((item, index) =>
           <Pressable 
@@ -108,6 +136,7 @@ const Manhwa = () => {
     if (countView.current == false) {
       countView.current = true
       await spUpdateManhwaViews(manhwa!.manhwa_id)
+      await dbUpsertManhwaViews(manhwa!.manhwa_id)
     }
 
     if (genres.length == 0) {
@@ -157,7 +186,7 @@ const Manhwa = () => {
             {
               loading ?
               <ActivityIndicator size={32} color={Colors.white} /> :
-              <>
+              <>                
                 <ManhwaAuthorsInfo authors={authors} />
                 <ManhwaGenreInfo genres={genres} />
                 <ManhwaChapterList manhwa_id={manhwa!.manhwa_id} />

@@ -30,6 +30,7 @@ const MostView = () => {
     }, []),
     []
   )
+  
 
   const onEndReached = () => {
     if (page * MANHWAS_PER_PAGE <= manhwas.length) {

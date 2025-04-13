@@ -61,17 +61,15 @@ const ManhwaCover = ({
     }    
 
     const init = async () => {
-        if (lastChapters.length == 0) {
-            await dpFetchLast3Chapters(manhwa.manhwa_id)
-                .then(values => setLastChapters(values))
-        }
+        await dpFetchLast3Chapters(manhwa.manhwa_id)
+            .then(values => setLastChapters(values))
     }
 
     useEffect(
         useCallback(() => {
             init()
-        }, []),
-        []
+        }, [manhwa]),
+        [manhwa]
     )
 
     return (

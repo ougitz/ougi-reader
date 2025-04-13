@@ -1,6 +1,7 @@
 import { 
     Linking, 
     Pressable, 
+    ScrollView, 
     StyleSheet,
     Text, 
     View 
@@ -60,66 +61,83 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
     }
 
     return (
-        <View style={styles.container} >
+        <ScrollView>
+            <View style={styles.container} >
+                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >
+                    <Text style={AppStyle.textHeader}>Menu</Text>
+                    <CloseBtn onPress={closeMenu} style={{padding: 2}} />
+                </View>
             
-            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >
-                <Text style={AppStyle.textHeader}>Menu</Text>
-                <CloseBtn onPress={closeMenu} style={{padding: 2}} />
+                {
+                    session ? 
+                    <Pressable 
+                        onPress={accountPage} 
+                        style={styles.link} 
+                        hitSlop={AppConstants.hitSlopLarge} >
+                        <Text style={AppStyle.textRegular}>Account</Text>
+                        <Ionicons name='person-outline' size={ICON_SIZE} color={ICON_COLOR} />
+                    </Pressable>
+                        :
+                    <Pressable 
+                        onPress={loginPage} 
+                        style={styles.link} 
+                        hitSlop={AppConstants.hitSlopLarge} >
+                        <Text style={AppStyle.textRegular}>Login</Text>
+                        <Ionicons name='log-in' size={ICON_SIZE} color={ICON_COLOR} />
+                    </Pressable>
+
+                }
+
+                <Pressable 
+                    onPress={libraryPage} 
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Library</Text>
+                    <Ionicons name='library-outline' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>        
+
+                <Pressable 
+                    onPress={randomRead} 
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Random Manhwa</Text>
+                    <Ionicons name='dice-outline' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>
+
+                <Pressable 
+                    onPress={readingHistoryPage}
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Read history</Text>
+                    <Ionicons name='reader-outline' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>
+
+                <Pressable 
+                    onPress={() => router.navigate("/KoreanTerms")} 
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Korean Terms</Text>
+                    <Ionicons name='language-outline' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>
+
+                <Pressable 
+                    onPress={() => Linking.openURL(AppConstants.PORNWHA_REDDIT_URL)} 
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Pornwha</Text>
+                    <Ionicons name='logo-reddit' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>
+
+                <Pressable 
+                    onPress={() => Linking.openURL(AppConstants.GITHUB_URL)} 
+                    style={styles.link} 
+                    hitSlop={AppConstants.hitSlopLarge} >
+                    <Text style={AppStyle.textRegular}>Source Code</Text>
+                    <Ionicons name='logo-github' size={ICON_SIZE} color={ICON_COLOR} />
+                </Pressable>
+
             </View>
-
-            {
-                session ? 
-                <Pressable 
-                    onPress={accountPage} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Account</Text>
-                    <Ionicons name='person-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
-                    :
-                <Pressable 
-                    onPress={loginPage} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Login</Text>
-                    <Ionicons name='log-in' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
-
-            }
-
-            <Pressable 
-                onPress={libraryPage} 
-                style={styles.link} 
-                hitSlop={AppConstants.hitSlopLarge} >
-                <Text style={AppStyle.textRegular}>Library</Text>
-                <Ionicons name='library-outline' size={ICON_SIZE} color={ICON_COLOR} />
-            </Pressable>        
-
-            <Pressable 
-                onPress={randomRead} 
-                style={styles.link} 
-                hitSlop={AppConstants.hitSlopLarge} >
-                <Text style={AppStyle.textRegular}>Random Manhwa</Text>
-                <Ionicons name='dice-outline' size={ICON_SIZE} color={ICON_COLOR} />
-            </Pressable>
-
-            <Pressable 
-                onPress={readingHistoryPage}
-                style={styles.link} 
-                hitSlop={AppConstants.hitSlopLarge} >
-                <Text style={AppStyle.textRegular}>Read history</Text>
-                <Ionicons name='reader-outline' size={ICON_SIZE} color={ICON_COLOR} />
-            </Pressable>
-
-            <Pressable 
-                onPress={() => Linking.openURL("https://github.com/VitorTz/ougi-reader")} 
-                style={styles.link} 
-                hitSlop={AppConstants.hitSlopLarge} >
-                <Text style={AppStyle.textRegular}>Github</Text>
-                <Ionicons name='logo-github' size={ICON_SIZE} color={ICON_COLOR} />
-            </Pressable>
-
-        </View>        
+        </ScrollView>
     )
 }
 
@@ -128,7 +146,7 @@ export default LateralMenu
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        gap: 40,
+        gap: 30,
         paddingVertical: 40,
         paddingHorizontal: 20
     },
