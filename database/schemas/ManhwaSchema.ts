@@ -12,6 +12,7 @@ export const manhwaSchema = tableSchema({
         { name: 'created_at', type: 'number' },
         { name: 'updated_at', type: 'number' },
         { name: 'color', type: 'string' },
-        { name: 'views', type: 'number' }
+        { name: 'views', type: 'number' },
+        { name: 'ratings', type: 'number' }
     ]
 })

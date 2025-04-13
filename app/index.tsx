@@ -1,10 +1,17 @@
+import React, { 
+  useEffect, 
+  useRef, 
+  useState 
+} from 'react'
 import { 
   ActivityIndicator, 
   SafeAreaView,
+  StyleSheet,
+  Text,
   View 
 } from 'react-native'
-import React, { useEffect, useRef } from 'react'
 import { useAuthState } from '@/store/authStore'
+import { Image } from 'expo-image';
 import {
   useFonts,
   LeagueSpartan_100Thin,
@@ -17,34 +24,26 @@ import {
   LeagueSpartan_800ExtraBold,
   LeagueSpartan_900Black,
 } from '@expo-google-fonts/league-spartan';
-import GenreModel from '@/database/models/GenreModel'
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import {   
   spFetchUser,
-  spGetCacheUrl,
   spGetSession  
 } from '@/lib/supabase';
-import { 
-  dbCreateLastUpdate, 
-  dbListTable, 
-  dpUpsertManhwas, 
-  dbShouldUpdateTable, 
-  dbUpsertGenres, 
-  dbUpsertManhwaViews,
-  dbSortManhwasByLastUpdate
+import {
+  dbShouldUpdateTable,  
+  dbUpdateDB,
+  dbInit
 } from '@/database/db';
-import ManhwaModel from '@/database/models/ManhwaModel';
-import ChapterModel from '@/database/models/ChapterModel';
-import { Manhwa } from '@/model/Manhwa';
-import { fetchJson } from '@/helpers/util';
-import { Chapter } from '@/model/Chapter';
+
 
 const App = () => {
   
+  const { login, logout } = useAuthState()
+  const [updatingDB, setUpdatingDB] = useState(false)
+
   const initialized = useRef(false)
-  const { login, logout } = useAuthState()  
 
   let [fontsLoaded] = useFonts({
       LeagueSpartan_100Thin,
@@ -64,18 +63,13 @@ const App = () => {
     
     initialized.current = true
 
-    await dbCreateLastUpdate('genres', 24)
-    await dbCreateLastUpdate('manhwas', 8)
+    await dbInit()
 
-    if (await dbShouldUpdateTable('genres')) {
-      await dbUpsertGenres()
+    if (await dbShouldUpdateTable('manhwas')) {
+      setUpdatingDB(true)
+      await dbUpdateDB()
+      setUpdatingDB(false)
     }
-
-    if (await dbShouldUpdateTable('manhwas'), true) {      
-      const cacheUrls: Map<string, string> = await spGetCacheUrl()
-      const manhwas: Manhwa[] = await fetchJson(cacheUrls.get('manhwas')!)
-      await dpUpsertManhwas(manhwas)
-    }        
 
     const session = await spGetSession()
 
@@ -101,10 +95,25 @@ const App = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+      {
+        updatingDB ?
+        <View style={{alignItems: "center", justifyContent: "center", gap: 10}} >
+          <Image source={require("@/assets/images/loading1.gif")} style={styles.image} />
+          <Text style={AppStyle.textHeader}>updating database...</Text>
+        </View> :
         <ActivityIndicator size={48} color={Colors.white}/>
+      }
       </View>
     </SafeAreaView>
   )
 }
 
 export default App
+
+const styles = StyleSheet.create({
+  image: {
+    width: 164,
+    height: 164,
+    borderRadius: 12
+  }
+})

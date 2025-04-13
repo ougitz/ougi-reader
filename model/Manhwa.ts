@@ -14,5 +14,5 @@ export type Manhwa = {
     genres: string[]
     titles: string[]
     authors: {name: string, role: string, author_id: number}[]
-    chapters: Chapter[] | null
+    chapters: Chapter[]
 }

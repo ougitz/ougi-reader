@@ -170,3 +170,14 @@ export async function spGetCacheUrl(): Promise<Map<string, string>> {
 
     return m
 }
+
+
+export async function spUpdateManhwaViews(p_manhwa_id: number) {
+    const { error } = await supabase
+        .rpc('increment_manhwa_views', { p_manhwa_id  });
+
+    if (error) {
+        console.error('error updateManhwaViews', error);
+        return null;
+    }  
+}

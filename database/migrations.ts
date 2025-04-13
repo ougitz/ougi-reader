@@ -1,17 +1,17 @@
 import { tableSchema } from '@nozbe/watermelondb'
-import { addColumns, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
+import { addColumns, createTable, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
 import { version } from 'react'
 
 export default schemaMigrations({  
   migrations: [
     {
-        toVersion: 2,
+        toVersion: 3,
         steps: [
             addColumns({
-                table: 'manhwas',
-                columns: [
-                    { name: 'views', type: 'number' }
-                ]
+              table: 'manhwas',
+              columns: [
+                { name: 'ratings', type: 'number' }
+              ]
             })
         ]
     }

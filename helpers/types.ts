@@ -16,3 +16,23 @@ export type ManhwaComment = {
     created_at: string
     thread: ManhwaComment[]
 }
+
+
+
+
+
+export type ManhwaGenre = {
+    manhwa_id: number
+    genre: string
+}
+
+export type Author = {
+    author_id: number
+    name: string
+    role: string
+}
+
+export type ManhwaAuthor = {
+    author_id: number
+    manhwa_id: number
+}
