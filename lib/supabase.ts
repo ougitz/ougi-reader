@@ -1,6 +1,6 @@
 import { createClient, PostgrestError, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ChapterImage } from '@/helpers/types'
+import { ChapterImage, Recommendation } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
@@ -120,6 +120,24 @@ export async function spFetchRandomManhwa(
 
     if (error) {
         console.log("error fetchRandomManhwa", error)
+        return []
+    }
+
+    return data
+}
+
+
+export async function spFetchManhwaRecommendations(p_limit: number = 13): Promise<{
+    manhwa_id: number,
+    width: number,
+    height: number,
+    image_url: string
+}[]> {
+    const { data, error } = await supabase
+        .rpc('get_manhwa_recommendations', { p_limit })
+
+    if (error) {
+        console.log("error spFetchManhwaRecommendations", error)
         return []
     }
 

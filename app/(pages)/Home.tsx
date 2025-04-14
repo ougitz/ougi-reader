@@ -1,5 +1,7 @@
 import { SafeAreaView, Pressable, Animated, StyleSheet, View, ScrollView } from 'react-native'
 import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
+import MangaRecommendationGrid from '@/components/MangaRecommendationGrid'
+import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
 import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -10,8 +12,6 @@ import TopBar from '@/components/TopBar'
 import React, { useRef } from 'react'
 import { router } from 'expo-router'
 import { wp } from '@/helpers/util'
-import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
-import DailyManhwa from '@/components/DailyManhwa'
 
 
 const MENU_WIDTH = wp(60)
@@ -66,7 +66,7 @@ const Home = () => {
             <ScrollView style={{flex: 1}} >
                 <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
-                    <DailyManhwa/>
+                    <MangaRecommendationGrid/>
                     <ManhwasLastUpdateGrid/>
                     <MostViewedManhwasComponent/>
                 </View>

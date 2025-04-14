@@ -35,7 +35,6 @@ import {
 import {
   dbShouldUpdateTable,  
   dbUpdateDB,
-  dbGetDailyManhwa,
   dbInit
 } from '@/database/db';
 import Toast from '@/components/Toast';

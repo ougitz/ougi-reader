@@ -6,10 +6,11 @@ import { genreSchema } from './schemas/GenreSchema'
 import { authorsSchema } from './schemas/authorSchema'
 import { manhwaGenreSchema } from './schemas/ManhwaGenreSchema'
 import { manhwaAuthorSchema } from './schemas/manhwaAuthorSchema'
-import { dailyManhwaSchema } from './schemas/dailyManhwaSchema'
+import { manhwaRecommendationSchema } from './schemas/manhwaRecommendationSchema'
+
 
 export const schemas = appSchema({
-  version: 5,
+  version: 6,
   tables: [
     manhwaSchema,
     chapterSchema,
@@ -18,6 +19,6 @@ export const schemas = appSchema({
     manhwaGenreSchema,
     authorsSchema,
     manhwaAuthorSchema,
-    dailyManhwaSchema
+    manhwaRecommendationSchema
   ]
 })

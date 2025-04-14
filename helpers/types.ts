@@ -1,4 +1,4 @@
-
+import { Manhwa } from "@/model/Manhwa"
 
 export type RatingRegister = {
     rating: number
@@ -17,6 +17,12 @@ export type ManhwaComment = {
     thread: ManhwaComment[]
 }
 
+export type Recommendation = {
+    manhwa: Manhwa,
+    width: number
+    height: number
+    cover_image_url: string
+}
 
 export type ChapterImage = {
     image_url: string

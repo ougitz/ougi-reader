@@ -1,5 +1,5 @@
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
-import { ManhwaGenre, Author, ManhwaAuthor } from '@/helpers/types'
+import { ManhwaGenre, Author, ManhwaAuthor, Recommendation } from '@/helpers/types'
 import ManhwaAuthorModel from './models/ManhwaAuthorModel'
 import ManhwaGenreModel from './models/ManhwaGenreModel'
 import LastUpdateModel from './models/LastUpdateModel'
@@ -9,7 +9,7 @@ import ManhwaModel from './models/ManhwaModel'
 import { spGetCacheUrl, supabase } from '@/lib/supabase'
 import AuthorModel from './models/AuthorModel'
 import GenreModel  from './models/GenreModel'
-import DailyManhwaModel from './models/DailyManhwaModel'
+import ManhwaRecommendationModel from './models/ManhwaRecommendationModel'
 import { Model } from '@nozbe/watermelondb'
 import { fetchJson } from '@/helpers/util'
 import { Chapter } from '@/model/Chapter'
@@ -17,8 +17,6 @@ import { Manhwa } from '@/model/Manhwa'
 import { Platform } from "react-native"
 import migrations from './migrations'
 import { schemas } from "./schemas"
-import { sortBy } from 'lodash'
-import { useDailyManhwaState } from '@/store/dailyManhwaStore'
 
 
 const adapter = new SQLiteAdapter({
@@ -41,7 +39,7 @@ const database = new Database({
         ManhwaGenreModel,
         AuthorModel,
         ManhwaAuthorModel,
-        DailyManhwaModel        
+        ManhwaRecommendationModel
     ]
 })
 
@@ -93,6 +91,9 @@ export async function dbDeleteItemsFromTable<T extends Model>(table_name: string
         .get<T>(table_name)
         .query()
         .fetch()
+        .catch(error => console.log("error while deleting, fetch all items of", table_name, error))
+
+    if (!allItems) { return }
 
     const deleteOperations: any = allItems.map(item => item.prepareDestroyPermanently());
 
@@ -172,50 +173,6 @@ export async function dbUpsertGenres(genres: string[]) {
     await database.write(async () => {
         await dbBatch<GenreModel>(operations)
     }).catch(error => console.log("error dbUpsertGenres", error))
-}
-
-export async function dbGetDailyManhwa(): Promise<{
-    manhwa: Manhwa, 
-    image_url: string,
-    width: number,
-    height: number
-} | null> {
-    
-    const items = await database
-        .collections
-        .get<DailyManhwaModel>('daily_manhwa')
-        .query()
-        .fetch()    
-
-    const daily = items[0]
-
-    const manhwas = await database
-        .collections
-        .get<ManhwaModel>('manhwas')
-        .query(Q.where('manhwa_id', daily.manhwa_id))
-        .fetch()
-
-    if (manhwas.length == 0) { return null }
-
-    const m = manhwas[0]
-
-    return {
-        manhwa:  {
-            manhwa_id: m.manhwa_id,
-            title: m.title,
-            descr: m.descr,
-            cover_image_url: m.cover_image_url,
-            status: m.status,
-            color: m.color,
-            updated_at: m.updated_at,
-            views: m.views,
-            rating: m.ratings,
-            chapters: []
-        },
-        image_url: daily.image_url,
-        width: daily.width,
-        height: daily.height
-    }   
 }
 
 
@@ -479,40 +436,84 @@ export async function dbUpdateDB() {
     console.log("updating db")
     const cacheUrls: Map<string, string> = await spGetCacheUrl()
     const db = await fetchJson(cacheUrls.get('db')!)    
-
-    await dbUpdateDailyManhwa()
+    
     await dpUpsertManhwas(db.manhwas)
     await dbUpsertGenres(db.genres)
     await dbUpsertManhwaGenres(db.manhwa_genres)
     await dbUpsertAuthors(db.authors)
     await dbUpsertManhwaAuthors(db.manhwa_authors)    
+    await dbUpdateManhwaRecommendations(db.recommendations)
+
 }
 
 
-async function dbUpdateDailyManhwa() {
-
-    await dbDeleteItemsFromTable<DailyManhwaModel>('daily_manhwa')
-
-    const { data, error } = await supabase.rpc('get_last_daily_manhwa')
-
-    if (error) {
-        console.log("error dbAddDailyManhwa", error)
-        return
-    }
-    
-    const daily = data[0]
+export async function dbUpdateManhwaRecommendations(
+    recommendations: {
+        width: number,
+        height: number,
+        image_url: string,
+        manhwa_id: string
+    }[]    
+) {
+    await dbDeleteItemsFromTable<ManhwaRecommendationModel>('manhwa_recommendations')
+    const itemCollection = database
+        .collections
+        .get<ManhwaRecommendationModel>('manhwa_recommendations')
+            
+    const operations: ManhwaRecommendationModel[] = recommendations
+        .map(rec => 
+            itemCollection.prepareCreate(r => {
+                r.width = rec.width
+                r.height = rec.height
+                r.image_url = rec.image_url,
+                r.manhwa_id = rec.manhwa_id
+            })
+        )
 
     await database.write(async () => {
-        
-        await database.get<DailyManhwaModel>('daily_manhwa').create(d => {
-            d.manhwa_id = daily.manhwa_id
-            d.image_url = daily.image_url
-            d.width = daily.width
-            d.height = daily.height
-        })
+        await dbBatch<ManhwaRecommendationModel>(operations)
+    }).catch(error => console.log(error))
 
-    }).catch(error => console.log("error dbAddDailyManhwa", error))
+}
 
+export async function dbGetManhwaRecommendations(): Promise<Recommendation[]> {
+
+    const items = await database
+        .collections
+        .get<ManhwaRecommendationModel>('manhwa_recommendations')
+        .query()
+        .fetch()    
+
+    const ids = items.map(item => item.manhwa_id)
+
+    const manhwas = await database
+        .collections
+        .get<ManhwaModel>('manhwas')
+        .query(Q.where('manhwa_id', Q.oneOf(ids)))
+        .fetch()
+
+    const manhwaMap = new Map(manhwas.map(r => [r.manhwa_id, r]))
+
+    return items.map(item => {
+        const r = manhwaMap.get(item.manhwa_id)!
+        return {
+            manhwa: {
+                manhwa_id: r.manhwa_id,
+                title: r.title,
+                descr: r.descr,
+                cover_image_url: r.cover_image_url,
+                status: r.status,
+                color: r.color,
+                updated_at: r.updated_at,
+                views: r.views,
+                rating: r.ratings,
+                chapters: []
+            },
+            width: item.width,
+            height: item.height,
+            cover_image_url: item.image_url
+    }})
+    
 }
 
 
@@ -611,7 +612,29 @@ export async function dbGetManhwasByAuthor(author_id: number): Promise<Manhwa[]>
         views: r.views,
         rating: r.ratings,
         chapters: []
-    }})
-
-    
+    }})    
 }
+
+
+export async function dbGetManhwasByIds(ids: number[]) {
+    const items: ManhwaModel[] = await database
+        .collections
+        .get<ManhwaModel>('manhwas')
+        .query(Q.where('manhwa_id', Q.oneOf(ids)))
+        .fetch()
+
+    return items.map(r => {return {
+        manhwa_id: r.manhwa_id,
+        title: r.title,
+        descr: r.descr,
+        cover_image_url: r.cover_image_url,
+        status: r.status,
+        color: r.color,
+        updated_at: r.updated_at,
+        views: r.views,
+        rating: r.ratings,
+        chapters: []
+    }})
+}
+
+
