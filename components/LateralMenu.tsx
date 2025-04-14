@@ -85,7 +85,6 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                         <Text style={AppStyle.textRegular}>Login</Text>
                         <Ionicons name='log-in' size={ICON_SIZE} color={ICON_COLOR} />
                     </Pressable>
-
                 }
 
                 <Pressable 
@@ -126,15 +125,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     hitSlop={AppConstants.hitSlopLarge} >
                     <Text style={AppStyle.textRegular}>Pornwha</Text>
                     <Ionicons name='logo-reddit' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
-
-                <Pressable 
-                    onPress={() => Linking.openURL(AppConstants.GITHUB_URL)} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Source Code</Text>
-                    <Ionicons name='logo-github' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
+                </Pressable>                
 
             </View>
         </ScrollView>

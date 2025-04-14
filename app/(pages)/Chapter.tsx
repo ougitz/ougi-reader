@@ -12,11 +12,16 @@ import { hp, wp } from '@/helpers/util'
 import ManhwaImage from '@/components/ManhwaImage'
 import { Manhwa } from '@/model/Manhwa'
 import { Colors } from '@/constants/Colors'
+import { Image } from 'expo-image'
 
 
-const ChapterHeader = ({loading}: {loading: boolean}) => {
+const ChapterHeader = ({
+  loading,
+  previousChapter,
+  nextChapter
+}: {loading: boolean, previousChapter: () => void, nextChapter: () => void}) => {
 
-  const {manhwa, currentChapter, moveToPreviousChapter, moveToNextChapter} = useReadingState()
+  const { manhwa, currentChapter } = useReadingState()
   
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5)}} >
@@ -26,7 +31,7 @@ const ChapterHeader = ({loading}: {loading: boolean}) => {
       <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "flex-start", marginBottom: 20}} >
         <Text style={AppStyle.textHeader}>Chapter</Text>
         <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
-          <Pressable onPress={moveToPreviousChapter} hitSlop={AppConstants.hitSlop} >
+          <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
             <Ionicons name='chevron-back' size={24} color={Colors.white} />
           </Pressable>
           <View style={{alignItems: "center", justifyContent: "center"}} >
@@ -36,7 +41,7 @@ const ChapterHeader = ({loading}: {loading: boolean}) => {
               <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
             }
           </View>
-          <Pressable onPress={moveToNextChapter} hitSlop={AppConstants.hitSlop}>
+          <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
             <Ionicons name='chevron-forward' size={24} color={Colors.white} />
           </Pressable>
         </View>
@@ -45,15 +50,19 @@ const ChapterHeader = ({loading}: {loading: boolean}) => {
   )
 }
 
-const ChapterFooter = ({loading}: {loading: boolean}) => {
-  const {currentChapter, moveToPreviousChapter, moveToNextChapter} = useReadingState()
+const ChapterFooter = ({
+  loading,
+  previousChapter,
+  nextChapter,
+}: {loading: boolean, previousChapter: () => void, nextChapter: () => void}) => {
+  const { currentChapter } = useReadingState()
 
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5), marginTop: 42, marginBottom: 220}} >
         <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "center", marginBottom: 20}} >
           <Text style={AppStyle.textHeader}>Chapter</Text>
           <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
-            <Pressable onPress={moveToPreviousChapter} hitSlop={AppConstants.hitSlop} >
+            <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
               <Ionicons name='chevron-back' size={24} color={Colors.white} />
             </Pressable>
             <View style={{alignItems: "center", justifyContent: "center"}} >
@@ -63,7 +72,7 @@ const ChapterFooter = ({loading}: {loading: boolean}) => {
                 <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
               }
             </View>
-            <Pressable onPress={moveToNextChapter} hitSlop={AppConstants.hitSlop}>
+            <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
               <Ionicons name='chevron-forward' size={24} color={Colors.white} />
             </Pressable>
           </View>
@@ -74,7 +83,7 @@ const ChapterFooter = ({loading}: {loading: boolean}) => {
 
 const Chapter = () => {
 
-  const { currentChapter } = useReadingState()
+  const { currentChapter, moveToNextChapter, moveToPreviousChapter  } = useReadingState()
   const [images, setImages] = useState<ChapterImage[]>([])
   const [loading, setLoading] = useState(false)
   
@@ -95,13 +104,28 @@ const Chapter = () => {
     }, [currentChapter]),
     [currentChapter]
   )
-
+  
   const scrollUp = () => {
     flatListRef.current?.scrollToOffset({animated: false, offset: 0})
   }
-
+  
   const scrollDown = () => {
     flatListRef.current?.scrollToEnd({animated: false})
+  }
+
+  const nextChapter = async () => {
+    scrollUp()
+    setLoading(true)
+    await Image.clearMemoryCache()
+    moveToNextChapter()
+    setLoading(false)
+  }
+
+  const previousChapter = async () => {
+    setLoading(true)
+    await Image.clearMemoryCache()
+    moveToPreviousChapter()
+    setLoading(false)
   }
 
   return (
@@ -109,8 +133,8 @@ const Chapter = () => {
       <View style={{width: '100%', height: hp(120)}} >
         <FlatList
           data={images}
-          ListHeaderComponent={<ChapterHeader loading={loading}/>}
-          ListFooterComponent={<ChapterFooter loading={loading}/>}
+          ListHeaderComponent={<ChapterHeader loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
+          ListFooterComponent={<ChapterFooter loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
           maxToRenderPerBatch={1}
           removeClippedSubviews={true}
