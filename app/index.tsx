@@ -33,12 +33,14 @@ import {
   spGetSession  
 } from '@/lib/supabase';
 import {
-  dbShouldUpdateTable,  
-  dbUpdateDB,
-  dbInit
+  dbShouldUpdate,  
+  dbUpdateDatabase,
+  dbInit,
+  dbForEach
 } from '@/database/db';
 import Toast from '@/components/Toast';
 import { sleep } from '@/helpers/util';
+import ManhwaModel from '@/database/models/ManhwaModel';
 
 
 const App = () => {
@@ -61,8 +63,7 @@ const App = () => {
   });
 
   const connectSupabase = async () => {
-    const session = await spGetSession()
-    
+    const session = await spGetSession()    
     if (!session) { return }
 
     await spFetchUser(session.user.id)
@@ -71,9 +72,9 @@ const App = () => {
   }
 
   const updateLocalDB = async () => {
-    if (await dbShouldUpdateTable('manhwas')) {
+    if (await dbShouldUpdate('manhwas', true)) {
       setUpdatingDB(true)
-      await dbUpdateDB()
+      await dbUpdateDatabase()
       setUpdatingDB(false)
     }
   }

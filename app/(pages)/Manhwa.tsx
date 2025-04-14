@@ -9,7 +9,7 @@ import { useReadingState } from '@/store/readingStore'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
-import { dbGetManhwaAuthors, dbGetManhwaGenres, dbUpsertManhwaViews } from '@/database/db';
+import { dbGetAuthorsOfManhwa, dbGetGenresOfManhwa, dbUpsertManhwaViewCount } from '@/database/db';
 import { router } from 'expo-router';
 import { Author } from '@/helpers/types';
 import { Chapter } from '@/model/Chapter';
@@ -136,16 +136,16 @@ const Manhwa = () => {
     if (countView.current == false) {
       countView.current = true
       await spUpdateManhwaViews(manhwa!.manhwa_id)
-      await dbUpsertManhwaViews(manhwa!.manhwa_id)
+      await dbUpsertManhwaViewCount(manhwa!.manhwa_id)
     }
 
     if (genres.length == 0) {
-      await dbGetManhwaGenres(manhwa!.manhwa_id)
+      await dbGetGenresOfManhwa(manhwa!.manhwa_id)
         .then(values => setGenres([...values]))
     }
 
     if (authors.length == 0) {
-      await dbGetManhwaAuthors(manhwa!.manhwa_id)
+      await dbGetAuthorsOfManhwa(manhwa!.manhwa_id)
         .then(values => setAuthors([...values]))
     }
 

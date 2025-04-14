@@ -1,6 +1,6 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { dbGetAll } from '@/database/db'
+import { dbGetItems } from '@/database/db'
 import GenreModel from '@/database/models/GenreModel'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
@@ -13,8 +13,13 @@ const GenreGrid = () => {
 
     const init = async () => {
         if (genres.length > 0) { return }
-        await dbGetAll<GenreModel>('genres')
-            .then(values => setGenres([...values.map(i => i.genre)]))
+        
+        await dbGetItems<GenreModel>('genres')
+            .then(values => {
+                if (values) {
+                    setGenres([...values.map(i => i.genre)])
+                }
+            })
     }
 
     useEffect(

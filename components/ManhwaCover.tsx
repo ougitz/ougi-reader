@@ -14,7 +14,7 @@ import React, {
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { AppConstants } from '@/constants/AppConstants';
 import { useReadingState } from '@/store/readingStore';
-import { dpFetchLast3Chapters } from '@/database/db';
+import { dpGetManhwaLastChapters } from '@/database/db';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { Chapter } from '@/model/Chapter';
@@ -61,7 +61,7 @@ const ManhwaCover = ({
     }    
 
     const init = async () => {
-        await dpFetchLast3Chapters(manhwa.manhwa_id)
+        await dpGetManhwaLastChapters(manhwa.manhwa_id)
             .then(values => setLastChapters(values))
     }
 
