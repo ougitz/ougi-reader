@@ -90,19 +90,26 @@ const Chapter = () => {
   const flatListRef = useRef<FlatList>()
 
   const init = async () => {
-    if (currentChapter) {
+    if (currentChapter && images.length == 0) {
       setLoading(true)
       await spFetchChapterImages(currentChapter.chapter_id) 
-        .then(values => setImages([...values]))
+          .then(values => setImages([...values]))
       setLoading(false)
+    }
+  }
+
+  const loadChapter = async () => {
+    if (currentChapter) {
+      await spFetchChapterImages(currentChapter.chapter_id) 
+        .then(values => setImages([...values]))
     }
   }
 
   useEffect(
     useCallback(() => {
       init()
-    }, [currentChapter]),
-    [currentChapter]
+    }, []),
+    []
   )
   
   const scrollUp = () => {
