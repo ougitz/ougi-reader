@@ -6,12 +6,10 @@ import React, {
 import { 
   ActivityIndicator, 
   SafeAreaView,
-  StyleSheet,
-  Text,
+  StyleSheet,  
   View 
 } from 'react-native'
 import { useAuthState } from '@/store/authStore'
-import { Image } from 'expo-image';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import {
   useFonts,
@@ -32,15 +30,8 @@ import {
   spFetchUser,
   spGetSession  
 } from '@/lib/supabase';
-import {
-  dbShouldUpdate,  
-  dbUpdateDatabase,
-  dbInit,
-  dbForEach
-} from '@/database/db';
 import Toast from '@/components/Toast';
 import { sleep } from '@/helpers/util';
-import ManhwaModel from '@/database/models/ManhwaModel';
 
 
 const App = () => {
@@ -64,28 +55,17 @@ const App = () => {
 
   const connectSupabase = async () => {
     const session = await spGetSession()    
+    
     if (!session) { return }
 
-    await spFetchUser(session.user.id)
-      .then(username => login(username, session))      
-    
-  }
-
-  const updateLocalDB = async () => {
-    if (await dbShouldUpdate('manhwas', true)) {
-      setUpdatingDB(true)
-      await dbUpdateDatabase()
-      setUpdatingDB(false)
-    }
+    await spFetchUser(session.user.id).then(username => login(username, session))
   }
 
   const init = async () => {
     
     if (initialized.current) { return }
     
-    initialized.current = true
-
-    await dbInit()
+    initialized.current = true    
 
     const state: NetInfoState = await NetInfo.fetch()
 
@@ -94,7 +74,6 @@ const App = () => {
       await sleep(1500)
     } else {
         await connectSupabase()
-        await updateLocalDB()
     }
 
     router.replace("/(pages)/Home")
@@ -110,16 +89,7 @@ const App = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-      {
-        updatingDB ?
-
-        <View style={{alignItems: "center", justifyContent: "center", gap: 10}} >
-          <Image source={require("@/assets/images/loading2.gif")} style={styles.image} />
-          <Text style={[AppStyle.textHeader, {fontSize: 22}]}>updating local database...</Text>
-        </View> :
-
         <ActivityIndicator size={48} color={Colors.white}/>
-      }
       </View>
     </SafeAreaView>
   )

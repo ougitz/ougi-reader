@@ -1,25 +1,23 @@
 import { useMostViewManhwasState } from '@/store/mostViewManhwasStore';
-import React, { useCallback, useEffect, useState } from 'react'
-import { dbSortManhwasByViews } from '@/database/db';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SafeAreaView, StyleSheet} from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
-
-
-const MANHWAS_PER_PAGE = 60
+import { spFetchMostViewManhwas } from '@/lib/supabase';
 
 
 const MostView = () => {
 
-  const [page, setPage] = useState(1)
-
   const { manhwas, setManhwas } = useMostViewManhwasState()
+
+  const page = useRef(0)
+  const hasResults = useRef(true)
 
   const init = async () => {
     if (manhwas.length == 0) {
-      await dbSortManhwasByViews()
+      await spFetchMostViewManhwas()
         .then(values => setManhwas([...values]))
     }
   }
@@ -32,10 +30,16 @@ const MostView = () => {
   )
   
 
-  const onEndReached = () => {
-    if (page * MANHWAS_PER_PAGE <= manhwas.length) {
-      setPage(prev => prev + 1)
+  const onEndReached = async () => {
+    if (!hasResults.current) {
+      return
     }
+    page.current += 1
+    await spFetchMostViewManhwas(page.current)
+      .then(values => {
+        hasResults.current = values.length > 0
+        setManhwas([...manhwas, ...values])
+      })
   }  
 
   return (
@@ -44,7 +48,7 @@ const MostView = () => {
         <ReturnButton/>        
       </TopBar>
       <ManhwaGrid
-        manhwas={manhwas.slice(0, page * MANHWAS_PER_PAGE)}
+        manhwas={manhwas}
         numColumns={2}
         shouldShowChapterDate={false}
         onEndReached={onEndReached}/>

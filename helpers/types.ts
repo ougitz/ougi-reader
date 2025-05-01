@@ -33,6 +33,7 @@ export type ChapterImage = {
 
 export type ManhwaGenre = {
     manhwa_id: number
+    genre_id: number
     genre: string
 }
 
@@ -45,4 +46,6 @@ export type Author = {
 export type ManhwaAuthor = {
     author_id: number
     manhwa_id: number
+    role: string
+    name: string
 }

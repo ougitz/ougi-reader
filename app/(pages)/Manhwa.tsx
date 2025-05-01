@@ -1,24 +1,58 @@
-import { SafeAreaView, ScrollView, Text, StyleSheet, View, Pressable, ActivityIndicator } from 'react-native'
-import { Image } from 'expo-image';
+import { 
+  spFetchChapterList, 
+  spFetchManhwaAuthors, 
+  spFetchManhwaGenres, 
+  spUpdateManhwaViews 
+} from '@/lib/supabase'
+import { 
+  SafeAreaView, 
+  ScrollView, 
+  Text, 
+  StyleSheet, 
+  View, 
+  Pressable, 
+  ActivityIndicator 
+} from 'react-native'
+import React, { 
+  useCallback, 
+  useEffect, 
+  useRef, 
+  useState 
+} from 'react'
+import { useManhwaGenreState } from '@/store/manhwaGenreState';
+import { useManhwaAuthorState } from '@/store/manhwaAuthorsState';
 import ReturnButton from '@/components/ReturnButton';
-import HomeButton from '@/components/HomeButton';
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
-import { spFetchChapterList, spUpdateManhwaViews } from '@/lib/supabase'
 import { useReadingState } from '@/store/readingStore'
+import HomeButton from '@/components/HomeButton';
+import { ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
-import { wp, hp } from '@/helpers/util';
-import { dbGetAuthorsOfManhwa, dbGetGenresOfManhwa, dbUpsertManhwaViewCount } from '@/database/db';
-import { router } from 'expo-router';
-import { Author } from '@/helpers/types';
 import { Chapter } from '@/model/Chapter';
+import { wp, hp } from '@/helpers/util';
+import { router } from 'expo-router';
+import { Image } from 'expo-image';
 
 
-const ManhwaGenreInfo = ({genres}: {genres: string[]}) => {
-  
-  const openGenrePage = (g: string) => {
-    router.navigate({pathname: '/ManhwaByGenre', params: {genre: g}})
+interface ManhwaGenreInfoProps {
+  manhwa_id: number
+}
+
+const ManhwaGenreInfo = ({manhwa_id}: ManhwaAuthorsInfoProps) => {
+
+  const { manhwaGenresMap } = useManhwaGenreState()
+  const genres: ManhwaGenre[] = manhwaGenresMap.has(manhwa_id) ?
+    manhwaGenresMap.get(manhwa_id)! :
+    []
+
+
+  const openGenrePage = (genre: ManhwaGenre) => {
+    router.navigate({
+      pathname: '/ManhwaByGenre', 
+      params: {
+        genre_id: genre.genre_id,
+        genre: genre.genre
+      }})
   }
 
   return (
@@ -26,7 +60,7 @@ const ManhwaGenreInfo = ({genres}: {genres: string[]}) => {
       {
         genres.map((genre, index) => 
           <Pressable style={styles.item} onPress={() => openGenrePage(genre)} key={index} >
-            <Text style={[AppStyle.textRegular, {color: Colors.white}]} >{genre}</Text>
+            <Text style={[AppStyle.textRegular, {color: Colors.white}]} >{genre.genre}</Text>
           </Pressable>
         )
       }
@@ -35,13 +69,26 @@ const ManhwaGenreInfo = ({genres}: {genres: string[]}) => {
 
 }
 
+interface ManhwaAuthorsInfoProps {
+  manhwa_id: number
+}
 
-const ManhwaAuthorsInfo = ({authors}: {authors: Author[]}) => {
+const ManhwaAuthorsInfo = ({manhwa_id}: ManhwaAuthorsInfoProps) => {
+
+  const { manhwaAuthorMap } = useManhwaAuthorState()
   
-  const openAuthorPage = (author: Author) => {
+  const authors: ManhwaAuthor[] = manhwaAuthorMap.has(manhwa_id) ?
+    manhwaAuthorMap.get(manhwa_id)! :
+    []
+  
+  const openAuthorPage = (author: ManhwaAuthor) => {
     router.navigate({
       pathname: '/ManhwaByAuthor', 
-      params: {author_id: author.author_id, author_name: author.name, author_role: author.role}})
+      params: {
+        author_id: author.author_id,
+        author_name: author.name, 
+        author_role: author.role
+      }})
   }
 
   return (
@@ -125,8 +172,8 @@ const Manhwa = () => {
 
   const { manhwa } = useReadingState()
 
-  const [genres, setGenres] = useState<string[]>([])
-  const [authors, setAuthors] = useState<Author[]>([])
+  const { manhwaGenresMap, addGenres } = useManhwaGenreState()
+  const { manhwaAuthorMap, addAuthor } = useManhwaAuthorState()
   const [loading, setLoading] = useState(false)
 
   const countView = useRef(false)
@@ -136,17 +183,16 @@ const Manhwa = () => {
     if (countView.current == false) {
       countView.current = true
       await spUpdateManhwaViews(manhwa!.manhwa_id)
-      await dbUpsertManhwaViewCount(manhwa!.manhwa_id)
     }
 
-    if (genres.length == 0) {
-      await dbGetGenresOfManhwa(manhwa!.manhwa_id)
-        .then(values => setGenres([...values]))
+    if (!manhwaGenresMap.has(manhwa!.manhwa_id)) {
+        await spFetchManhwaGenres(manhwa!.manhwa_id)
+          .then(values => addGenres(manhwa!.manhwa_id, values))
     }
 
-    if (authors.length == 0) {
-      await dbGetAuthorsOfManhwa(manhwa!.manhwa_id)
-        .then(values => setAuthors([...values]))
+    if (!manhwaAuthorMap.has(manhwa!.manhwa_id)) {
+      await spFetchManhwaAuthors(manhwa!.manhwa_id)
+        .then(values => addAuthor(manhwa!.manhwa_id, values))
     }
 
     setLoading(false)
@@ -187,8 +233,8 @@ const Manhwa = () => {
               loading ?
               <ActivityIndicator size={32} color={Colors.white} /> :
               <>                
-                <ManhwaAuthorsInfo authors={authors} />
-                <ManhwaGenreInfo genres={genres} />
+                <ManhwaAuthorsInfo manhwa_id={manhwa!.manhwa_id}/>
+                <ManhwaGenreInfo manhwa_id={manhwa!.manhwa_id}/>
                 <ManhwaChapterList manhwa_id={manhwa!.manhwa_id} />
               </>
             }

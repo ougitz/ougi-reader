@@ -1,25 +1,40 @@
-import { ActivityIndicator, FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { 
+  ActivityIndicator, 
+  FlatList, 
+  Pressable, 
+  SafeAreaView, 
+  StyleSheet, 
+  Text, 
+  View 
+} from 'react-native'
+import React, { 
+  useCallback, 
+  useEffect, 
+  useRef, 
+  useState 
+} from 'react'
 import { AppConstants } from '@/constants/AppConstants'
-import { AppStyle } from '@/styles/AppStyles'
-import TopBar from '@/components/TopBar'
-import ReturnButton from '@/components/ReturnButton'
 import { useReadingState } from '@/store/readingStore'
-import { ChapterImage } from '@/helpers/types'
+import ReturnButton from '@/components/ReturnButton'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { spFetchChapterImages } from '@/lib/supabase'
-import { hp, wp } from '@/helpers/util'
 import ManhwaImage from '@/components/ManhwaImage'
-import { Manhwa } from '@/model/Manhwa'
+import { ChapterImage } from '@/helpers/types'
+import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
+import TopBar from '@/components/TopBar'
+import { hp, wp } from '@/helpers/util'
 import { Image } from 'expo-image'
 
 
-const ChapterHeader = ({
-  loading,
-  previousChapter,
-  nextChapter
-}: {loading: boolean, previousChapter: () => void, nextChapter: () => void}) => {
+interface ChapterHeaderProps {
+  loading: boolean
+  previousChapter: () => void
+  nextChapter: () => void
+}
+
+
+const ChapterHeader = ({ loading, previousChapter, nextChapter}: ChapterHeaderProps) => {
 
   const { manhwa, currentChapter } = useReadingState()
   
@@ -50,11 +65,15 @@ const ChapterHeader = ({
   )
 }
 
-const ChapterFooter = ({
-  loading,
-  previousChapter,
-  nextChapter,
-}: {loading: boolean, previousChapter: () => void, nextChapter: () => void}) => {
+
+interface ChapterFooterProps {
+  loading: boolean
+  previousChapter: () => void
+  nextChapter: () => void
+}
+
+
+const ChapterFooter = ({ loading, previousChapter, nextChapter }: ChapterFooterProps) => {
   const { currentChapter } = useReadingState()
 
   return (
@@ -92,8 +111,8 @@ const Chapter = () => {
   const init = async () => {
     if (currentChapter && images.length == 0) {
       setLoading(true)
-      await spFetchChapterImages(currentChapter.chapter_id) 
-          .then(values => setImages([...values]))
+      await spFetchChapterImages(currentChapter.chapter_id)
+        .then(values => setImages([...values]))
       setLoading(false)
     }
   }

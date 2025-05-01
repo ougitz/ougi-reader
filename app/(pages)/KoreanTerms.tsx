@@ -6,14 +6,6 @@ import ReturnButton from '@/components/ReturnButton'
 import { Colors } from '@/constants/Colors'
 
 
-const A = `
-    - Manhwa [만화] : Korean term for comics and print cartoons.
-    - Manhwaga [만화가] : The author or artist of a Manhwa.
-    - Aeni [애니] : South Korean animation.
-    - Webtoon [웹툰] : A type of digital comic that originated in South Korea.
-`
-
-
 const Term = ({term, meaning}: {term: string, meaning: string}) => {
     return (
         <View style={{width: '100%', padding: 8, backgroundColor: Colors.gray, borderRadius: 4, alignItems: "flex-start", justifyContent: "flex-start", gap: 10}} >

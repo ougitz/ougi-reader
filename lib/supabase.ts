@@ -1,6 +1,6 @@
 import { createClient, PostgrestError, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ChapterImage, Recommendation } from '@/helpers/types'
+import { ChapterImage, ManhwaAuthor, ManhwaGenre, Recommendation } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
@@ -216,4 +216,112 @@ export async function spUpdateManhwaViews(p_manhwa_id: number) {
         console.error('error updateManhwaViews', error);
         return null;
     }  
+}
+
+export async function spFetchManhwaGenres(manhwa_id: number): Promise<ManhwaGenre[]> {
+    const { data, error } = await supabase
+        .from("manwha_genres")    
+        .select("genre_id, genres (genre)")
+        .eq("manhwa_id", manhwa_id)
+    
+    if (error) {
+        console.log("error spFetchManhwaGenres", error)
+        return []
+    }
+
+    return data.map(item => {
+        return {
+            genre: (item.genres as any).genre,
+            genre_id: item.genre_id,
+            manhwa_id
+        }
+    })
+}
+
+
+export async function spFetchManhwaAuthors(manhwa_id: number): Promise<ManhwaAuthor[]> {
+    const { data, error } = await supabase
+        .from("manhwa_authors")
+        .select("author_id, authors (role, name)")
+    
+    if (error) {
+        console.log("error spFetchManhwaAuthors", error)
+        return []
+    }
+
+    return data.map(item => {return {
+        author_id: item.author_id,
+        name: (item.authors as any).name,
+        role: (item.authors as any).role,
+        manhwa_id
+    }})
+}
+
+
+export async function spFetchLatestManhwas(
+    p_offset: number = 0,
+    p_limit: number = 30,
+    p_num_chapters: number = 3
+): Promise<Manhwa[]> {
+    const { data, error } = await supabase
+        .rpc("get_manhwas_ordered_by_update", { p_offset, p_limit, p_num_chapters })
+
+    if (error) {
+        console.log("error spFetchLatestManhwas", error)
+        return []
+    }
+
+    return data
+}
+
+
+export async function spFetchManhwasByAuthor(
+    p_author_id: number,
+    p_offset: number = 0,
+    p_limit: number = 666,
+    p_num_chapters: number = 3
+): Promise<Manhwa[]> {
+    const { data, error } = await supabase
+        .rpc("get_manhwas_by_author", {p_author_id, p_offset, p_limit, p_num_chapters })
+    
+    if (error) {
+        console.log("error spFetchManhwasByAuthor", error)
+        return []
+    }
+
+    return data
+}
+
+
+export async function spFetchManhwasByGenre(
+    p_genre_id: number,
+    p_offset: number = 30,
+    p_num_chapters: number = 3
+): Promise<Manhwa[]> {
+
+    const { data, error } = await supabase
+        .rpc("get_manhwas_by_genre", {p_genre_id, p_offset, p_num_chapters})
+
+    if (error) {
+        console.log("error spFetchManhwasByGenre", error)
+        return []
+    }
+
+    return data
+}
+
+export async function spFetchMostViewManhwas(
+    p_offset: number,
+    p_limit: number,
+    p_num_chapters: number = 3
+) {
+    const { data, error } = await supabase
+        .rpc("get_manhwas_ordered_by_views", {p_offset, p_limit, p_num_chapters})
+
+    if (error) {
+        console.log("error spFetchMostViewManhwas", error)
+        return []
+    }
+    
+    return data
 }
