@@ -36,27 +36,22 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
     const randomRead = async () => {
         const manhwaList = await spFetchRandomManhwa(0, 1, 0)
         setManhwa(manhwaList[0])
-        closeMenu()
         router.navigate("/(pages)/Manhwa")
     }
 
     const accountPage = () => {
-        closeMenu()
         router.navigate("/(pages)/Account")
     }
 
     const loginPage = () => {
-        closeMenu()
         router.navigate("/(auth)/SignIn")
     }
 
     const readingHistoryPage = () => {
-        closeMenu()
         router.navigate("/(pages)/ReadHistory")
     }
 
     const libraryPage = () => {
-        closeMenu()
         router.navigate("/(pages)/Library")
     }
 

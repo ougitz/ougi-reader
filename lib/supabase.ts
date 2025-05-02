@@ -146,8 +146,7 @@ export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> 
         .from("chapters")
         .select("chapter_id, manhwa_id, chapter_num, created_at")
         .eq("manhwa_id", manhwa_id)
-        .order("chapter_num", {ascending: true})        
-        .overrideTypes<Chapter[]>()    
+        .order("chapter_num", {ascending: true})
 
     if (error) {
         console.log("error spFetchChapterList", error)
@@ -171,24 +170,6 @@ export async function spFetchGenres(): Promise<Genre[]> {
 }
 
 
-export async function spGetCacheUrl(): Promise<Map<string, string>> {
-    const { data, error } = await supabase
-        .from("cache")
-        .select("name, url")
-        .overrideTypes<{name: string, url: string}[]>()
-    
-    if (error) {
-        console.log("error spGetCacheUrl", error)
-        return new Map()
-    }
-
-    const m = new Map()
-    data?.forEach(item => m.set(item.name, item.url))
-
-    return m
-}
-
-
 export async function spUpdateManhwaViews(p_manhwa_id: number) {
     const { error } = await supabase
         .rpc('increment_manhwa_views', { p_manhwa_id  });
@@ -201,7 +182,7 @@ export async function spUpdateManhwaViews(p_manhwa_id: number) {
 
 export async function spFetchManhwaGenres(manhwa_id: number): Promise<ManhwaGenre[]> {
     const { data, error } = await supabase
-        .from("manwha_genres")    
+        .from("manhwa_genres")    
         .select("genre_id, genres (genre)")
         .eq("manhwa_id", manhwa_id)
     
@@ -224,6 +205,7 @@ export async function spFetchManhwaAuthors(manhwa_id: number): Promise<ManhwaAut
     const { data, error } = await supabase
         .from("manhwa_authors")
         .select("author_id, authors (role, name)")
+        .eq("manhwa_id", manhwa_id)
     
     if (error) {
         console.log("error spFetchManhwaAuthors", error)
@@ -276,12 +258,13 @@ export async function spFetchManhwasByAuthor(
 
 export async function spFetchManhwasByGenre(
     p_genre_id: number,
-    p_offset: number = 30,
+    p_offset: number = 0,
+    p_limit: number = 30,
     p_num_chapters: number = 3
 ): Promise<Manhwa[]> {
 
     const { data, error } = await supabase
-        .rpc("get_manhwas_by_genre", {p_genre_id, p_offset, p_num_chapters})
+        .rpc("get_manhwas_by_genre", {p_genre_id, p_offset, p_limit, p_num_chapters})
 
     if (error) {
         console.log("error spFetchManhwasByGenre", error)

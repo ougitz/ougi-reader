@@ -16,7 +16,7 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
 
 
     const w = wp(80)
-    const h = getRelativeHeight(w, recommendation.width, recommendation.height)
+    const h = getRelativeHeight(w, recommendation.image.width, recommendation.image.height)
 
     const openManhwaPage = () => {
         setManhwa(recommendation.manhwa)
@@ -27,7 +27,7 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
             <View 
                 style={{gap: 20, marginRight: 10, alignSelf: "flex-start"}} >
                 <View>
-                    <Image source={recommendation.cover_image_url} style={{
+                    <Image source={recommendation.image.image_url} style={{
                         alignSelf: "center",
                         width: w, 
                         height: h,

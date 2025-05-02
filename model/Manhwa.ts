@@ -1,3 +1,4 @@
+import { Genre, ManhwaAuthor } from "@/helpers/types"
 import { Chapter } from "./Chapter"
 
 
@@ -11,5 +12,7 @@ export type Manhwa = {
     updated_at: string
     views: number
     rating: number | null        
+    genres: Genre[]
+    authors: ManhwaAuthor[]
     chapters: Chapter[]
 }

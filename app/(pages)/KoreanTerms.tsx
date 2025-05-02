@@ -22,7 +22,8 @@ const KoreanTerms = () => {
             <ReturnButton/>
         </TopBar>
         <ScrollView style={{flex: 1}} >
-            <View style={{width: '100%', gap: 20, marginBottom: 42}} >                
+            <View style={{width: '100%', gap: 20, marginBottom: 42}} >
+                <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Manhwa</Text>
                 <Term term='Manhwa [만화]' meaning='Korean term for comics and print cartoons.' />
                 <Term term='Manhwaga [만화가]' meaning='The author or artist of a Manhwa.' />
                 <Term term='Aeni [애니]' meaning='South Korean animation.' />
@@ -30,17 +31,17 @@ const KoreanTerms = () => {
                 
                 <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
                 
-                <Text style={AppStyle.textHeader}>Used by females</Text>
+                <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by females</Text>
                 <Term term='Eonni [언니]' meaning='older sister, older female.' />
                 <Term term='Oppa [오빠]' meaning='older brother, older male.' />
                 
-                <Text style={AppStyle.textHeader}>Used by males</Text>
+                <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by males</Text>
                 <Term term='Nuna [누나]' meaning='older sister, older female.' />
                 <Term term='Hyeong [형]' meaning='older brother, older male.' />
                 
                 <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
 
-                <Text style={AppStyle.textHeader}>Other</Text>
+                <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Other</Text>
                 <Term term='Ajumma [아줌마]' meaning='Aunt, middle-aged woman.' />
                 <Term term='Sunbae [선배]' meaning='A senior or upperclassman in an organization, group, or school.' />
                 <Term term='Seonsaengnim [선생님]' meaning='Teacher or Professor.' />

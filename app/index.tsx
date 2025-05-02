@@ -60,11 +60,11 @@ const App = () => {
     } else {
       const session = await spGetSession()
     
-      if (!session) { return }
-  
-      await spFetchUser(session.user.id).then(username => login(username, session))
+      if (session) { 
+          await spFetchUser(session.user.id).then(username => login(username, session))      
+      }
     }
-
+    
     router.replace("/(pages)/Home")
   }
 
