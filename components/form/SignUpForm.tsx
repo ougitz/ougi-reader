@@ -77,7 +77,28 @@ const SignUpForm = () => {
         )
 
         if (error) {
-            Toast.show({title: "Error", message: error.message, type: "error"})
+            console.log(error, error.code)
+            switch (error.code) {
+                case "weak_password":
+                    Toast.show({
+                        title: "Error", 
+                        message: "password must contain at least 1 uppercase, 1 lowercase, 1 digit and 1 symbol", 
+                        type: "error", 
+                        duration: 3000
+                    })
+                    break
+                default:
+                    Toast.show({
+                        title: "Error", 
+                        message: error.message, 
+                        type: "error",
+                        duration: 3000
+                    })
+                    break
+            }
+        } else {
+            Toast.show({title: "Success!", message: '', type: 'success'})
+            router.replace("/(auth)/SignIn")
         }
 
         await supabase.auth.signOut()

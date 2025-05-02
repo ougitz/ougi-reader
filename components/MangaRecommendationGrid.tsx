@@ -1,9 +1,9 @@
-import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationsStores'
+import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationStores'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
 import ManhwaRecommendation from './DailyManhwa'
 import { AppStyle } from '@/styles/AppStyles'
-import { spFetchManhwaRecommendations } from '@/lib/supabase'
 
 
 const MangaRecommendationGrid = () => {
@@ -19,7 +19,7 @@ const MangaRecommendationGrid = () => {
     useEffect(
         () => {init()},
         []
-    )
+    )    
 
     return (
         <View style={{gap: 20}} >

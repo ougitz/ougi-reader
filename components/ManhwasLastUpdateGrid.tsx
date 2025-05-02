@@ -1,4 +1,4 @@
-import { useLastUpdateManhwasState } from '@/store/lastUpdateManhwasStore'
+import { useLastUpdateManhwasState } from '@/store/manhwaLastUpdateState'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import React, { useCallback, useEffect } from 'react'
 import { StyleSheet } from 'react-native'

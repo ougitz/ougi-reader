@@ -9,7 +9,7 @@ import {
   StyleSheet,  
   View 
 } from 'react-native'
-import { useAuthState } from '@/store/authStore'
+import { useAuthState } from '@/store/authState'
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import {
   useFonts,
@@ -61,7 +61,14 @@ const App = () => {
       const session = await spGetSession()
     
       if (session) { 
-          await spFetchUser(session.user.id).then(username => login(username, session))      
+          await spFetchUser(session.user.id)
+            .then(user => {
+              if (!user) {
+                console.log("error fetching user", session.user.id)
+              } else {
+                login(user, session)
+              }
+            })
       }
     }
     

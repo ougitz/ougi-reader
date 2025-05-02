@@ -9,41 +9,51 @@ import { Manhwa } from '@/model/Manhwa'
 import { spFetchManhwasByGenre } from '@/lib/supabase'
 
 
+const PAGE_OFFSET = 30
+
+
 const ManhwaByGenre = () => {
   
     const params = useLocalSearchParams()
     const genre: string = params.genre as any
     const genre_id: number = parseInt(params.genre_id as any)
 
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const [loading, setLoading] = useState(false)
     const hasResults = useRef(true)
     const page = useRef(0)
-    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const isInitialized = useRef(false)
 
-    const init = async () => {
+    const init = useCallback(async () => {
         if (manhwas.length == 0) {
+            setLoading(true)
             await spFetchManhwasByGenre(genre_id)
                 .then(values => setManhwas([...values]))
+            setLoading(false)
         }
-    }   
+        isInitialized.current = true
+    }, [])
+
 
     useEffect(
-        useCallback(() => {
+        () => {
             init()
-        }, []),
+        },
         []
     )
 
     const onEndReached = async () => {
-        if (!hasResults.current) {
+        if (!hasResults.current || !isInitialized.current) {
             return
         }
-        console.log("end")
         page.current += 1
-        await spFetchManhwasByGenre(genre_id, page.current)
+        setLoading(true)
+        await spFetchManhwasByGenre(genre_id, page.current * PAGE_OFFSET)
             .then(values => {
                 hasResults.current = values.length > 0
                 setManhwas(prev => [...prev, ...values])
             })
+        setLoading(false)
     }  
 
 
@@ -55,6 +65,9 @@ const ManhwaByGenre = () => {
             <ManhwaGrid
                 manhwas={manhwas}
                 numColumns={2}
+                loading={loading}
+                hasResults={true}
+                listMode='FlatList'
                 shouldShowChapterDate={false}
                 onEndReached={onEndReached}/>
         </SafeAreaView>

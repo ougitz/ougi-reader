@@ -1,6 +1,6 @@
-import { createClient, PostgrestError, Session, AuthError } from '@supabase/supabase-js'
+import { ChapterImage, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
+import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ChapterImage, Genre, ManhwaAuthor, ManhwaGenre, Recommendation } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
@@ -21,13 +21,13 @@ export const supabase = createClient(supabaseUrl, supabaseKey as any, {
 
 
 AppState.addEventListener(
-'change', (state) => {  
-    if (state === 'active') {    
-        supabase.auth.startAutoRefresh()  
-    } else {    
-        supabase.auth.stopAutoRefresh()
+    'change', (state) => {  
+        if (state === 'active') {    
+            supabase.auth.startAutoRefresh()  
+        } else {    
+            supabase.auth.stopAutoRefresh()
+        }
     }
-}
 )
 
 
@@ -49,10 +49,14 @@ export async function spUpdateUserLastLogin(user_id: string) {
 }
 
 
-export async function spFetchUser(user_id: string, update_login_time: boolean = false): Promise<string | null> {
+export async function spFetchUser(
+    user_id: string, 
+    update_login_time: boolean = false
+): Promise<OugiUser | null> {
+
     const { data, error } = await supabase
         .from("users")
-        .select("username")
+        .select("username, image_id, images (width, height, image_url)")
         .eq("user_id", user_id)
         .single()
 
@@ -62,10 +66,19 @@ export async function spFetchUser(user_id: string, update_login_time: boolean = 
     }
 
     if (update_login_time) {
-        await spUpdateUserLastLogin(user_id)
+        spUpdateUserLastLogin(user_id)
     }
 
-    return data.username
+    return {
+        username: data.username,
+        image: data.images ? {
+            image_id: data.image_id,
+            width: (data.images as any).width,
+            height: (data.images as any).height,
+            image_url: (data.images as any).image_url
+        } : null,
+        user_id
+    }
 }
 
 export async function spCreateUser(
@@ -73,21 +86,11 @@ export async function spCreateUser(
     password: string, 
     username: string
 ): Promise<AuthError | null> {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
         email,
-        password
-    })    
-
-    if (data.session) {
-        const { error: err } = await supabase
-            .from("users")
-            .insert({username, user_id: data.session.user.id})
-
-        if (err) {
-            console.log("error spCreateUser", err)
-        }
-    }
-
+        password,
+        options: { data: { username } }
+    })
     return error
 }
 

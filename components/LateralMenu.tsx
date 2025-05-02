@@ -1,4 +1,5 @@
 import { 
+    ActivityIndicator,
     Linking, 
     Pressable, 
     ScrollView, 
@@ -10,12 +11,12 @@ import { AppConstants } from '@/constants/AppConstants'
 import { useReadingState } from '@/store/readingStore'
 import { spFetchRandomManhwa } from '@/lib/supabase'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { useAuthState } from '@/store/authStore'
+import { useAuthState } from '@/store/authState'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
-import React from 'react'
+import React, { useState } from 'react'
 
 
 interface LateralMenuProps {
@@ -27,11 +28,42 @@ const ICON_COLOR = Colors.white
 const ICON_SIZE = 26
 
 
+interface OptionProps {
+    onPress: () => void
+    title: string
+    iconName: string
+}
+
+const Option = ({onPress, title, iconName}: OptionProps) => {
+
+    const [loading, setLoading] = useState(false)
+
+    const p = async () => {
+        setLoading(true)
+        await onPress()
+        setLoading(false)
+    }
+
+    return (
+        <Pressable 
+            onPress={p} 
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
+            <Text style={AppStyle.textRegular}>{title}</Text>
+            {
+                loading ?
+                <ActivityIndicator size={ICON_SIZE} color={ICON_COLOR} /> :
+                <Ionicons name={iconName as any} size={ICON_SIZE} color={ICON_COLOR} />
+            }
+        </Pressable>
+    )
+}
+
+
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const { session } = useAuthState()
     const { setManhwa } = useReadingState()
-
 
     const randomRead = async () => {
         const manhwaList = await spFetchRandomManhwa(0, 1, 0)
@@ -55,6 +87,14 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.navigate("/(pages)/Library")
     }
 
+    const koreanTerms = () => {
+        router.navigate("/KoreanTerms")
+    }
+
+    const openReddit = () => {
+        Linking.openURL(AppConstants.PORNWHA_REDDIT_URL)
+    }
+
     return (
         <ScrollView>
             <View style={styles.container} >
@@ -65,62 +105,48 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             
                 {
                     session ? 
-                    <Pressable 
+                    <Option 
                         onPress={accountPage} 
-                        style={styles.link} 
-                        hitSlop={AppConstants.hitSlopLarge} >
-                        <Text style={AppStyle.textRegular}>Account</Text>
-                        <Ionicons name='person-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                    </Pressable>
+                        title='Account' 
+                        iconName='person-outline'
+                    />
                         :
-                    <Pressable 
+                    <Option 
                         onPress={loginPage} 
-                        style={styles.link} 
-                        hitSlop={AppConstants.hitSlopLarge} >
-                        <Text style={AppStyle.textRegular}>Login</Text>
-                        <Ionicons name='log-in' size={ICON_SIZE} color={ICON_COLOR} />
-                    </Pressable>
+                        title='Login' 
+                        iconName='log-in'
+                    />
                 }
 
-                <Pressable 
+                <Option 
                     onPress={libraryPage} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Library</Text>
-                    <Ionicons name='library-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>        
+                    title='Library' 
+                    iconName='library-outline'
+                />
 
-                <Pressable 
+                <Option 
                     onPress={randomRead} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Random Manhwa</Text>
-                    <Ionicons name='dice-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
+                    title='Random Manhwa' 
+                    iconName='dice-outline'
+                />
+                
+                <Option 
+                    onPress={readingHistoryPage} 
+                    title='Read history' 
+                    iconName='reader-outline'
+                />
 
-                <Pressable 
-                    onPress={readingHistoryPage}
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Read history</Text>
-                    <Ionicons name='reader-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
-
-                <Pressable 
-                    onPress={() => router.navigate("/KoreanTerms")} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Korean Terms</Text>
-                    <Ionicons name='language-outline' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>
-
-                <Pressable 
-                    onPress={() => Linking.openURL(AppConstants.PORNWHA_REDDIT_URL)} 
-                    style={styles.link} 
-                    hitSlop={AppConstants.hitSlopLarge} >
-                    <Text style={AppStyle.textRegular}>Pornwha</Text>
-                    <Ionicons name='logo-reddit' size={ICON_SIZE} color={ICON_COLOR} />
-                </Pressable>                
+                <Option 
+                    onPress={koreanTerms} 
+                    title='Korean Terms' 
+                    iconName='language-outline'
+                />
+                
+                <Option 
+                    onPress={openReddit} 
+                    title='Pornwha' 
+                    iconName='logo-reddit'
+                />
 
             </View>
         </ScrollView>

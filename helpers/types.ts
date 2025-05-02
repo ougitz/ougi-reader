@@ -58,3 +58,14 @@ export type Genre = {
     genre: string
     genre_id: number
 }
+
+export type OugiUser = {
+    username: string
+    user_id: string
+    image: {
+        image_id: number,
+        width: number,
+        height: number,
+        image_url: string
+    } | null
+}

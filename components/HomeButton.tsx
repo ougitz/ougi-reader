@@ -22,7 +22,7 @@ export default HomeButton
 const styles = StyleSheet.create({
   container: {
     padding: 10, 
-    borderRadius: 32, 
+    borderRadius: 4, 
     backgroundColor: Colors.almostBlack
   }
 })

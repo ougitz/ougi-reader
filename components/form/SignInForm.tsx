@@ -22,7 +22,7 @@ import { useState } from 'react'
 import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
-import { useAuthState } from '@/store/authStore';
+import { useAuthState } from '@/store/authState';
 
 const schema = yup.object().shape({  
     email: yup
@@ -82,10 +82,16 @@ const SignInForm = () => {
         }
 
         await spFetchUser(session.user.id)    
-            .then(username => login(username, session))
-
+            .then(user => {
+                if (!user) {
+                    console.log("error fetching user in sign in", session.user.id)
+                } else {
+                    login(user, session)
+                }
+            })
 
         setLoading(false)
+        Toast.show({title: "Success!", message: '', type: 'success'})
         router.replace("/(pages)/Home")
     };
 

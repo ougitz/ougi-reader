@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 6,
     backgroundColor: Colors.almostBlack,
-    borderRadius: 32
+    borderRadius: 4
   }
 })

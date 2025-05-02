@@ -1,5 +1,5 @@
 import { Dimensions } from "react-native";
-import { ManhwaComment } from "./types";
+import { ManhwaComment, Recommendation } from "./types";
 import { Alert } from "react-native";
 
 
@@ -95,3 +95,19 @@ export async function fetchJson(url: string): Promise<any> {
 export function getRelativeHeight(width: number, originalWidth: number, originalHeight: number): number {
     return width * (originalHeight / originalWidth)
 }
+
+
+export function orderRecommendations(arr: Recommendation[]): Recommendation[] {
+    const desc = [...arr].sort((a, b) => b.image.height - a.image.height);
+      
+    const result = [];
+    for (let i = 0; i < desc.length; i++) {
+      if (i % 2 === 0) {
+        result.push(desc[i]);
+      } else {
+        result.unshift(desc[i]);
+      }
+    }
+
+    return result;
+  }
