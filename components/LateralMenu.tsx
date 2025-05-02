@@ -8,7 +8,7 @@ import {
     View 
 } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
-import { useReadingState } from '@/store/readingStore'
+import { useReadingState } from '@/store/manhwaReadingState'
 import { spFetchRandomManhwa } from '@/lib/supabase'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useAuthState } from '@/store/authState'

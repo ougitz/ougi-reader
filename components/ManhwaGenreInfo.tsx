@@ -1,7 +1,7 @@
 import { Text, View, Pressable, StyleSheet } from "react-native"
 import { AppStyle } from "@/styles/AppStyles"
 import { Colors } from "@/constants/Colors"
-import { useReadingState } from "@/store/readingStore"
+import { useReadingState } from "@/store/manhwaReadingState"
 import { Genre } from "@/helpers/types"
 import { router } from "expo-router"
 

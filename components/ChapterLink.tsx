@@ -6,7 +6,7 @@ import {
     ViewStyle 
 } from 'react-native'
 import { spFetchChapterList } from '@/lib/supabase'
-import { useReadingState } from '@/store/readingStore'
+import { useReadingState } from '@/store/manhwaReadingState'
 import { formatTimestamp } from '@/helpers/util'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'

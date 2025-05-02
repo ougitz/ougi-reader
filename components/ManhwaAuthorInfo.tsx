@@ -1,6 +1,6 @@
 import { View, Pressable, Text, StyleSheet } from "react-native"
 import { router } from "expo-router"
-import { useReadingState } from "@/store/readingStore"
+import { useReadingState } from "@/store/manhwaReadingState"
 import { Colors } from "@/constants/Colors"
 import { AppStyle } from "@/styles/AppStyles"
 import { ManhwaAuthor } from "@/helpers/types"

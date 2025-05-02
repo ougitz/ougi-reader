@@ -14,7 +14,7 @@ import React, {
   useState 
 } from 'react'
 import { AppConstants } from '@/constants/AppConstants'
-import { useReadingState } from '@/store/readingStore'
+import { useReadingState } from '@/store/manhwaReadingState'
 import ReturnButton from '@/components/ReturnButton'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { spFetchChapterImages } from '@/lib/supabase'

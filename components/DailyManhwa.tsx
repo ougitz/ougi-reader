@@ -1,22 +1,25 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 import { getRelativeHeight, wp } from '@/helpers/util'
 import { AppConstants } from '@/constants/AppConstants'
-import { useReadingState } from '@/store/readingStore'
+import { useReadingState } from '@/store/manhwaReadingState'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { Recommendation } from '@/helpers/types'
 import { router } from 'expo-router'
 import { Image } from 'expo-image'
-import React from 'react'
+import React, { useState } from 'react'
 
+const w = wp(80)
 
 const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}) => {
     
     const { setManhwa } = useReadingState()    
-
-
-    const w = wp(80)
-    const h = getRelativeHeight(w, recommendation.image.width, recommendation.image.height)
+    
+    const h = getRelativeHeight(
+        w, 
+        recommendation.image.width, 
+        recommendation.image.height
+    )
 
     const openManhwaPage = () => {
         setManhwa(recommendation.manhwa)
@@ -24,7 +27,8 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
     }
     
     return (                    
-            <View 
+            <Pressable
+                onPress={openManhwaPage}
                 style={{gap: 20, marginRight: 10, alignSelf: "flex-start"}} >
                 <View>
                     <Image source={recommendation.image.image_url} style={{
@@ -45,9 +49,7 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
                         }} >
                         <Text style={AppStyle.textRegular}>{recommendation.manhwa.title}</Text>
                     </View>
-                    <Pressable
-                        onPress={openManhwaPage}
-                        hitSlop={AppConstants.hitSlopLarge}
+                    <View
                         style={{
                             position: 'absolute',
                             right: 10,
@@ -57,10 +59,10 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
                             backgroundColor: Colors.gray, 
                             borderRadius: 20
                         }} >
-                        <Text style={AppStyle.textRegular}>Read Now</Text>
-                    </Pressable>
+                            <Text style={AppStyle.textRegular}>Read Now</Text>
+                    </View>
                 </View>
-            </View>
+            </Pressable>
     )
 }
 

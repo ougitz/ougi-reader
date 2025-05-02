@@ -317,3 +317,16 @@ export async function spFetchManhwaRecommendations(
         }
     }})
 }
+
+
+export async function spGetManhwas(): Promise<Manhwa[]> {
+    const { data, error } = await supabase
+        .rpc("get_manhwas")
+    
+    if (error) {
+        console.log("error spGetManhwas", error)
+        return []
+    }
+    
+    return data
+}

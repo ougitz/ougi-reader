@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { AppConstants } from '@/constants/AppConstants';
-import { useReadingState } from '@/store/readingStore';
+import { useReadingState } from '@/store/manhwaReadingState';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { Chapter } from '@/model/Chapter';
@@ -16,6 +16,7 @@ import { Manhwa } from '@/model/Manhwa';
 import ChapterLink from './ChapterLink';
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
+import { useManhwaStackState } from '@/store/manhwaStackState';
 
 
 

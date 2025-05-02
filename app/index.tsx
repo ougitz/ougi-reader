@@ -26,12 +26,11 @@ import {
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import {   
-  spFetchUser,
-  spGetSession  
-} from '@/lib/supabase';
+import { spFetchUser, spGetManhwas, spGetSession } from '@/lib/supabase';
 import Toast from '@/components/Toast';
 import { sleep } from '@/helpers/util';
+import { Manhwa } from '@/model/Manhwa';
+import { dbAddManhwa, dbCheckTableUpdate, dbListTable, dbListTables, dbReadAll, dbUpsertManhwas } from '@/lib/database';
 
 
 const App = () => {
@@ -61,7 +60,7 @@ const App = () => {
       const session = await spGetSession()
     
       if (session) { 
-          await spFetchUser(session.user.id)
+          spFetchUser(session.user.id)
             .then(user => {
               if (!user) {
                 console.log("error fetching user", session.user.id)
@@ -71,7 +70,8 @@ const App = () => {
             })
       }
     }
-    
+    const manhwas: Manhwa[] = await dbReadAll<Manhwa>('manhwas')
+    manhwas.forEach(item => console.log(item.title))
     router.replace("/(pages)/Home")
   }
 

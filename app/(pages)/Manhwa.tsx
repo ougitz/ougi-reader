@@ -1,9 +1,4 @@
-import { 
-  spFetchChapterList, 
-  spFetchManhwaAuthors, 
-  spFetchManhwaGenres, 
-  spUpdateManhwaViews 
-} from '@/lib/supabase'
+import { spUpdateManhwaViews } from '@/lib/supabase'
 import { 
   SafeAreaView, 
   ScrollView, 
@@ -12,20 +7,22 @@ import {
   View
 } from 'react-native'
 import React, { 
+  useCallback,
   useEffect, 
   useRef
 } from 'react'
-import ReturnButton from '@/components/ReturnButton';
+import ManhwaChapterList from '@/components/ManhwaChapterList';
+import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
+import ManhwaAuthorsInfo from '@/components/ManhwaAuthorInfo';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useReadingState } from '@/store/readingStore'
+import { useReadingState } from '@/store/manhwaReadingState'
+import ReturnButton from '@/components/ReturnButton';
 import HomeButton from '@/components/HomeButton';
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
 import { Image } from 'expo-image';
-import ManhwaChapterList from '@/components/ManhwaChapterList';
-import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
-import ManhwaAuthorsInfo from '@/components/ManhwaAuthorInfo';
+import { useManhwaStackState } from '@/store/manhwaStackState';
 
 
 const Manhwa = () => {
@@ -34,12 +31,12 @@ const Manhwa = () => {
 
   const countView = useRef(false)
 
-  const init = async () => {
+  const init = useCallback(async () => {
     if (countView.current == false) {
       countView.current = true
       spUpdateManhwaViews(manhwa!.manhwa_id)
-    }
-  }
+    }    
+  }, [])
 
   useEffect(
     () => {
