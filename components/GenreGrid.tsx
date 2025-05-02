@@ -1,25 +1,22 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { dbGetItems } from '@/database/db'
-import GenreModel from '@/database/models/GenreModel'
+import { Genre } from '@/helpers/types'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
+import { spFetchGenres } from '@/lib/supabase'
+import { useGenreState } from '@/store/genreState'
 
 
 const GenreGrid = () => {
 
-    const [genres, setGenres] = useState<string[]>([])
+    const { genres, setGenres } = useGenreState()
 
     const init = async () => {
-        if (genres.length > 0) { return }
-        
-        await dbGetItems<GenreModel>('genres')
-            .then(values => {
-                if (values) {
-                    setGenres([...values.map(i => i.genre)])
-                }
-            })
+        if (genres.length == 0) {
+            await spFetchGenres()
+                .then(values => setGenres(values))
+        }
     }
 
     useEffect(
@@ -29,8 +26,14 @@ const GenreGrid = () => {
         []
     )
 
-    const onPress = (genre: string) => {
-        router.navigate({pathname: '/(pages)/ManhwaByGenre', params: {genre}})
+    const onPress = (genre: Genre) => {
+        router.navigate({
+            pathname: '/(pages)/ManhwaByGenre', 
+            params: {
+                genre: genre.genre,
+                genre_id: genre.genre_id
+            }
+        })
     }
 
     return (
@@ -42,7 +45,7 @@ const GenreGrid = () => {
                 horizontal={true}
                 renderItem={({item, index}) => 
                     <Pressable onPress={() => onPress(item)} style={styles.button} >
-                        <Text style={AppStyle.textRegular}>{item}</Text>
+                        <Text style={AppStyle.textRegular}>{item.genre}</Text>
                     </Pressable>
                 }
             />

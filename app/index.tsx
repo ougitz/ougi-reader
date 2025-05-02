@@ -36,10 +36,7 @@ import { sleep } from '@/helpers/util';
 
 const App = () => {
   
-  const { login } = useAuthState()
-  const [updatingDB, setUpdatingDB] = useState(false)
-
-  const initialized = useRef(false)
+  const { login } = useAuthState()  
 
   let [fontsLoaded] = useFonts({
       LeagueSpartan_100Thin,
@@ -53,19 +50,7 @@ const App = () => {
       LeagueSpartan_900Black,
   });
 
-  const connectSupabase = async () => {
-    const session = await spGetSession()    
-    
-    if (!session) { return }
-
-    await spFetchUser(session.user.id).then(username => login(username, session))
-  }
-
-  const init = async () => {
-    
-    if (initialized.current) { return }
-    
-    initialized.current = true    
+  const init = async () => {    
 
     const state: NetInfoState = await NetInfo.fetch()
 
@@ -73,7 +58,11 @@ const App = () => {
       Toast.show({title: 'Warning', message: 'You dont have connection to internet', type: 'info'})
       await sleep(1500)
     } else {
-        await connectSupabase()
+      const session = await spGetSession()
+    
+      if (!session) { return }
+  
+      await spFetchUser(session.user.id).then(username => login(username, session))
     }
 
     router.replace("/(pages)/Home")

@@ -19,9 +19,12 @@ export type ManhwaComment = {
 
 export type Recommendation = {
     manhwa: Manhwa,
-    width: number
-    height: number
-    cover_image_url: string
+    image: {
+        width: number,
+        height: number,
+        image_url: number
+        image_id: number
+    }
 }
 
 export type ChapterImage = {
@@ -48,4 +51,10 @@ export type ManhwaAuthor = {
     manhwa_id: number
     role: string
     name: string
+}
+
+
+export type Genre = {
+    genre: string
+    genre_id: number
 }

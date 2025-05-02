@@ -5,7 +5,6 @@ import {
     View 
 } from 'react-native'
 import { ChapterImage } from '@/helpers/types'
-import { Colors } from '@/constants/Colors'
 import React, { useState } from 'react'
 import { wp } from '@/helpers/util'
 import { Image } from 'expo-image'

@@ -1,9 +1,9 @@
 import { useLastUpdateManhwasState } from '@/store/lastUpdateManhwasStore'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import { dbSortManhwasByLastUpdate } from '@/database/db'
 import React, { useCallback, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { router } from 'expo-router'
+import { spFetchLatestManhwas } from '@/lib/supabase'
 
 
 const ManhwasLastUpdateGrid = () => {
@@ -12,8 +12,8 @@ const ManhwasLastUpdateGrid = () => {
 
     const init = async () => {
         if (manhwas.length == 0) {
-            await dbSortManhwasByLastUpdate()
-                .then(values => setManhwas([...values]))
+            await spFetchLatestManhwas()
+                .then(values => setManhwas(values))
         }
     }
 

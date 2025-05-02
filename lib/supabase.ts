@@ -1,6 +1,6 @@
 import { createClient, PostgrestError, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ChapterImage, ManhwaAuthor, ManhwaGenre, Recommendation } from '@/helpers/types'
+import { ChapterImage, Genre, ManhwaAuthor, ManhwaGenre, Recommendation } from '@/helpers/types'
 import { AppState } from 'react-native'
 import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
@@ -126,38 +126,6 @@ export async function spFetchRandomManhwa(
     return data
 }
 
-
-export async function spFetchManhwaRecommendations(p_limit: number = 13): Promise<{
-    manhwa_id: number,
-    width: number,
-    height: number,
-    image_url: string
-}[]> {
-    const { data, error } = await supabase
-        .rpc('get_manhwa_recommendations', { p_limit })
-
-    if (error) {
-        console.log("error spFetchManhwaRecommendations", error)
-        return []
-    }
-
-    return data
-}
-
-
-export async function spFetchGenres(): Promise<string[]> {
-    
-    const { data, error } = await supabase.rpc('get_genres');
-
-    if (error) {
-        console.error('error fetchGenres', error);
-        return [];
-    }
-
-    return data.map((item: {genre: string}) => item.genre)
-}
-
-
 export async function spFetchAllManhwas(
     p_num_chapters: number = 3
 ): Promise<Manhwa[]> {
@@ -183,6 +151,19 @@ export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> 
 
     if (error) {
         console.log("error spFetchChapterList", error)
+        return []
+    }
+
+    return data
+}
+
+export async function spFetchGenres(): Promise<Genre[]> {
+    const { data, error } = await supabase
+        .from("genres")
+        .select("genre, genre_id")
+    
+    if (error) {
+        console.log("error spFetchGenres", error)
         return []
     }
 
@@ -311,10 +292,10 @@ export async function spFetchManhwasByGenre(
 }
 
 export async function spFetchMostViewManhwas(
-    p_offset: number,
-    p_limit: number,
+    p_offset: number = 0,
+    p_limit: number = 30,
     p_num_chapters: number = 3
-) {
+): Promise<Manhwa[]> {
     const { data, error } = await supabase
         .rpc("get_manhwas_ordered_by_views", {p_offset, p_limit, p_num_chapters})
 
@@ -322,6 +303,31 @@ export async function spFetchMostViewManhwas(
         console.log("error spFetchMostViewManhwas", error)
         return []
     }
-    
+
     return data
+}
+
+
+export async function spFetchManhwaRecommendations(
+    p_offset: number = 0,
+    p_limit: number = 10,
+    p_num_chapters: number = 3
+): Promise<Recommendation[]> {
+    const { data, error } = await supabase
+        .rpc("get_manhwa_recommendations", {p_offset, p_limit, p_num_chapters})    
+
+    if (error) {
+        console.log("error spFetchManhwaRecommendations", error)
+        return []
+    }
+
+    return data.map((item: any) => {return {
+        manhwa: item,
+        image: {
+            width: item.width,
+            height: item.height,
+            image_url: item.image_url,
+            image_id: item.image_id
+        }
+    }})
 }

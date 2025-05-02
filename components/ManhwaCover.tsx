@@ -6,15 +6,9 @@ import {
     View, 
     ViewStyle 
 } from 'react-native'
-import React, { 
-    useCallback, 
-    useEffect, 
-    useState 
-}  from 'react'
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { AppConstants } from '@/constants/AppConstants';
 import { useReadingState } from '@/store/readingStore';
-import { dpGetManhwaLastChapters } from '@/database/db';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { Chapter } from '@/model/Chapter';
@@ -49,7 +43,6 @@ const ManhwaCover = ({
 }: ManhwaCoverProps) => {
 
     const { setManhwa } = useReadingState()
-    const [lastChapters, setLastChapters] = useState<Chapter[]>([])
     
     const manhwaStatusColor = manhwa.status == "Completed" ? 
         Colors.orange : 
@@ -58,19 +51,7 @@ const ManhwaCover = ({
     const onPress = () => {
         setManhwa(manhwa)
         router.navigate("/(pages)/Manhwa")
-    }    
-
-    const init = async () => {
-        await dpGetManhwaLastChapters(manhwa.manhwa_id)
-            .then(values => setLastChapters(values))
     }
-
-    useEffect(
-        useCallback(() => {
-            init()
-        }, [manhwa]),
-        [manhwa]
-    )
 
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
@@ -82,7 +63,7 @@ const ManhwaCover = ({
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {
                     showChaptersPreview && 
-                    lastChapters.map(
+                    manhwa.chapters.map(
                         (item) => 
                             <ChapterLink 
                                 shouldShowChapterDate={shouldShowChapterDate} 

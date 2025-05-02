@@ -1,30 +1,29 @@
+import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationsStores'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect } from 'react'
-import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationsStores'
-import { dbGetManhwaRecommendations } from '@/database/db'
-import { AppStyle } from '@/styles/AppStyles'
 import ManhwaRecommendation from './DailyManhwa'
+import { AppStyle } from '@/styles/AppStyles'
+import { spFetchManhwaRecommendations } from '@/lib/supabase'
+
 
 const MangaRecommendationGrid = () => {
 
     const { recommendations, setRecommendations } = useManhwaRecommendationsState()
     
-    const init = async () => {
+    const init = useCallback(async () => {
         if (recommendations.length > 0) { return }
-        await dbGetManhwaRecommendations()
+        await spFetchManhwaRecommendations()
             .then(values => setRecommendations([...values]))
-    }
+    }, [])
 
     useEffect(
-        useCallback(() => {
-            init()
-        }, []),
+        () => {init()},
         []
     )
 
     return (
         <View style={{gap: 20}} >
-            <Text style={[AppStyle.textHeader, {fontSize: 24}]}>Today's Recommendations</Text>
+            <Text style={[AppStyle.textHeader, {fontSize: 24}]}>Recommendations</Text>
             <FlatList
                 data={recommendations}
                 horizontal={true}
