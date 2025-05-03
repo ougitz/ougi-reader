@@ -67,15 +67,17 @@ const ManhwaChapterList = () => {
                 <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read Last</Text>
               </Pressable>
             </View>
-            {
-              chapters.map((item, index) =>
-                <Pressable 
-                  key={index}
-                  style={{backgroundColor: Colors.gray, width: 48, height: 48, borderRadius: 4, alignItems: "center", justifyContent: "center"}} >
-                    <Text style={AppStyle.textRegular}>{item.chapter_num}</Text>
-                </Pressable>
-              )
-            }  
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, alignItems: "center", justifyContent: "center"}} >
+              {
+                chapters.map((item, index) =>
+                  <Pressable 
+                    key={index}
+                    style={{backgroundColor: Colors.gray, width: 48, height: 48, borderRadius: 4, alignItems: "center", justifyContent: "center"}} >
+                      <Text style={AppStyle.textRegular}>{item.chapter_num}</Text>
+                  </Pressable>
+                )
+              }
+            </View>
           </>
       }
     </View>

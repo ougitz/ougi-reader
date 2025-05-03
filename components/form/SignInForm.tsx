@@ -23,6 +23,7 @@ import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
 import { useAuthState } from '@/store/authState';
+import { ToastError, ToastSuccess } from '@/helpers/ToastMessages';
 
 const schema = yup.object().shape({  
     email: yup
@@ -68,7 +69,7 @@ const SignInForm = () => {
         })
 
         if (error) {
-            Toast.show({title: "Error", message: error.message, type: "error"})        
+            ToastError(error.message)
             setLoading(false)
             return
         }
@@ -76,7 +77,7 @@ const SignInForm = () => {
         const session = await spGetSession()
 
         if (!session) {
-            Toast.show({title: "Error", message: "server error", type: "error"})
+            ToastError('server error')            
             setLoading(false)
             return
         }
@@ -91,7 +92,7 @@ const SignInForm = () => {
             })
 
         setLoading(false)
-        Toast.show({title: "Success!", message: '', type: 'success'})
+        ToastSuccess()
         router.replace("/(pages)/Home")
     };
 

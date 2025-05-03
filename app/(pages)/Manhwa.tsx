@@ -60,10 +60,9 @@ const Manhwa = () => {
 
         <View style={styles.manhwaContainer}>
             <Image source={manhwa!.cover_image_url} style={styles.image} />
-            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa!.title}</Text>              
+            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold', color: Colors.orange}]}>{manhwa!.title}</Text>
             <View style={{gap: 10, alignSelf: "flex-start"}} >
-                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
-                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa!.descr}</Text>
+                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa!.descr}</Text>
             </View>
             <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa!.status == 'Completed' ? Colors.orange : Colors.white }]} >
               <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa!.status}</Text>

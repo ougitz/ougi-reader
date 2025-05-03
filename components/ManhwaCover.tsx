@@ -16,7 +16,8 @@ import { Manhwa } from '@/model/Manhwa';
 import ChapterLink from './ChapterLink';
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
-import { useManhwaStackState } from '@/store/manhwaStackState';
+import { useCallback, useEffect, useState } from 'react';
+import { dbReadLast3Chapters } from '@/lib/database';
 
 
 
@@ -44,6 +45,7 @@ const ManhwaCover = ({
 }: ManhwaCoverProps) => {
 
     const { setManhwa } = useReadingState()
+    const [chapters, setChapters] = useState<Chapter[]>([])
     
     const manhwaStatusColor = manhwa.status == "Completed" ? 
         Colors.orange : 
@@ -53,6 +55,21 @@ const ManhwaCover = ({
         setManhwa(manhwa)
         router.navigate("/(pages)/Manhwa")
     }
+
+    const init = useCallback(async () => {
+        if (showChaptersPreview) {
+            console.log(manhwa.title)
+            await dbReadLast3Chapters(manhwa.manhwa_id)
+                .then(values => setChapters(values))
+        }
+    }, [])
+
+    useEffect(
+        () => {
+            init()
+        },
+        []
+    )
 
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
@@ -64,7 +81,7 @@ const ManhwaCover = ({
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {
                     showChaptersPreview && 
-                    manhwa.chapters.map(
+                    chapters.map(
                         (item) => 
                             <ChapterLink 
                                 shouldShowChapterDate={shouldShowChapterDate} 

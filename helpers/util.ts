@@ -110,4 +110,24 @@ export function orderRecommendations(arr: Recommendation[]): Recommendation[] {
     }
 
     return result;
-  }
+}
+
+
+export function hasMinutesElapsed(timestampStr: string, minutes: number): boolean {    
+    const isoString = timestampStr.replace(' ', 'T');
+      
+    const timestamp = new Date(isoString);
+    if (isNaN(timestamp.getTime())) {
+      throw new Error(`Timestamp inválido: "${timestampStr}"`);
+    }
+      
+    if (isNaN(minutes) || minutes < 0) {
+      throw new Error(`Quantidade de minutos inválida: "${minutes}"`);
+    }
+    
+    const now = new Date();
+    const diffMs = now.getTime() - timestamp.getTime();
+      
+    const diffMinutes = diffMs / (1000 * 60);    
+    return diffMinutes >= minutes;
+}

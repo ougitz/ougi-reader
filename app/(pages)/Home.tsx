@@ -9,9 +9,11 @@ import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import React, { useRef } from 'react'
-import { router } from 'expo-router'
+import React, { useCallback, useEffect, useRef } from 'react'
+import { router, useFocusEffect } from 'expo-router'
 import { wp } from '@/helpers/util'
+import { dbListTable, dbReadManhwasOrderedByUpdateAt, dbReadManhwasOrderedByViews, dbUpdateDatabase } from '@/lib/database'
+import { Manhwa } from '@/model/Manhwa'
 
 
 const MENU_WIDTH = wp(60)

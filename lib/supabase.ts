@@ -114,12 +114,10 @@ export async function spFetchChapterImages(chapter_id: number): Promise<ChapterI
 
 
 export async function spFetchRandomManhwa(
-    p_offset: number = 0,
-    p_limit: number = 30, 
-    p_num_chapters: number = 3
+    p_limit: number = 30
 ): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc('get_random_manhwas', { p_offset, p_limit, p_num_chapters });
+        .rpc('get_random_manhwas', { p_limit });
 
     if (error) {
         console.log("error fetchRandomManhwa", error)
@@ -183,54 +181,13 @@ export async function spUpdateManhwaViews(p_manhwa_id: number) {
     }  
 }
 
-export async function spFetchManhwaGenres(manhwa_id: number): Promise<ManhwaGenre[]> {
-    const { data, error } = await supabase
-        .from("manhwa_genres")    
-        .select("genre_id, genres (genre)")
-        .eq("manhwa_id", manhwa_id)
-    
-    if (error) {
-        console.log("error spFetchManhwaGenres", error)
-        return []
-    }
-
-    return data.map(item => {
-        return {
-            genre: (item.genres as any).genre,
-            genre_id: item.genre_id,
-            manhwa_id
-        }
-    })
-}
-
-
-export async function spFetchManhwaAuthors(manhwa_id: number): Promise<ManhwaAuthor[]> {
-    const { data, error } = await supabase
-        .from("manhwa_authors")
-        .select("author_id, authors (role, name)")
-        .eq("manhwa_id", manhwa_id)
-    
-    if (error) {
-        console.log("error spFetchManhwaAuthors", error)
-        return []
-    }
-
-    return data.map(item => {return {
-        author_id: item.author_id,
-        name: (item.authors as any).name,
-        role: (item.authors as any).role,
-        manhwa_id
-    }})
-}
-
 
 export async function spFetchLatestManhwas(
     p_offset: number = 0,
-    p_limit: number = 30,
-    p_num_chapters: number = 3
+    p_limit: number = 30    
 ): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc("get_manhwas_ordered_by_update", { p_offset, p_limit, p_num_chapters })
+        .rpc("get_manhwas_ordered_by_update", { p_offset, p_limit })
 
     if (error) {
         console.log("error spFetchLatestManhwas", error)
@@ -279,11 +236,10 @@ export async function spFetchManhwasByGenre(
 
 export async function spFetchMostViewManhwas(
     p_offset: number = 0,
-    p_limit: number = 30,
-    p_num_chapters: number = 3
+    p_limit: number = 30    
 ): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc("get_manhwas_ordered_by_views", {p_offset, p_limit, p_num_chapters})
+        .rpc("get_manhwas_ordered_by_views", {p_offset, p_limit})
 
     if (error) {
         console.log("error spFetchMostViewManhwas", error)
@@ -319,9 +275,9 @@ export async function spFetchManhwaRecommendations(
 }
 
 
-export async function spGetManhwas(): Promise<Manhwa[]> {
+export async function spGetManhwas(p_limit: number | null = null): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc("get_manhwas")
+        .rpc("get_manhwas", { p_limit })
     
     if (error) {
         console.log("error spGetManhwas", error)

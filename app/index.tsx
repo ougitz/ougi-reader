@@ -1,10 +1,6 @@
-import React, { 
-  useEffect, 
-  useRef, 
-  useState 
-} from 'react'
-import { 
-  ActivityIndicator, 
+import React, { useEffect} from 'react'
+import {
+  Text,
   SafeAreaView,
   StyleSheet,  
   View 
@@ -23,19 +19,18 @@ import {
   LeagueSpartan_800ExtraBold,
   LeagueSpartan_900Black,
 } from '@expo-google-fonts/league-spartan';
+import { spFetchUser, spGetSession } from '@/lib/supabase';
 import { AppStyle } from '@/styles/AppStyles';
-import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { spFetchUser, spGetManhwas, spGetSession } from '@/lib/supabase';
-import Toast from '@/components/Toast';
 import { sleep } from '@/helpers/util';
-import { Manhwa } from '@/model/Manhwa';
-import { dbAddManhwa, dbCheckTableUpdate, dbListTable, dbListTables, dbReadAll, dbUpsertManhwas } from '@/lib/database';
+import { dbUpdateDatabase } from '@/lib/database';
+import { Image } from 'expo-image';
+import { ToastNoInternet } from '@/helpers/ToastMessages';
 
 
 const App = () => {
   
-  const { login } = useAuthState()  
+  const { login } = useAuthState()    
 
   let [fontsLoaded] = useFonts({
       LeagueSpartan_100Thin,
@@ -49,29 +44,29 @@ const App = () => {
       LeagueSpartan_900Black,
   });
 
+  const initSession = async () => {
+    const session = await spGetSession()
+    if (!session) { return }
+
+    spFetchUser(session.user.id)
+      .then(user => user ?
+          login(user, session) :
+          console.log("error fetching user", session.user.id)
+    )
+  }
+
   const init = async () => {    
 
     const state: NetInfoState = await NetInfo.fetch()
 
     if (!state.isConnected) {
-      Toast.show({title: 'Warning', message: 'You dont have connection to internet', type: 'info'})
+      ToastNoInternet()
       await sleep(1500)
-    } else {
-      const session = await spGetSession()
-    
-      if (session) { 
-          spFetchUser(session.user.id)
-            .then(user => {
-              if (!user) {
-                console.log("error fetching user", session.user.id)
-              } else {
-                login(user, session)
-              }
-            })
-      }
+      return
     }
-    const manhwas: Manhwa[] = await dbReadAll<Manhwa>('manhwas')
-    manhwas.forEach(item => console.log(item.title))
+
+    await initSession()
+    await dbUpdateDatabase()
     router.replace("/(pages)/Home")
   }
 
@@ -85,11 +80,14 @@ const App = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-        <ActivityIndicator size={48} color={Colors.white}/>
+        <Image source={require('@/assets/images/loading2.gif')} style={styles.image} />
+        <Text style={AppStyle.textRegular}>Loading database...</Text>
       </View>
     </SafeAreaView>
   )
+
 }
+
 
 export default App
 

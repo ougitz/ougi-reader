@@ -9,16 +9,16 @@ import {
     Text, 
     View 
 } from 'react-native'
-import { supabase, spGetSession, spCreateUser } from '@/lib/supabase';
+import { supabase, spCreateUser } from '@/lib/supabase';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { capitalize } from 'lodash';
 import { useState } from 'react'
 import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
+import { ToastError, ToastSuccess, ToastWeakPassword } from '@/helpers/ToastMessages';
 
 
 const schema = yup.object().shape({  
@@ -80,24 +80,14 @@ const SignUpForm = () => {
             console.log(error, error.code)
             switch (error.code) {
                 case "weak_password":
-                    Toast.show({
-                        title: "Error", 
-                        message: "password must contain at least 1 uppercase, 1 lowercase, 1 digit and 1 symbol", 
-                        type: "error", 
-                        duration: 3000
-                    })
+                    ToastWeakPassword()
                     break
                 default:
-                    Toast.show({
-                        title: "Error", 
-                        message: error.message, 
-                        type: "error",
-                        duration: 3000
-                    })
+                    ToastError(error.message)
                     break
             }
         } else {
-            Toast.show({title: "Success!", message: '', type: 'success'})
+            ToastSuccess()
             router.replace("/(auth)/SignIn")
         }
 
