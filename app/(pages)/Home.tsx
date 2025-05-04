@@ -54,7 +54,7 @@ const Home = () => {
     }
 
     return (
-        <SafeAreaView style={AppStyle.safeArea} >
+        <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 20}]} >
             <TopBar title='Ougi Reader'>
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
                     <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >

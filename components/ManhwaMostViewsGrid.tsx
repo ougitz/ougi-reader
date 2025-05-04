@@ -1,20 +1,18 @@
-import { useMostViewManhwasState } from '@/store/mostViewManhwasStore'
+import React, { useCallback, useEffect, useState } from 'react'
+import { dbReadManhwasOrderedByViews } from '@/lib/database'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import React, { useCallback, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { router } from 'expo-router'
-import { spFetchMostViewManhwas } from '@/lib/supabase'
+import { Manhwa } from '@/model/Manhwa'
 
 
 const MostViewedManhwasComponent = () => {
     
-    const { manhwas, setManhwas } = useMostViewManhwasState()
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = useCallback(async () => {
-        if (manhwas.length == 0) {
-            await spFetchMostViewManhwas()
-                .then(values => setManhwas(values))
-        }
+        await dbReadManhwasOrderedByViews(0, 30)
+            .then(values => setManhwas(values))
     }, [])
 
     useEffect(
@@ -31,7 +29,7 @@ const MostViewedManhwasComponent = () => {
     return (
         <ManhwaHorizontalGrid 
             title='Most Views ⚡' 
-            manhwas={manhwas.slice(0, 30)}
+            manhwas={manhwas}
             onPress={onPress}/>
     )
 }

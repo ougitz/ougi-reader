@@ -1,7 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 import { getRelativeHeight, wp } from '@/helpers/util'
-import { AppConstants } from '@/constants/AppConstants'
-import { useReadingState } from '@/store/manhwaReadingState'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { Recommendation } from '@/helpers/types'
@@ -13,17 +11,18 @@ const w = wp(80)
 
 const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}) => {
     
-    const { setManhwa } = useReadingState()    
-    
     const h = getRelativeHeight(
         w, 
         recommendation.image.width, 
         recommendation.image.height
     )
-
+    
     const openManhwaPage = () => {
-        setManhwa(recommendation.manhwa)
-        router.navigate("/Manhwa")
+        router.navigate({
+            pathname: "/(pages)/Manhwa", 
+            params: {
+                manhwa_id: recommendation.manhwa.manhwa_id
+            }})
     }
     
     return (                    

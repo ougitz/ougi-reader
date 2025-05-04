@@ -4,12 +4,14 @@ import {
   ScrollView, 
   Text, 
   StyleSheet, 
-  View
+  View,
+  ActivityIndicator
 } from 'react-native'
 import React, { 
   useCallback,
   useEffect, 
-  useRef
+  useRef,
+  useState
 } from 'react'
 import ManhwaChapterList from '@/components/ManhwaChapterList';
 import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
@@ -22,20 +24,31 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
 import { Image } from 'expo-image';
-import { useManhwaStackState } from '@/store/manhwaStackState';
+import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Manhwa } from '@/model/Manhwa';
+import Toast from '@/components/Toast';
 
 
-const Manhwa = () => {
+const ManhwaPage = () => {
 
-  const { manhwa } = useReadingState()  
+  const params = useLocalSearchParams()
+  const [manhwa, setManhwa] = useState<Manhwa | null>()
+  const manhwa_id: number = parseInt(params.manhwa_id as any)  
+  console.log(params)
+  const init = useCallback(async () => {    
+      spUpdateManhwaViews(manhwa_id)
+      dbUpdateManhwaViews(manhwa_id)
+      await dbReadManhwaById(manhwa_id)
+        .then(value => {
+          if (value) {
+            setManhwa(value)
+          } else {
+            Toast.show({title: "Error", message: "invalid manhwa", type: "error"})
+            router.replace("/(pages)/Home")
+          }
+        })
 
-  const countView = useRef(false)
-
-  const init = useCallback(async () => {
-    if (countView.current == false) {
-      countView.current = true
-      spUpdateManhwaViews(manhwa!.manhwa_id)
-    }    
   }, [])
 
   useEffect(
@@ -48,36 +61,50 @@ const Manhwa = () => {
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
       <ScrollView style={{flex: 1}} >
-        <LinearGradient 
-            colors={[manhwa!.color, Colors.backgroundColor]}
-            style={styles.linearBackground} />
-        <View style={styles.topBar} >
-            <HomeButton/>
-            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                <ReturnButton/>
+        {
+          manhwa ?
+          <>
+            <LinearGradient 
+                colors={[manhwa.color, Colors.backgroundColor]}
+                style={styles.linearBackground} />
+            <View style={styles.topBar} >
+                <HomeButton/>
+                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+                    <ReturnButton/>
+                </View>
             </View>
-        </View>
 
-        <View style={styles.manhwaContainer}>
-            <Image source={manhwa!.cover_image_url} style={styles.image} />
-            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold', color: Colors.orange}]}>{manhwa!.title}</Text>
-            <View style={{gap: 10, alignSelf: "flex-start"}} >
-                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa!.descr}</Text>
+            <View style={styles.manhwaContainer}>
+                <Image source={manhwa.cover_image_url} style={styles.image} />
+                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold', color: Colors.orange}]}>{manhwa!.title}</Text>
+                <View style={{gap: 10, alignSelf: "flex-start"}} >
+                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>
+                </View>
+                <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
+                  <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa.status == 'Completed' ? Colors.orange : Colors.neonRed }]} >
+                    <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa.status}</Text>
+                  </View>
+                  <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa.status == 'Completed' ? Colors.orange : Colors.neonRed }]} >
+                    <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Views: {manhwa.views}</Text>
+                  </View>
+                </View>
+                <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
+                <ManhwaGenreInfo manhwa_id={manhwa_id} />
+                <ManhwaChapterList manhwa={manhwa} />
             </View>
-            <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa!.status == 'Completed' ? Colors.orange : Colors.white }]} >
-              <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa!.status}</Text>
-            </View>
-            <ManhwaAuthorsInfo/>
-            <ManhwaGenreInfo/>
-            <ManhwaChapterList/>
-        </View>
+          </>
+          :
+          <View style={{flex: 1, alignItems: "center", justifyContent: "center"}} >
+              <ActivityIndicator size={'large'} color={Colors.white} />
+          </View>
+        }
 
       </ScrollView>
     </SafeAreaView>
   )
 }
 
-export default Manhwa
+export default ManhwaPage
 
 const styles = StyleSheet.create({
   linearBackground: {

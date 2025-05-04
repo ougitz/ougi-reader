@@ -1,18 +1,18 @@
-import { useMostViewManhwasState } from '@/store/mostViewManhwasStore';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { dbReadManhwasOrderedByViews } from '@/lib/database';
 import { SafeAreaView, StyleSheet} from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
-import { spFetchMostViewManhwas } from '@/lib/supabase';
+import { Manhwa } from '@/model/Manhwa';
 
 
-const PAGE_OFFSET = 30
+const PAGE_LIMIT = 30
 
 const MostView = () => {
 
-  const { manhwas, setManhwas, appendManwas } = useMostViewManhwasState()
+  const [manhwas, setManhwas] = useState<Manhwa[]>([])
   const [loading, setLoading] = useState(false)
   
   const page = useRef(0)
@@ -20,12 +20,11 @@ const MostView = () => {
   const isInitialized = useRef(false)
 
   const init = useCallback(async () => {
-    if (manhwas.length == 0) {
-      await spFetchMostViewManhwas()
-        .then(values => setManhwas([...values]))
-    }
+    await dbReadManhwasOrderedByViews(0, PAGE_LIMIT)
+      .then(values => setManhwas(values))
     isInitialized.current = true
   }, [])
+
 
   useEffect(
     () => {
@@ -41,10 +40,10 @@ const MostView = () => {
     }
     page.current += 1
     setLoading(true)
-    await spFetchMostViewManhwas(page.current * PAGE_OFFSET)
+    await dbReadManhwasOrderedByViews(page.current * PAGE_LIMIT, PAGE_LIMIT)
       .then(values => {
         hasResults.current = values.length > 0
-        appendManwas(values)
+        setManhwas(prev => [...prev, ...values])
       })
     setLoading(false)
   }  

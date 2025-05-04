@@ -25,22 +25,24 @@ import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
 import { Image } from 'expo-image'
+import { useLocalSearchParams } from 'expo-router'
 
 
 interface ChapterHeaderProps {
+  manhwa_title: string
   loading: boolean
   previousChapter: () => void
   nextChapter: () => void
 }
 
 
-const ChapterHeader = ({ loading, previousChapter, nextChapter}: ChapterHeaderProps) => {
+const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: ChapterHeaderProps) => {
 
-  const { manhwa, currentChapter } = useReadingState()
+  const { currentChapter } = useReadingState()
   
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5)}} >
-      <TopBar title={manhwa!.title} >
+      <TopBar title={manhwa_title} >
         <ReturnButton/>
       </TopBar>
       <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "flex-start", marginBottom: 20}} >
@@ -105,30 +107,26 @@ const Chapter = () => {
   const { currentChapter, moveToNextChapter, moveToPreviousChapter  } = useReadingState()
   const [images, setImages] = useState<ChapterImage[]>([])
   const [loading, setLoading] = useState(false)
-  
+  const params = useLocalSearchParams()
+  const manhwa_title: string = params.manhwa_title as any
   const flatListRef = useRef<FlatList>()
 
-  const init = async () => {
-    if (currentChapter && images.length == 0) {
+  const init = useCallback(async () => {
+    if (currentChapter) {
       setLoading(true)
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))
+        .catch(error => console.log(error))
       setLoading(false)
     }
-  }
+  }, [currentChapter])
 
-  const loadChapter = async () => {
-    if (currentChapter) {
-      await spFetchChapterImages(currentChapter.chapter_id) 
-        .then(values => setImages([...values]))
-    }
-  }
 
   useEffect(
-    useCallback(() => {
+    () => {
       init()
-    }, []),
-    []
+    },
+    [currentChapter]
   )
   
   const scrollUp = () => {
@@ -141,25 +139,22 @@ const Chapter = () => {
 
   const nextChapter = async () => {
     scrollUp()
-    setLoading(true)
     await Image.clearMemoryCache()
     moveToNextChapter()
-    setLoading(false)
   }
 
   const previousChapter = async () => {
-    setLoading(true)
-    await Image.clearMemoryCache()
+    scrollUp()
+    await Image.clearMemoryCache()    
     moveToPreviousChapter()
-    setLoading(false)
   }
 
   return (
-    <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
-      <View style={{width: '100%', height: hp(120)}} >
+    <SafeAreaView style={[AppStyle.safeArea, {paddingHorizontal: 0}]} >
+      <View style={{width: '100%', height: hp(100)}} >
         <FlatList
           data={images}
-          ListHeaderComponent={<ChapterHeader loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
+          ListHeaderComponent={<ChapterHeader manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           ListFooterComponent={<ChapterFooter loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
           maxToRenderPerBatch={1}
@@ -168,13 +163,10 @@ const Chapter = () => {
           initialNumToRender={1}
           renderItem={({item, index}) => <ManhwaImage image={item} />}
         />
+        <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
+            <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+        </Pressable>
       </View>
-      <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
-          <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
-      </Pressable>
-      <Pressable onPress={scrollDown} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowDown} >
-          <Ionicons name='arrow-down-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
-      </Pressable>
     </SafeAreaView>
   )
 }

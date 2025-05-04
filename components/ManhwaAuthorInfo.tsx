@@ -4,12 +4,25 @@ import { useReadingState } from "@/store/manhwaReadingState"
 import { Colors } from "@/constants/Colors"
 import { AppStyle } from "@/styles/AppStyles"
 import { ManhwaAuthor } from "@/helpers/types"
+import { useCallback, useEffect, useState } from "react"
+import { dbReadManhwaAuthors } from "@/lib/database"
 
 
-const ManhwaAuthorsInfo = () => {
+const ManhwaAuthorsInfo = ({manhwa_id}: {manhwa_id: number}) => {
 
-  const { manhwa } = useReadingState()  
-  const authors = manhwa ? manhwa.authors : []
+  const [authors, setAuthors] = useState<ManhwaAuthor[]>([])
+
+  const init = useCallback(async () => {
+    await dbReadManhwaAuthors(manhwa_id)
+      .then(values => setAuthors(values))
+  }, [])
+
+  useEffect(
+    () => {
+      init()
+    }, 
+    []
+  )
   
   const openAuthorPage = (author: ManhwaAuthor) => {
     router.navigate({

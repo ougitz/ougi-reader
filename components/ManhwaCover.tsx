@@ -43,8 +43,7 @@ const ManhwaCover = ({
     showChaptersPreview = true,
     shouldShowChapterDate = true    
 }: ManhwaCoverProps) => {
-
-    const { setManhwa } = useReadingState()
+    
     const [chapters, setChapters] = useState<Chapter[]>([])
     
     const manhwaStatusColor = manhwa.status == "Completed" ? 
@@ -52,13 +51,14 @@ const ManhwaCover = ({
         Colors.neonRed
     
     const onPress = () => {
-        setManhwa(manhwa)
-        router.navigate("/(pages)/Manhwa")
+        router.navigate({
+            pathname: '/(pages)/Manhwa', 
+            params: {manhwa_id: manhwa.manhwa_id}
+        })
     }
 
     const init = useCallback(async () => {
         if (showChaptersPreview) {
-            console.log(manhwa.title)
             await dbReadLast3Chapters(manhwa.manhwa_id)
                 .then(values => setChapters(values))
         }

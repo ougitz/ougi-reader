@@ -6,23 +6,22 @@ import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import { spFetchGenres } from '@/lib/supabase'
 import { useGenreState } from '@/store/genreState'
+import { dbReadGenres } from '@/lib/database'
 
 
 const GenreGrid = () => {
 
-    const { genres, setGenres } = useGenreState()
+    const [genres, setGenres] = useState<Genre[]>([])
 
-    const init = async () => {
-        if (genres.length == 0) {
-            await spFetchGenres()
-                .then(values => setGenres(values))
-        }
-    }
+    const init = useCallback(async () => {
+        await dbReadGenres()
+            .then(values => setGenres(values))
+    }, [])
 
     useEffect(
-        useCallback(() => {
+        () => {
             init()
-        }, []),
+        },
         []
     )
 

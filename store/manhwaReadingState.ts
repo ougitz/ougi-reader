@@ -4,68 +4,46 @@ import { create } from "zustand"
 
 
 export type ReadingState = {
-    manhwa: Manhwa | null
-    setManhwa: (manhwa: Manhwa) => void
     chapterMap: Map<number, Chapter>
-    chapterNum: number | null
-    currentChapter: Chapter | null
-    setChapterMap: (chapterList: Chapter[]) => void    
-    setChapterNum: (newChapterIndex: number) => void
+    currentChapter: Chapter | null,
+    setChapterMap: (chapterMap: Map<number, Chapter>) => void
+    setChapterNum: (chapterNum: number) => void
     moveToNextChapter: () => void
-    moveToPreviousChapter: () => void
-    clearReadingState: () => void
+    moveToPreviousChapter: () => void    
 }
 
 
 export const useReadingState = create<ReadingState>(
     (set) => ({
-        manhwa: null,
-        chapterMap: new Map<number, Chapter>,
-        chapterNum: null,
+        chapterMap: new Map(),
         currentChapter: null,
-        setManhwa: (manhwa: Manhwa) => {set((state) => {            
-            return {...state, manhwa}
-        })},
-        setChapterMap: (chapterList: Chapter[]) => {set((state) => {
-            const newChapterMap = new Map()
-            chapterList.forEach(item => newChapterMap.set(item.chapter_num, item))
-            return {...state, chapterMap: newChapterMap}
-        })
-        },
-        setChapterNum: (newChapterNum: number) => {set((state) => {
-            if (state.chapterMap.has(newChapterNum)) {
-                return {...state, chapterNum: newChapterNum, currentChapter: state.chapterMap.get(newChapterNum)}
-            }            
-            return state
+        setChapterMap: (chapterMap: Map<number, Chapter>) => {set((state) => {
+            return {...state, chapterMap}
         })},
         moveToNextChapter: () => {set((state) => {
-            if (state.chapterNum && state.chapterMap.has(state.chapterNum + 1)) {
-                return {
-                    ...state, 
-                    chapterNum: state.chapterNum + 1, 
-                    currentChapter: state.chapterMap.get(state.chapterNum + 1)
-                }
+            if (!state.currentChapter) { return state }
+            if (!state.chapterMap.has(state.currentChapter.chapter_num + 1)) { return state }
+            const newChapter: Chapter = state.chapterMap.get(state.currentChapter.chapter_num + 1)!
+            return {
+                ...state, 
+                currentChapter: newChapter
             }
-            return state
         })},
         moveToPreviousChapter: () => {set((state) => {
-            if (state.chapterNum && state.chapterMap.has(state.chapterNum - 1)) {
-                return {
-                    ...state,
-                    chapterNum: state.chapterNum - 1,
-                    currentChapter: state.chapterMap.get(state.chapterNum - 1)
-                }
-            }
-            return state
-        })},
-        clearReadingState: () => {set((state) => {
+            if (!state.currentChapter) { return state }
+            if (!state.chapterMap.has(state.currentChapter.chapter_num - 1)) { return state }
+            const newChapter: Chapter = state.chapterMap.get(state.currentChapter.chapter_num - 1)!
             return {
-                ...state,
-                manhwa: null,
-                chapterMap: new Map(),
-                chapterIndex: null,
-                currentChapter: null,
+                ...state, 
+                currentChapter: newChapter
             }
-        })}
-    })
-)
+        })},
+        setChapterNum: (chapterNum: number) => {set((state) => {
+            if (!state.chapterMap.has(chapterNum)) { return state }
+            const newChapter: Chapter = state.chapterMap.get(chapterNum)!
+            return {
+                ...state, 
+                currentChapter: newChapter
+            }
+        })},  
+}))

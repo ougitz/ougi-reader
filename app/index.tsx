@@ -23,7 +23,7 @@ import { spFetchUser, spGetSession } from '@/lib/supabase';
 import { AppStyle } from '@/styles/AppStyles';
 import { router } from 'expo-router';
 import { sleep } from '@/helpers/util';
-import { dbUpdateDatabase } from '@/lib/database';
+import { dbInitSchema, dbUpdateDatabase } from '@/lib/database';
 import { Image } from 'expo-image';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 
@@ -65,7 +65,9 @@ const App = () => {
       return
     }
 
+
     await initSession()
+    await dbInitSchema()
     await dbUpdateDatabase()
     router.replace("/(pages)/Home")
   }

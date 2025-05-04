@@ -6,10 +6,10 @@ import TopBar from '@/components/TopBar'
 import { useLocalSearchParams } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
 import { Manhwa } from '@/model/Manhwa'
-import { spFetchManhwasByGenre } from '@/lib/supabase'
+import { dbListTable, dbListTables, dbReadManhwasByGenreId } from '@/lib/database'
 
 
-const PAGE_OFFSET = 30
+const PAGE_LIMIT = 30
 
 
 const ManhwaByGenre = () => {
@@ -25,13 +25,9 @@ const ManhwaByGenre = () => {
     const isInitialized = useRef(false)
 
     const init = useCallback(async () => {
-        if (manhwas.length == 0) {
-            setLoading(true)
-            await spFetchManhwasByGenre(genre_id)
-                .then(values => setManhwas([...values]))
-            setLoading(false)
-        }
-        isInitialized.current = true
+        await dbReadManhwasByGenreId(genre_id, 0, PAGE_LIMIT)
+            .then(values => setManhwas(values))
+        isInitialized.current = true        
     }, [])
 
 
@@ -48,7 +44,7 @@ const ManhwaByGenre = () => {
         }
         page.current += 1
         setLoading(true)
-        await spFetchManhwasByGenre(genre_id, page.current * PAGE_OFFSET)
+        await dbReadManhwasByGenreId(genre_id, page.current * PAGE_LIMIT, PAGE_LIMIT)
             .then(values => {
                 hasResults.current = values.length > 0
                 setManhwas(prev => [...prev, ...values])

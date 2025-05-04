@@ -1,26 +1,24 @@
-import { useLastUpdateManhwasState } from '@/store/manhwaLastUpdateState'
+import React, { useCallback, useEffect, useState } from 'react'
+import { dbReadManhwasOrderedByUpdateAt } from '@/lib/database'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import React, { useCallback, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { router } from 'expo-router'
-import { spFetchLatestManhwas } from '@/lib/supabase'
+import { Manhwa } from '@/model/Manhwa'
 
 
 const ManhwasLastUpdateGrid = () => {
     
-    const { manhwas, setManhwas } = useLastUpdateManhwasState()
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
-    const init = async () => {
-        if (manhwas.length == 0) {
-            await spFetchLatestManhwas()
-                .then(values => setManhwas(values))
-        }
-    }
+    const init = useCallback(async () => {
+        await dbReadManhwasOrderedByUpdateAt(0, 30)
+            .then(values => setManhwas(values))
+    }, [])
 
     useEffect(
-        useCallback(() => {            
+        () => {
             init()
-        }, []),
+        },
         []
     )
 
@@ -31,7 +29,7 @@ const ManhwasLastUpdateGrid = () => {
     return (
         <ManhwaHorizontalGrid 
             title='Last Updates 🔥' 
-            manhwas={manhwas.slice(0, 30)}
+            manhwas={manhwas}
             onPress={onPress}/>
     )
 }

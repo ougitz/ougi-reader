@@ -17,6 +17,8 @@ import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
 import React, { useState } from 'react'
+import { Manhwa } from '@/model/Manhwa'
+import { dbReadRandomManhwa } from '@/lib/database'
 
 
 interface LateralMenuProps {
@@ -63,12 +65,13 @@ const Option = ({onPress, title, iconName}: OptionProps) => {
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const { session } = useAuthState()
-    const { setManhwa } = useReadingState()
-
+    
     const randomRead = async () => {
-        const manhwaList = await spFetchRandomManhwa(0, 1, 0)
-        setManhwa(manhwaList[0])
-        router.navigate("/(pages)/Manhwa")
+        const manhwaList: Manhwa[] = await dbReadRandomManhwa()
+        router.navigate({
+            pathname: "/(pages)/Manhwa", 
+            params: {manhwa_id: manhwaList[0].manhwa_id}
+        })
     }
 
     const accountPage = () => {

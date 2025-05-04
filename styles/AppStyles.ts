@@ -24,6 +24,6 @@ export const AppStyle = StyleSheet.create({
         width: '100%', 
         flex: 1, 
         padding: wp(5), 
-        backgroundColor: Colors.backgroundColor
+        backgroundColor: Colors.backgroundColor        
     }
 })

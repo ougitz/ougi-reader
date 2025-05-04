@@ -33,18 +33,16 @@ const ChapterLink = ({
     style
 }: ChapterLinkProps) => {
 
-    const { setManhwa, setChapterMap, setChapterNum } = useReadingState()
-    const [loading, setLoading] = useState(false)
-    const manhwa_id = manhwa.manhwa_id
+    const { setChapterMap, setChapterNum } = useReadingState()
+    const [loading, setLoading] = useState(false)    
 
-    const onPress = async () => {        
+    const onPress = async () => {
         setLoading(true)
-            setManhwa(manhwa)
-            await spFetchChapterList(manhwa_id)
-                .then(values => setChapterMap(values))
-            setChapterNum(chapter.chapter_num)
+        await spFetchChapterList(manhwa.manhwa_id)
+            .then(values => setChapterMap(new Map(values.map(i => [i.chapter_num, i]))))
+        setChapterNum(chapter.chapter_num)
         setLoading(false)
-        router.navigate("/(pages)/Chapter")
+        router.navigate({pathname: "/(pages)/Chapter", params: {manhwa_title: manhwa.title}})
     }
 
     return (

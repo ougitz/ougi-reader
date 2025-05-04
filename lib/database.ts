@@ -6,6 +6,7 @@ import { hasMinutesElapsed } from '@/helpers/util';
 import { spGetManhwas } from './supabase';
 import { Debug } from '@/constants/Debug';
 import { Chapter } from '@/model/Chapter';
+import { Genre, ManhwaAuthor } from '@/helpers/types';
 
 
 SQLite.enablePromise(true);
@@ -19,7 +20,7 @@ function openDB() {
 }
 
 
-async function dbInitSchema(): Promise<SQLiteDatabase> {
+export async function dbInitSchema(): Promise<SQLiteDatabase> {
   const db = await openDB();
   console.log("init schema")
 
@@ -237,16 +238,15 @@ async function dbShouldUpdateDatabase(): Promise<boolean> {
 }
 
 export async function dbUpdateDatabase() {
-  const db: SQLiteDatabase = await dbInitSchema();
+  const db: SQLiteDatabase = await openDB()
   const shouldUpdate = await dbShouldUpdateDatabase()
 
   if (!shouldUpdate && !Debug.FORCE_DATABASE_UPDATE) { return }
 
   console.log("updating database")
-  const manhwas: Manhwa[] = await spGetManhwas()
+  const manhwas: Manhwa[] = await spGetManhwas()  
 
-  const genres = new Map<number, string>()
-  const genresByManhwa = new Map<number, number>()
+  const manhwaGenres: number[][] = []
 
   await db.transaction(async tx => {
     for (const m of manhwas) {
@@ -278,9 +278,13 @@ export async function dbUpdateDatabase() {
         )
 
         // GENRES
-        for (const g of m.genres) {
-          genres.set(g.genre_id, g.genre)
-          genresByManhwa.set(m.manhwa_id, g.genre_id)
+        for (const g of m.genres) {          
+            tx.executeSql(
+              "INSERT OR REPLACE INTO genres (genre_id, genre) VALUES (?, ?);",
+              [g.genre_id, g.genre]
+            )
+            
+            manhwaGenres.push([m.manhwa_id, g.genre_id])
         }        
         
         // AUTHORS
@@ -290,9 +294,9 @@ export async function dbUpdateDatabase() {
             [a.author_id, a.name, a.role]
           )
           tx.executeSql(
-            "INSERT OR REPLACE INTO manhwa_authors (manhwa_id, author_id) VALUES (?, ?);",
+            "INSERT INTO manhwa_authors (manhwa_id, author_id) VALUES (?, ?) ON CONFLICT (manhwa_id, author_id) DO NOTHING;",
             [m.manhwa_id, a.author_id]
-          )
+          ).catch(error => console.log(error))
         }
 
         // CHAPTERS
@@ -307,38 +311,88 @@ export async function dbUpdateDatabase() {
     }
   )
 
-  await db.transaction(async tx => {
-    genres.forEach((genre: string, genre_id: number) => {
-      tx.executeSql(
-        "INSERT OR REPLACE INTO genres (genre_id, genre) VALUES (?, ?);",
-        [genre_id, genre]
-      )
-    })
-
-    genresByManhwa.forEach((genre_id: number, manhwa_id: number) => {
-      tx.executeSql(
-        "INSERT OR REPLACE INTO manhwa_genres (manhwa_id, genre_id) VALUES (?, ?);",
-        [manhwa_id, genre_id]
-      )
-    })
-
-  })
+  for (let i = 0; i < manhwaGenres.length; i++) {
+    const a: number[] = manhwaGenres[i]
+    await db.executeSql(
+      'INSERT INTO manhwa_genres (manhwa_id, genre_id) VALUES (?, ?) ON CONFLICT (manhwa_id, genre_id) DO NOTHING;',
+      [a[0], a[1]]
+    ).catch(error => console.log(error))
+  }
 
 }
 
 
-export async function dbReadManhwasByGenreName(genre: string): Promise<Manhwa[]> {  
+export async function dbReadRandomManhwa(p_limit: number = 1): Promise<Manhwa[]> {
+  const manhwas: Manhwa[] = await dbReadMany(
+    `
+      SELECT 
+        *
+      FROM 
+        manhwas
+      ORDER BY RANDOM()
+      LIMIT ?;      
+    `,
+    [p_limit]
+  )
+  return manhwas
+}
+
+
+export async function dbReadManhwasByGenreName(
+  genre: string,
+  p_offset: number = 0,
+  p_limit: number = 30
+): Promise<Manhwa[]> {
   const manhwas: Manhwa[] = await dbReadMany(
     `
       SELECT m.*
       FROM manhwas m
       JOIN manhwa_genres mg ON m.manhwa_id = mg.manhwa_id
       JOIN genres g ON mg.genre_id = g.genre_id
-      WHERE g.genre = ?;
+      WHERE g.genre = ?
+      ORDER BY m.views DESC
+      LIMIT ?
+      OFFSET ?;
     `,
-    [genre]
+    [genre, p_limit, p_offset]
   )
   return manhwas
+}
+
+export async function dbReadManhwasByGenreId(
+  genre_id: number,
+  p_offset: number = 0,
+  p_limit: number = 30
+): Promise<Manhwa[]> {  
+  const manhwas: Manhwa[] = await dbReadMany(
+    `
+      SELECT m.*
+      FROM manhwas m
+      JOIN manhwa_genres mg ON m.manhwa_id = mg.manhwa_id
+      JOIN genres g ON mg.genre_id = g.genre_id
+      WHERE g.genre_id = ?
+      ORDER BY m.views DESC
+      LIMIT ?
+      OFFSET ?;
+    `,
+    [genre_id, p_limit, p_offset]
+  )
+  return manhwas
+}
+
+export async function dbReadManhwaGenres(manhwa_id: number): Promise<Genre[]> {
+  const genres: Genre[] = await dbReadMany(
+    `
+      SELECT g.*
+      FROM genres g
+      JOIN manhwa_genres mg ON mg.genre_id = g.genre_id      
+      WHERE mg.manhwa_id = ?
+      ORDER BY g.genre;
+    `,
+    [manhwa_id]
+  )
+  
+  return genres
 }
 
 export async function dbReadManhwasByAuthorId(author_id: number): Promise<Manhwa[]> {
@@ -348,12 +402,27 @@ export async function dbReadManhwasByAuthorId(author_id: number): Promise<Manhwa
       SELECT m.*
       FROM manhwas m
       JOIN manhwa_authors ma ON m.manhwa_id = ma.manhwa_id
-      WHERE ma.author_id = ?;
+      WHERE ma.author_id = ?
+      ORDER BY m.views DESC;
     `,
     [author_id]
   )
 
   return manwhas
+}
+
+
+export async function dbReadManhwaAuthors(manhwa_id: number): Promise<ManhwaAuthor[]> {
+  const authors: ManhwaAuthor[] = await dbReadMany(
+    `
+      SELECT a.*
+      FROM authors a
+      JOIN manhwa_authors ma ON a.author_id = ma.author_id
+      WHERE ma.manhwa_id = ?;
+    `,
+    [manhwa_id]
+  )
+  return authors
 }
 
 
@@ -399,8 +468,8 @@ export async function dbReadManhwasOrderedByViews(
       FROM
         manhwas
       ORDER BY views DESC
-      OFFSET ?
-      LIMIT ?;
+      LIMIT ?
+      OFFSET ?;
     `,
     [p_limit, p_offset]
   )
@@ -444,6 +513,30 @@ export async function dbReadLast3Chapters(manhwa_id: number): Promise<Chapter[]>
     `,
     [manhwa_id]
   )
-  
+
   return chapters
+}
+
+
+export async function dbReadGenres(): Promise<Genre[]> {
+  const genres: Genre[] = await dbReadMany('SELECT * FROM genres ORDER BY genre;')
+  return genres
+}
+
+
+export async function dbUpdateManhwaViews(manhwa_id: number) {
+  const db = await openDB()
+  db.transaction(tx => {
+    tx.executeSql(
+      `
+      UPDATE 
+          manhwas
+        SET
+          views = views + 1
+        WHERE
+          manhwa_id = ?
+      `,
+      [manhwa_id]
+    )
+  }).catch(error => console.log(error))   
 }

@@ -4,12 +4,26 @@ import { Colors } from "@/constants/Colors"
 import { useReadingState } from "@/store/manhwaReadingState"
 import { Genre } from "@/helpers/types"
 import { router } from "expo-router"
+import { useCallback, useEffect, useState } from "react"
+import { dbReadManhwaGenres } from "@/lib/database"
 
 
-const ManhwaGenreInfo = () => {
+const ManhwaGenreInfo = ({manhwa_id}: {manhwa_id: number}) => {
 
-  const { manhwa } = useReadingState()
-  const genres = manhwa ? manhwa.genres : []
+  
+  const [genres, setGenres] = useState<Genre[]>([])
+
+  const init = useCallback(async () => {
+    await dbReadManhwaGenres(manhwa_id)
+      .then(values => setGenres(values))
+  }, [])
+
+  useEffect(
+    () => {
+      init()
+    }, 
+    []
+  )
 
   const openGenrePage = (genre: Genre) => {
     router.navigate({
