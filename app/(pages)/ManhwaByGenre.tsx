@@ -6,14 +6,16 @@ import TopBar from '@/components/TopBar'
 import { useLocalSearchParams } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
 import { Manhwa } from '@/model/Manhwa'
-import { dbListTable, dbListTables, dbReadManhwasByGenreId } from '@/lib/database'
+import { dbReadManhwasByGenreId } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const PAGE_LIMIT = 30
 
 
 const ManhwaByGenre = () => {
-  
+    
+    const db = useSQLiteContext()
     const params = useLocalSearchParams()
     const genre: string = params.genre as any
     const genre_id: number = parseInt(params.genre_id as any)
@@ -25,7 +27,7 @@ const ManhwaByGenre = () => {
     const isInitialized = useRef(false)
 
     const init = useCallback(async () => {
-        await dbReadManhwasByGenreId(genre_id, 0, PAGE_LIMIT)
+        await dbReadManhwasByGenreId(db, genre_id, 0, PAGE_LIMIT)
             .then(values => setManhwas(values))
         isInitialized.current = true        
     }, [])
@@ -44,7 +46,7 @@ const ManhwaByGenre = () => {
         }
         page.current += 1
         setLoading(true)
-        await dbReadManhwasByGenreId(genre_id, page.current * PAGE_LIMIT, PAGE_LIMIT)
+        await dbReadManhwasByGenreId(db, genre_id, page.current * PAGE_LIMIT, PAGE_LIMIT)
             .then(values => {
                 hasResults.current = values.length > 0
                 setManhwas(prev => [...prev, ...values])

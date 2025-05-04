@@ -1,14 +1,14 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
 import { AppStyle } from '@/styles/AppStyles'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import TopBar from '@/components/TopBar'
-import HomeButton from '@/components/HomeButton'
 import ReadingStatusPicker from '@/components/picker/ReadingStatusPicker'
 import { Manhwa } from '@/model/Manhwa'
-import { dbGetManhwasByReadingStatus, dbListTable } from '@/lib/database'
+import { dbGetManhwasByReadingStatus } from '@/lib/database'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { useFocusEffect } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const PAGE_LIMIT = 30
@@ -16,6 +16,7 @@ const PAGE_LIMIT = 30
 
 const Library = () => {
 
+  const db = useSQLiteContext()
   const [manhwas, setManhwas] = useState<Manhwa[]>([])
   const [loading, setLoading] = useState(false)
   const status = useRef('Completed')
@@ -24,7 +25,7 @@ const Library = () => {
 
   const init = async () => {
     setLoading(true)
-    await dbGetManhwasByReadingStatus(status.current)
+    await dbGetManhwasByReadingStatus(db, status.current)
       .then(values => setManhwas(values))
     setLoading(false)
   }
@@ -40,7 +41,7 @@ const Library = () => {
     setLoading(true)
     status.current = value
     page.current = 0
-    await dbGetManhwasByReadingStatus(value)
+    await dbGetManhwasByReadingStatus(db, value)
       .then(values => {
         hasResults.current = values.length > 0
         setManhwas(values)
@@ -53,6 +54,7 @@ const Library = () => {
     console.log("end")
     page.current += 1
     await dbGetManhwasByReadingStatus(
+      db,
       status.current,
       page.current * PAGE_LIMIT,
       PAGE_LIMIT

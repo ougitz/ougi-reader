@@ -6,14 +6,16 @@ import { AppStyle } from "@/styles/AppStyles"
 import { ManhwaAuthor } from "@/helpers/types"
 import { useCallback, useEffect, useState } from "react"
 import { dbReadManhwaAuthors } from "@/lib/database"
+import { useSQLiteContext } from "expo-sqlite"
 
 
 const ManhwaAuthorsInfo = ({manhwa_id}: {manhwa_id: number}) => {
 
+  const db = useSQLiteContext()
   const [authors, setAuthors] = useState<ManhwaAuthor[]>([])
 
   const init = useCallback(async () => {
-    await dbReadManhwaAuthors(manhwa_id)
+    await dbReadManhwaAuthors(db, manhwa_id)
       .then(values => setAuthors(values))
   }, [])
 

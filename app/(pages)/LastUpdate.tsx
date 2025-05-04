@@ -6,12 +6,14 @@ import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa'
 import { dbReadManhwasOrderedByUpdateAt } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const PAGE_LIMIT = 30
 
 const LastUpdate = () => {
 
+  const db = useSQLiteContext()
   const page = useRef(0)
   const hasResults = useRef(true)
   const isInitialized = useRef(false)
@@ -22,7 +24,7 @@ const LastUpdate = () => {
   const init = useCallback(async () => {
     if (manhwas.length == 0) {
       setLoading(true)
-      await dbReadManhwasOrderedByUpdateAt(0, PAGE_LIMIT)
+      await dbReadManhwasOrderedByUpdateAt(db, 0, PAGE_LIMIT)
         .then(values => setManhwas(values))
       setLoading(false)
     }
@@ -41,7 +43,7 @@ const LastUpdate = () => {
     console.log("end")
     page.current += 1
     setLoading(true)
-      await dbReadManhwasOrderedByUpdateAt(page.current * PAGE_LIMIT, PAGE_LIMIT)
+      await dbReadManhwasOrderedByUpdateAt(db, page.current * PAGE_LIMIT, PAGE_LIMIT)
         .then(values => {
           hasResults.current = values.length > 0
           setManhwas(prev => [...prev, ...values])

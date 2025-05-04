@@ -7,14 +7,16 @@ import { router } from 'expo-router'
 import { spFetchGenres } from '@/lib/supabase'
 import { useGenreState } from '@/store/genreState'
 import { dbReadGenres } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const GenreGrid = () => {
 
+    const db = useSQLiteContext()
     const [genres, setGenres] = useState<Genre[]>([])
 
     const init = useCallback(async () => {
-        await dbReadGenres()
+        await dbReadGenres(db)
             .then(values => setGenres(values))
     }, [])
 

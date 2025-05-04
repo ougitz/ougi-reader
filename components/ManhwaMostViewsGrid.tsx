@@ -4,14 +4,16 @@ import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { StyleSheet } from 'react-native'
 import { router } from 'expo-router'
 import { Manhwa } from '@/model/Manhwa'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const MostViewedManhwasComponent = () => {
     
+    const db = useSQLiteContext()
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = useCallback(async () => {
-        await dbReadManhwasOrderedByViews(0, 30)
+        await dbReadManhwasOrderedByViews(db, 0, 30)
             .then(values => setManhwas(values))
     }, [])
 

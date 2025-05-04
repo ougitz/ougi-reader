@@ -6,15 +6,16 @@ import { Genre } from "@/helpers/types"
 import { router } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
 import { dbReadManhwaGenres } from "@/lib/database"
+import { useSQLiteContext } from "expo-sqlite"
 
 
 const ManhwaGenreInfo = ({manhwa_id}: {manhwa_id: number}) => {
 
-  
+  const db = useSQLiteContext()
   const [genres, setGenres] = useState<Genre[]>([])
 
   const init = useCallback(async () => {
-    await dbReadManhwaGenres(manhwa_id)
+    await dbReadManhwaGenres(db, manhwa_id)
       .then(values => setGenres(values))
   }, [])
 

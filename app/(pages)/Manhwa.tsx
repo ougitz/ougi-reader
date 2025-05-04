@@ -29,18 +29,20 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
 import AddToLibray from '@/components/AddToLibray';
+import { useSQLiteContext } from 'expo-sqlite';
 
 
 const ManhwaPage = () => {
 
+  const db = useSQLiteContext()
   const params = useLocalSearchParams()
   const [manhwa, setManhwa] = useState<Manhwa | null>()
   const manhwa_id: number = parseInt(params.manhwa_id as any)  
   
   const init = useCallback(async () => {    
       spUpdateManhwaViews(manhwa_id)
-      dbUpdateManhwaViews(manhwa_id)
-      await dbReadManhwaById(manhwa_id)
+      dbUpdateManhwaViews(db, manhwa_id)
+      await dbReadManhwaById(db, manhwa_id)
         .then(value => {
           if (value) {
             setManhwa(value)

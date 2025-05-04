@@ -19,6 +19,7 @@ import CloseBtn from './CloseBtn'
 import React, { useState } from 'react'
 import { Manhwa } from '@/model/Manhwa'
 import { dbReadRandomManhwa } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 interface LateralMenuProps {
@@ -64,10 +65,11 @@ const Option = ({onPress, title, iconName}: OptionProps) => {
 
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
+    const db = useSQLiteContext()
     const { session } = useAuthState()
     
     const randomRead = async () => {
-        const manhwaList: Manhwa[] = await dbReadRandomManhwa()
+        const manhwaList: Manhwa[] = await dbReadRandomManhwa(db)
         router.navigate({
             pathname: "/(pages)/Manhwa", 
             params: {manhwa_id: manhwaList[0].manhwa_id}

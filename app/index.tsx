@@ -23,14 +23,15 @@ import { spFetchUser, spGetSession } from '@/lib/supabase';
 import { AppStyle } from '@/styles/AppStyles';
 import { router } from 'expo-router';
 import { sleep } from '@/helpers/util';
-import { dbInitSchema, dbUpdateDatabase } from '@/lib/database';
-import { Image } from 'expo-image';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
+import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
+import { Image } from 'expo-image';
 
 
 const App = () => {
   
   const { login } = useAuthState()    
+  const db: SQLiteDatabase = useSQLiteContext();
 
   let [fontsLoaded] = useFonts({
       LeagueSpartan_100Thin,
@@ -65,11 +66,9 @@ const App = () => {
       return
     }
 
-
     await initSession()
-    await dbInitSchema()
-    await dbUpdateDatabase()
-    router.replace("/(pages)/Home")
+    
+    // router.replace("/(pages)/Home")
   }
 
   useEffect(

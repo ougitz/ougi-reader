@@ -6,12 +6,14 @@ import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa';
+import { useSQLiteContext } from 'expo-sqlite';
 
 
 const PAGE_LIMIT = 30
 
 const MostView = () => {
 
+  const db = useSQLiteContext()
   const [manhwas, setManhwas] = useState<Manhwa[]>([])
   const [loading, setLoading] = useState(false)
   
@@ -20,7 +22,7 @@ const MostView = () => {
   const isInitialized = useRef(false)
 
   const init = useCallback(async () => {
-    await dbReadManhwasOrderedByViews(0, PAGE_LIMIT)
+    await dbReadManhwasOrderedByViews(db, 0, PAGE_LIMIT)
       .then(values => setManhwas(values))
     isInitialized.current = true
   }, [])
@@ -40,7 +42,7 @@ const MostView = () => {
     }
     page.current += 1
     setLoading(true)
-    await dbReadManhwasOrderedByViews(page.current * PAGE_LIMIT, PAGE_LIMIT)
+    await dbReadManhwasOrderedByViews(db, page.current * PAGE_LIMIT, PAGE_LIMIT)
       .then(values => {
         hasResults.current = values.length > 0
         setManhwas(prev => [...prev, ...values])

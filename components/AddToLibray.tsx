@@ -7,10 +7,12 @@ import { useAuthState } from '@/store/authState';
 import { spUpdateManhwaReadingStatus } from '@/lib/supabase';
 import Toast, { ToastNotLogged } from './Toast';
 import { dbGetManhwaReadingStatus, dbUpdateManhwaReadingStatus } from '@/lib/database';
+import { useSQLiteContext } from 'expo-sqlite';
 
 
 const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
 
+    const db = useSQLiteContext()
     const { session } = useAuthState()
 
     const [open, setOpen] = useState(false)
@@ -23,7 +25,7 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
     const dbValue = useRef('')
 
     const init = useCallback(async () => {
-        await dbGetManhwaReadingStatus(manhwa_id)
+        await dbGetManhwaReadingStatus(db, manhwa_id)
             .then(value => {
                 if (!value) { return }
                 dbValue.current = value
@@ -45,7 +47,7 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
         }
         if (!value || value == dbValue.current) { return }
         setLoading(true)
-        await dbUpdateManhwaReadingStatus(manhwa_id, value)
+        await dbUpdateManhwaReadingStatus(db, manhwa_id, value)
         spUpdateManhwaReadingStatus(session.user.id, manhwa_id, value)
         setLoading(false)
     }

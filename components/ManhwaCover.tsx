@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { AppConstants } from '@/constants/AppConstants';
-import { useReadingState } from '@/store/manhwaReadingState';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { Chapter } from '@/model/Chapter';
@@ -18,6 +17,7 @@ import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useState } from 'react';
 import { dbReadLast3Chapters } from '@/lib/database';
+import { useSQLiteContext } from 'expo-sqlite';
 
 
 
@@ -44,6 +44,7 @@ const ManhwaCover = ({
     shouldShowChapterDate = true    
 }: ManhwaCoverProps) => {
     
+    const db = useSQLiteContext()
     const [chapters, setChapters] = useState<Chapter[]>([])
     
     const manhwaStatusColor = manhwa.status == "Completed" ? 
@@ -59,7 +60,7 @@ const ManhwaCover = ({
 
     const init = useCallback(async () => {
         if (showChaptersPreview) {
-            await dbReadLast3Chapters(manhwa.manhwa_id)
+            await dbReadLast3Chapters(db, manhwa.manhwa_id)
                 .then(values => setChapters(values))
         }
     }, [])
