@@ -26,6 +26,7 @@ import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
 import { Image } from 'expo-image'
 import { useLocalSearchParams } from 'expo-router'
+import { dbUpsertReadingHistory } from '@/lib/database'
 
 
 interface ChapterHeaderProps {
@@ -114,9 +115,10 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
+      await dbUpsertReadingHistory(currentChapter.manhwa_id, currentChapter.chapter_id)
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))
-        .catch(error => console.log(error))
+        .catch(error => console.log(error))        
       setLoading(false)
     }
   }, [currentChapter])

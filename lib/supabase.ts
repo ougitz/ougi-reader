@@ -286,3 +286,17 @@ export async function spGetManhwas(p_limit: number | null = null): Promise<Manhw
     
     return data
 }
+
+
+export async function spUpdateManhwaReadingStatus(
+    p_user_id: string,
+    p_manhwa_id: number, 
+    p_status: string
+) {      
+    const { error } = await supabase
+        .rpc("upsert_reading_status", {p_user_id, p_manhwa_id, p_status})
+
+    if (error) {
+        console.log("error spUpdateManhwaReadingStatus", error)
+    }
+}

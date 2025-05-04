@@ -26,8 +26,7 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
 
   // ative enforcement de FK (opcional, mas recomendado)
   await db.executeSql('PRAGMA foreign_keys = ON;');
-
-  // 1 comando por executeSql:
+  
   await db.executeSql(`
     CREATE TABLE IF NOT EXISTS update_history (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,14 +36,14 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
       refreshed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-  `);
+  `).catch(error => console.log(error));
 
   await db.executeSql(`
     CREATE TABLE IF NOT EXISTS genres (
       genre_id INTEGER PRIMARY KEY,
       genre TEXT NOT NULL
     );
-  `);
+  `).catch(error => console.log(error));
 
   await db.executeSql(`
     CREATE TABLE IF NOT EXISTS authors (
@@ -52,7 +51,7 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
       name TEXT NOT NULL,
       role TEXT NOT NULL
     );
-  `);
+  `).catch(error => console.log(error));
 
   // Crie manhwas antes de manhwa_authors
   await db.executeSql(`
@@ -68,7 +67,7 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-  `);
+  `).catch(error => console.log(error));
 
   await db.executeSql(`
     CREATE TABLE IF NOT EXISTS manhwa_authors (
@@ -80,7 +79,7 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
       CONSTRAINT manhwa_authors_author_id_fkey FOREIGN KEY (author_id) REFERENCES authors (author_id) ON UPDATE CASCADE ON DELETE CASCADE,
       CONSTRAINT manhwa_authors_manhwa_id_fkey FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
     );
-  `);  
+  `).catch(error => console.log(error));
     
   await db.executeSql(
     `
@@ -101,7 +100,7 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
         ON UPDATE CASCADE ON DELETE CASCADE
       );
     `
-  )
+  ).catch(error => console.log(error))
 
   await db.executeSql(`
     CREATE TABLE IF NOT EXISTS chapters (
@@ -111,15 +110,15 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (manhwa_id) REFERENCES manhwas(manhwa_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
-  `);
+  `).catch(error => console.log(error));
 
   // índices e view
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_id ON chapters(manhwa_id);`);
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_ma_manhwa_id ON manhwa_authors(manhwa_id);`);
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_manhwas_status ON manhwas(status);`);
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_manhwas_rating ON manhwas(rating);`);
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_authors_name ON authors(name);`);
-  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_num ON chapters(manhwa_id, chapter_num DESC);`);
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_id ON chapters(manhwa_id);`).catch(error => console.log(error));
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_ma_manhwa_id ON manhwa_authors(manhwa_id);`).catch(error => console.log(error));
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_manhwas_status ON manhwas(status);`).catch(error => console.log(error));
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_manhwas_rating ON manhwas(rating);`).catch(error => console.log(error));
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_authors_name ON authors(name);`).catch(error => console.log(error));
+  await db.executeSql(`CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_num ON chapters(manhwa_id, chapter_num DESC);`).catch(error => console.log(error));
 
 
   await db.executeSql(
@@ -132,9 +131,48 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
     ON CONFLICT (name) 
     DO UPDATE SET refresh_cycle = EXCLUDED.refresh_cycle;
     `
-  )
+  ).catch(error => console.log(error))
 
-  await db.executeSql(`DROP VIEW IF EXISTS last_3_chapters;`).catch(error => console.log(error));  
+  await db.executeSql(
+    `
+      CREATE TABLE IF NOT EXISTS reading_status (        
+        manhwa_id    INTEGER NOT NULL PRIMARY KEY,        
+        status       TEXT    NOT NULL,
+        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_reading_status_manhwa
+          FOREIGN KEY (manhwa_id)
+          REFERENCES manhwas (manhwa_id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
+      );
+    `
+  ).catch(error => console.log(error))
+
+  await db.executeSql(
+    'CREATE INDEX IF NOT EXISTS idx_reading_status_manhwa_id_status ON reading_status (manhwa_id, status);'
+  ).catch(error => console.log(error))
+
+  await db.executeSql(
+    `
+      CREATE TABLE IF NOT EXISTS reading_history (
+        manhwa_id   INTEGER NOT NULL,
+        chapter_id  INTEGER NOT NULL,
+        updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
+        PRIMARY KEY (manhwa_id, chapter_id),
+                
+        FOREIGN KEY (manhwa_id)
+          REFERENCES manhwas (manhwa_id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE,
+                
+        FOREIGN KEY (chapter_id)
+          REFERENCES chapters (chapter_id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
+    );`
+  ).catch(error => console.log(error))
   
   console.log("schema inited")
   return db;
@@ -207,14 +245,14 @@ async function dbWrite(query: string, args: any[] = []) {
         query,
         args
       );
-    })
+    }).catch(error => console.log(error))
 }
 
 async function dbShouldUpdateDatabase(): Promise<boolean> {
 
-  const update_history: UpdateHistoryTable | null = await dbReadUnique<UpdateHistoryTable>(
+  const update_history: UpdateHistoryTable | null | void = await dbReadUnique<UpdateHistoryTable>(
     `SELECT * FROM update_history WHERE name = 'database';`
-  )
+  ).catch(error => console.log(error))
   
   if (!update_history) { 
     console.log("could not read updated_history of database")
@@ -229,7 +267,7 @@ async function dbShouldUpdateDatabase(): Promise<boolean> {
   if (shouldUpdate) {
     const current_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
     await dbWrite(
-      "UPDATE update_history SET refreshed_at = ? WHERE name = 'database;",
+      "UPDATE update_history SET refreshed_at = ? WHERE name = 'database';",
       [current_time]
     )
     return true
@@ -238,16 +276,15 @@ async function dbShouldUpdateDatabase(): Promise<boolean> {
 }
 
 export async function dbUpdateDatabase() {
-  const db: SQLiteDatabase = await openDB()
+  const db: SQLiteDatabase = await openDB()  
   const shouldUpdate = await dbShouldUpdateDatabase()
-
   if (!shouldUpdate && !Debug.FORCE_DATABASE_UPDATE) { return }
 
-  console.log("updating database")
+  console.log("fetching manhwas")
   const manhwas: Manhwa[] = await spGetManhwas()  
 
   const manhwaGenres: number[][] = []
-
+  console.log("updating database")
   await db.transaction(async tx => {
     for (const m of manhwas) {
         // MANHWA
@@ -539,4 +576,80 @@ export async function dbUpdateManhwaViews(manhwa_id: number) {
       [manhwa_id]
     )
   }).catch(error => console.log(error))   
+}
+
+
+export async function dbUpdateManhwaReadingStatus(manhwa_id: number, status: string) {
+  const db = await openDB()
+  db.transaction(tx => {
+    tx.executeSql(
+      `
+      INSERT INTO reading_status (
+        manhwa_id,
+        status
+      )
+      VALUES (?, ?)
+      ON CONFLICT
+        (manhwa_id)
+      DO UPDATE SET
+        status = EXCLUDED.status,
+        updated_at = CURRENT_TIMESTAMP;
+      `,
+      [manhwa_id, status]
+    )
+  }).catch(error => console.log(error))
+}
+
+export async function dbGetManhwasByReadingStatus(
+  status: string,
+  p_offset: number = 0,
+  p_limit: number = 30
+): Promise<Manhwa[]> {
+  const manhwas: Manhwa[] = await dbReadMany(
+    `
+      SELECT
+        m.*
+      FROM
+        manhwas m
+      JOIN
+        reading_status r
+        on r.manhwa_id = m.manhwa_id
+      WHERE
+        r.status = ?
+      ORDER BY r.updated_at DESC
+      LIMIT ?
+      OFFSET ?;
+    `,
+    [status, p_limit, p_offset]
+  )
+
+  return manhwas
+}
+
+
+export async function dbGetManhwaReadingStatus(manhwa_id: number): Promise<string | null> {
+  const r: {status: string} | null = await dbReadUnique<{status: string}>(
+    "SELECT status FROM reading_status WHERE manhwa_id = ?", 
+    [manhwa_id]
+  )
+
+  if (r) { return r.status }
+  return null
+}
+
+
+export async function dbUpsertReadingHistory(manhwa_id: number, chapter_id: number) {
+  await dbWrite(
+    `
+      INSERT INTO reading_history (
+        manhwa_id,
+        chapter_id,
+        updated_at
+      )
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT (manhwa_id, chapter_id)
+      DO UPDATE SET updated_at = CURRENT_TIMESTAMP;
+    `,
+    [manhwa_id, chapter_id]
+  )
 }

@@ -12,8 +12,6 @@ import TopBar from '@/components/TopBar'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { router, useFocusEffect } from 'expo-router'
 import { wp } from '@/helpers/util'
-import { dbListTable, dbReadManhwasOrderedByUpdateAt, dbReadManhwasOrderedByViews, dbUpdateDatabase } from '@/lib/database'
-import { Manhwa } from '@/model/Manhwa'
 
 
 const MENU_WIDTH = wp(60)

@@ -28,6 +28,7 @@ import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
+import AddToLibray from '@/components/AddToLibray';
 
 
 const ManhwaPage = () => {
@@ -35,7 +36,7 @@ const ManhwaPage = () => {
   const params = useLocalSearchParams()
   const [manhwa, setManhwa] = useState<Manhwa | null>()
   const manhwa_id: number = parseInt(params.manhwa_id as any)  
-  console.log(params)
+  
   const init = useCallback(async () => {    
       spUpdateManhwaViews(manhwa_id)
       dbUpdateManhwaViews(manhwa_id)
@@ -76,10 +77,12 @@ const ManhwaPage = () => {
 
             <View style={styles.manhwaContainer}>
                 <Image source={manhwa.cover_image_url} style={styles.image} />
-                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold', color: Colors.orange}]}>{manhwa!.title}</Text>
+                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold'}]}>{manhwa!.title}</Text>
+                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28}]}>Summary</Text>
                 <View style={{gap: 10, alignSelf: "flex-start"}} >
                     <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>
                 </View>
+                <AddToLibray manhwa_id={manhwa_id} />
                 <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
                   <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa.status == 'Completed' ? Colors.orange : Colors.neonRed }]} >
                     <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa.status}</Text>
@@ -94,7 +97,7 @@ const ManhwaPage = () => {
             </View>
           </>
           :
-          <View style={{flex: 1, alignItems: "center", justifyContent: "center"}} >
+          <View style={{flex: 1, height: hp(100), alignItems: "center", justifyContent: "center"}} >
               <ActivityIndicator size={'large'} color={Colors.white} />
           </View>
         }
