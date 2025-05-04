@@ -1,9 +1,14 @@
 import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationStores'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
 import ManhwaRecommendation from './DailyManhwa'
 import { AppStyle } from '@/styles/AppStyles'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Colors } from '@/constants/Colors'
+import { AppConstants } from '@/constants/AppConstants'
+import { debounce } from 'lodash'
+import RotatingButton from './RotatingButton'
 
 
 const MangaRecommendationGrid = () => {
@@ -16,14 +21,28 @@ const MangaRecommendationGrid = () => {
             .then(values => setRecommendations([...values]))
     }, [])
 
+
+    const reload = async () => {
+        await spFetchManhwaRecommendations()
+            .then(values => setRecommendations([...values]))
+    }
+
+    const debounceReload = useCallback(
+        debounce(reload, 500),
+        []
+    )
+
     useEffect(
         () => {init()},
         []
-    )    
+    )
 
     return (
         <View style={{gap: 20}} >
-            <Text style={[AppStyle.textHeader, {fontSize: 24}]}>Recommendations</Text>
+            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
+                <Text style={[AppStyle.textHeader, {fontSize: 24}]}>Recommendations</Text>
+                <RotatingButton onPress={debounceReload} duration={800} />
+            </View>
             <FlatList
                 data={recommendations}
                 horizontal={true}

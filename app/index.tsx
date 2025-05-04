@@ -26,6 +26,7 @@ import { sleep } from '@/helpers/util';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { Image } from 'expo-image';
+import { dbUpdateDatabase } from '@/lib/database';
 
 
 const App = () => {
@@ -67,8 +68,8 @@ const App = () => {
     }
 
     await initSession()
-    
-    // router.replace("/(pages)/Home")
+    await dbUpdateDatabase(db)    
+    router.replace("/(pages)/Home")
   }
 
   useEffect(
@@ -80,9 +81,9 @@ const App = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-      <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+      <View style={{flex: 1, alignItems: "center", justifyContent: "center", gap: 20}}>
         <Image source={require('@/assets/images/loading2.gif')} style={styles.image} />
-        <Text style={AppStyle.textRegular}>Loading database...</Text>
+        <Text style={[AppStyle.textRegular, {fontSize: 22}]}>Loading database...</Text>
       </View>
     </SafeAreaView>
   )

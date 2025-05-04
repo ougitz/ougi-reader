@@ -252,7 +252,7 @@ export async function spFetchMostViewManhwas(
 
 export async function spFetchManhwaRecommendations(
     p_offset: number = 0,
-    p_limit: number = 10,
+    p_limit: number = 13,
     p_num_chapters: number = 3
 ): Promise<Recommendation[]> {
     const { data, error } = await supabase
