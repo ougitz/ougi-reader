@@ -153,22 +153,19 @@ export async function dbInitSchema(): Promise<SQLiteDatabase> {
     'CREATE INDEX IF NOT EXISTS idx_reading_status_manhwa_id_status ON reading_status (manhwa_id, status);'
   ).catch(error => console.log(error))
 
+  await db.executeSql("drop table if exists reading_history;").catch(error => console.log(error))
+
   await db.executeSql(
     `
       CREATE TABLE IF NOT EXISTS reading_history (
         manhwa_id   INTEGER NOT NULL,
-        chapter_id  INTEGER NOT NULL,
+        chapter_num  INTEGER NOT NULL,
         updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         
-        PRIMARY KEY (manhwa_id, chapter_id),
+        PRIMARY KEY (manhwa_id, chapter_num),
                 
         FOREIGN KEY (manhwa_id)
           REFERENCES manhwas (manhwa_id)
-          ON UPDATE CASCADE
-          ON DELETE CASCADE,
-                
-        FOREIGN KEY (chapter_id)
-          REFERENCES chapters (chapter_id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
     );`
@@ -638,18 +635,18 @@ export async function dbGetManhwaReadingStatus(manhwa_id: number): Promise<strin
 }
 
 
-export async function dbUpsertReadingHistory(manhwa_id: number, chapter_id: number) {
+export async function dbUpsertReadingHistory(manhwa_id: number, chapter_num: number) {
   await dbWrite(
     `
       INSERT INTO reading_history (
         manhwa_id,
-        chapter_id,
+        chapter_num,
         updated_at
       )
       VALUES (?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT (manhwa_id, chapter_id)
+      ON CONFLICT (manhwa_id, chapter_num)
       DO UPDATE SET updated_at = CURRENT_TIMESTAMP;
     `,
-    [manhwa_id, chapter_id]
+    [manhwa_id, chapter_num]
   )
 }

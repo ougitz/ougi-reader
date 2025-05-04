@@ -8,6 +8,7 @@ import { Manhwa } from '@/model/Manhwa'
 import { dbGetManhwasByReadingStatus, dbListTable } from '@/lib/database'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { useFocusEffect } from 'expo-router'
+import ReturnButton from '@/components/ReturnButton'
 
 
 const PAGE_LIMIT = 30
@@ -64,7 +65,7 @@ const Library = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <TopBar title='Library' >
-        <HomeButton/>
+        <ReturnButton/>
       </TopBar>
       <View style={{flex: 1, gap: 20}} >
         <ReadingStatusPicker onChangeValue={onChangeValue} />
