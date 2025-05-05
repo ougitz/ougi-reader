@@ -1,12 +1,9 @@
 import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationStores'
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
 import ManhwaRecommendation from './DailyManhwa'
 import { AppStyle } from '@/styles/AppStyles'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { Colors } from '@/constants/Colors'
-import { AppConstants } from '@/constants/AppConstants'
 import { debounce } from 'lodash'
 import RotatingButton from './RotatingButton'
 
@@ -28,7 +25,7 @@ const MangaRecommendationGrid = () => {
     }
 
     const debounceReload = useCallback(
-        debounce(reload, 500),
+        debounce(reload, 1500),
         []
     )
 
@@ -44,6 +41,7 @@ const MangaRecommendationGrid = () => {
                 <RotatingButton onPress={debounceReload} duration={800} />
             </View>
             <FlatList
+                showsVerticalScrollIndicator={false}
                 data={recommendations}
                 horizontal={true}
                 initialNumToRender={2}

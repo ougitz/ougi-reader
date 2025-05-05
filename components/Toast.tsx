@@ -70,7 +70,7 @@ const ToastComponent = forwardRef((_, ref) => {
 });
 
 export const ToastNotLogged = () => {
-  Toast.show({title: 'Info', message: 'You must be logged!', type: 'info'})
+  Toast.show({title: 'Hey 🧐', message: 'This command requires you to be logged in', type: 'info', duration: 2500})
 }
 
 const Toast = {
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   toast: {
     position: "absolute",
     height: 60,
-    bottom: 50,
+    bottom: 60,
     left: "5%",
     right: "5%",       
     justifyContent: "center", 

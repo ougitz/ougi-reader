@@ -62,14 +62,15 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       CONSTRAINT manhwa_genres_genre_id_fkey FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON UPDATE CASCADE ON DELETE CASCADE,        
       CONSTRAINT manhwa_genres_manhwa_id_fkey FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
     );
-
+    
     CREATE TABLE IF NOT EXISTS chapters (
       chapter_id INTEGER PRIMARY KEY,
       manhwa_id INTEGER,
-      chapter_num INTEGER NOT NULL,      
+      chapter_num INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (manhwa_id) REFERENCES manhwas(manhwa_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
-
+    
     CREATE TABLE IF NOT EXISTS reading_status (        
       manhwa_id INTEGER NOT NULL PRIMARY KEY,
       status TEXT NOT NULL,
@@ -80,7 +81,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
     CREATE TABLE IF NOT EXISTS reading_history (
       manhwa_id   INTEGER NOT NULL,
       chapter_num  INTEGER NOT NULL,
-      updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      
+      updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (manhwa_id, chapter_num),              
       FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
     );
@@ -189,7 +190,7 @@ async function dbUpsertManhwas(db: SQLite.SQLiteDatabase, manhwas: Manhwa[]) {
     i.updated_at,
   ]);  
   await db.runAsync(`    
-    INSERT INTO manhwas (
+    INSERT OR REPLACE INTO manhwas (
       manhwa_id, 
       title,
       descr,
@@ -201,23 +202,25 @@ async function dbUpsertManhwas(db: SQLite.SQLiteDatabase, manhwas: Manhwa[]) {
       updated_at
     )
     VALUES ${placeholders};
-  `, params).catch(error => console.log(error));
+  `, params).catch(error => console.log("upsert manhwas", error));
 }
 
 
 async function dbUpsertChapter(db: SQLite.SQLiteDatabase, chapters: Chapter[]) {
-  const placeholders = chapters.map(() => '(?,?,?)').join(',');  
+  const placeholders = chapters.map(() => '(?,?,?,?)').join(',');  
   const params = chapters.flatMap(i => [
     i.chapter_id, 
     i.manhwa_id, 
-    i.chapter_num
+    i.chapter_num,
+    i.created_at
   ]);
   await db.runAsync(
     `
-      INSERT INTO chapters (
+      INSERT OR REPLACE INTO chapters (
         chapter_id, 
         manhwa_id, 
-        chapter_num
+        chapter_num,
+        created_at
       ) 
       VALUES ${placeholders}
       ON CONFLICT (chapter_id)
@@ -315,12 +318,11 @@ async function dbUpsertManhwaAuthors(db: SQLite.SQLiteDatabase, manhwaAuthors: M
 
 
 export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
-  const start = Date.now()
-  const shouldUpdate = await dbShouldUpdate(db, 'database')
-
-  if (!shouldUpdate && !Debug.FORCE_DATABASE_UPDATE) { return }
-  
   console.log('[UPDATING DATABASE]')
+  const start = Date.now()
+
+  await dbClearDatabase(db)
+
   const manhwas: Manhwa[] = await spGetManhwas()
 
   console.log

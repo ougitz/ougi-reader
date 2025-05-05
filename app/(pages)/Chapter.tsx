@@ -154,8 +154,8 @@ const Chapter = () => {
   }
 
   return (
-    <SafeAreaView style={[AppStyle.safeArea, {paddingHorizontal: 0}]} >
-      <View style={{width: '100%', height: hp(100)}} >
+    <SafeAreaView style={[AppStyle.safeArea, {padding: 0, paddingBottom: 10}]} >
+      <View style={{flex: 1}} >
         <FlatList
           data={images}
           ListHeaderComponent={<ChapterHeader manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
@@ -168,7 +168,7 @@ const Chapter = () => {
           renderItem={({item, index}) => <ManhwaImage image={item} />}
         />
         <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
-            <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+            <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.3)'} />
         </Pressable>
       </View>
     </SafeAreaView>
@@ -180,11 +180,11 @@ export default Chapter
 const styles = StyleSheet.create({
   arrowUp: {
     position: 'absolute', 
-    bottom: 20, 
+    bottom: 50, 
     right: 10, 
     padding: 6, 
     borderRadius: 32, 
-    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    backgroundColor: 'rgba(255, 255, 255, 0.3)'
   },    
   arrowDown: {
       position: 'absolute', 

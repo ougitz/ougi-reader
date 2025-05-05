@@ -16,7 +16,7 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
     const { session } = useAuthState()
 
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState<string>('None')
+    const [value, setValue] = useState<string>()
     const [loading, setLoading] = useState(false)
     const [items, setItems] = useState(
         AppConstants.READING_STATUS.map(i => {return {label: i, value: i}})

@@ -9,8 +9,8 @@ import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import React, { useCallback, useEffect, useRef } from 'react'
-import { router, useFocusEffect } from 'expo-router'
+import React, { useRef } from 'react'
+import { router } from 'expo-router'
 import { wp } from '@/helpers/util'
 
 
@@ -63,7 +63,7 @@ const Home = () => {
                     </Pressable>
                 </View>
             </TopBar>
-            <ScrollView style={{flex: 1}} >
+            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} >
                 <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
                     <MangaRecommendationGrid/>

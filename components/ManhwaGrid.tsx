@@ -85,7 +85,8 @@ const ManhwaGrid = ({
                         }
                         onEndReached={onEndReached}
                         scrollEventThrottle={4}
-                        onEndReachedThreshold={1}/> :
+                        onEndReachedThreshold={1}/> 
+                    :
                     <FlatList
                         ref={ref as any}
                         data={manhwas}

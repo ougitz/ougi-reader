@@ -58,13 +58,13 @@ const ManhwaCover = ({
         })
     }
 
-    const init = useCallback(async () => {
+    const init = async () => {
         if (showChaptersPreview) {
             await dbReadLast3Chapters(db, manhwa.manhwa_id)
                 .then(values => setChapters(values))
         }
-    }, [])
-
+    }
+    
     useEffect(
         () => {
             init()
