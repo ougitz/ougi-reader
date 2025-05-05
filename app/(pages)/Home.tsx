@@ -66,9 +66,9 @@ const Home = () => {
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} >
                 <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
-                    <MangaRecommendationGrid/>
                     <ManhwasLastUpdateGrid/>
                     <MostViewedManhwasComponent/>
+                    <MangaRecommendationGrid/>
                 </View>
             </ScrollView>
             <Animated.View style={[styles.sideMenu, { width: MENU_WIDTH, transform: [{ translateX: menuAnim }] }]}>
