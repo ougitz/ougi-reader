@@ -1,6 +1,6 @@
-import { Dimensions } from "react-native";
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { ManhwaComment, Recommendation } from "./types";
-import { Alert } from "react-native";
+import { Dimensions } from "react-native";
 
 
 
@@ -97,37 +97,24 @@ export function getRelativeHeight(width: number, originalWidth: number, original
 }
 
 
-export function orderRecommendations(arr: Recommendation[]): Recommendation[] {
-    const desc = [...arr].sort((a, b) => b.image.height - a.image.height);
-      
-    const result = [];
-    for (let i = 0; i < desc.length; i++) {
-      if (i % 2 === 0) {
-        result.push(desc[i]);
-      } else {
-        result.unshift(desc[i]);
-      }
-    }
-
-    return result;
+export function secondsSince(dateTimeString: string): number {
+    const inputDate = new Date(dateTimeString);
+    const now = new Date()
+    const diff = now.getTime() - inputDate.getTime()
+    return diff / 1000
 }
 
 
-export function hasMinutesElapsed(timestampStr: string, minutes: number): boolean {    
-    const isoString = timestampStr.replace(' ', 'T');
-      
-    const timestamp = new Date(isoString);
-    if (isNaN(timestamp.getTime())) {
-      throw new Error(`Timestamp inválido: "${timestampStr}"`);
-    }
-      
-    if (isNaN(minutes) || minutes < 0) {
-      throw new Error(`Quantidade de minutos inválida: "${minutes}"`);
-    }
-    
-    const now = new Date();
-    const diffMs = now.getTime() - timestamp.getTime();
-      
-    const diffMinutes = diffMs / (1000 * 60);    
-    return diffMinutes >= minutes;
+export async function hasInternetAvailable(): Promise<boolean> {
+    const state: NetInfoState = await NetInfo.fetch()
+    return state.isConnected ? true : false
+}
+
+
+export function secondsToMinutesAndSecondsStr(seconds: number): string {    
+    const m = Math.floor(seconds / 60);
+    const s = m % 60;    
+    const mm = String(m).padStart(2, '0');
+    const ss = String(s).padStart(2, '0');
+    return `${mm}:${ss}`;
 }

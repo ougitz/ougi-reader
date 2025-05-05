@@ -68,7 +68,7 @@ const App = () => {
     }
 
     await initSession()
-    await dbUpdateDatabase(db)
+    // await dbUpdateDatabase(db)
     router.replace("/(pages)/Home")
   }
 
