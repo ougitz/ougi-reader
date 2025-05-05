@@ -101,7 +101,7 @@ export function secondsSince(dateTimeString: string): number {
     const inputDate = new Date(dateTimeString);
     const now = new Date()
     const diff = now.getTime() - inputDate.getTime()
-    return diff / 1000
+    return Math.floor(diff / 1000)
 }
 
 

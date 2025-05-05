@@ -158,10 +158,17 @@ export async function dbListTable(db: SQLite.SQLiteDatabase, name: string) {
 }
 
 
-export async function dbCheckSecondsSinceLastRefresh(db: SQLite.SQLiteDatabase, name: string): Promise<number> {
-  const row = await db.getFirstAsync<{last_refreshed_at: string}>(
+export async function dbCheckSecondsSinceLastRefresh(
+  db: SQLite.SQLiteDatabase, 
+  name: string
+): Promise<{seconds: number, secondsUntilRefresh: number}> {
+  const row = await db.getFirstAsync<{
+    last_refreshed_at: string,
+    refresh_cycle: number
+  }>(
     `
       SELECT
+        refresh_cycle,
         last_refreshed_at
       FROM
         update_history
@@ -173,10 +180,14 @@ export async function dbCheckSecondsSinceLastRefresh(db: SQLite.SQLiteDatabase, 
   
   if (!row) { 
     console.log(`could not read updated_history of ${name}`)
-    return -1
+    return {seconds: -1, secondsUntilRefresh: 0}
+  }
+  
+  const seconds = secondsSince(row.last_refreshed_at)
+  return {
+    seconds,
+    secondsUntilRefresh: row.refresh_cycle - seconds
   }  
-
-  return secondsSince(row.last_refreshed_at)
 }
 
 
@@ -196,15 +207,16 @@ export async function dbShouldUpdate(db: SQLite.SQLiteDatabase, name: string): P
   if (!row) { 
     console.log(`could not read updated_history of ${name}`)
     return false 
-  }  
+  }
 
-  const seconds = secondsSince(row.last_refreshed_at)
-  console.log(seconds)
+  const seconds = row.last_refreshed_at ?
+    secondsSince(row.last_refreshed_at) :
+    -1
+
   const shouldUpdate = seconds < 0 || seconds >= row.refresh_cycle
 
   if (shouldUpdate) {
     const current_time = new Date().toString()
-    console.log(current_time)
     await db.runAsync(
       `
         UPDATE 

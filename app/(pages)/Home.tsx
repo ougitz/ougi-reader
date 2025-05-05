@@ -1,7 +1,15 @@
-import { SafeAreaView, Pressable, Animated, StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native'
+import { 
+    SafeAreaView, 
+    Pressable, 
+    Animated, 
+    StyleSheet, 
+    View, 
+    ScrollView 
+} from 'react-native'
 import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
 import MangaRecommendationGrid from '@/components/MangaRecommendationGrid'
 import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
+import UpdateDatabase from '@/components/UpdateDatabase'
 import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -9,13 +17,9 @@ import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import React, { useRef, useState } from 'react'
-import { router, useFocusEffect } from 'expo-router'
-import { hasInternetAvailable, secondsToMinutesAndSecondsStr, wp } from '@/helpers/util'
-import { dbCheckSecondsSinceLastRefresh, dbListTable, dbShouldUpdate, dbUpdateDatabase } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
-import { ToastNoInternet, ToastSuccess } from '@/helpers/ToastMessages'
-import Toast from '@/components/Toast'
+import React, { useRef } from 'react'
+import { router } from 'expo-router'
+import { wp } from '@/helpers/util'
 
 
 const MENU_WIDTH = wp(60)
@@ -23,11 +27,9 @@ const ANIMATION_TIME = 600
 
 
 const Home = () => {
-    
-    const db = useSQLiteContext()
+        
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current  
-    const menuVisible = useRef(false)
-    const [loading, setLoading] = useState(false)
+    const menuVisible = useRef(false)    
 
     const searchPress = () => {
         router.navigate("/(pages)/SearchManhwa")
@@ -57,39 +59,11 @@ const Home = () => {
         menuVisible.current ? closeMenu() : openMenu()
     }
 
-    const updateDatabase = async () => {
-        setLoading(true)
-        const hasInternet = await hasInternetAvailable()
-        if (!hasInternet) { 
-            ToastNoInternet()
-            setLoading(false)
-            return 
-        }
-
-        const shouldUpdate = await dbShouldUpdate(db, 'database')
-
-        if (!shouldUpdate) {
-            const s = await dbCheckSecondsSinceLastRefresh(db, 'database')
-            console.log(s)
-        } else {
-            ToastSuccess("Updating database")
-            await dbUpdateDatabase(db)
-        }
-                
-        setLoading(false)
-    }
-
     return (
         <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >
-            <TopBar title='Ougi Reader'>
+            <TopBar title='Ougi'>
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                    {
-                        loading ?
-                        <ActivityIndicator size={28} color={'white'} /> :
-                        <Pressable onPress={updateDatabase} hitSlop={AppConstants.hitSlop} >
-                            <Ionicons name='layers-outline' size={28} color={'white'} />
-                        </Pressable>
-                    }
+                    <UpdateDatabase/>
                     <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlop} >
                         <Ionicons name='search-outline' size={28} color={'white'} />
                     </Pressable>
