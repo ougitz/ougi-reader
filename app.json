@@ -9,14 +9,18 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.ougireader"
+      "package": "com.anonymous.ougireader",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -34,10 +38,21 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-sqlite"        
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "45ff99c1-6a82-43c5-a24a-323577e472fd"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/45ff99c1-6a82-43c5-a24a-323577e472fd"
     }
   }
 }
