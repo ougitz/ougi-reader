@@ -1,12 +1,11 @@
+import { Author, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
+import { UpdateHistorySchema } from './model/UpdateHistorySchema';
+import { ReadingStatusSchema } from './model/ReadingStatusSchema';
+import { spFetchChapterList, spGetManhwas } from './supabase';
+import { secondsSince } from '@/helpers/util';
+import { Chapter } from '@/model/Chapter';
 import { Manhwa } from '@/model/Manhwa';
 import * as SQLite from 'expo-sqlite';
-import { UpdateHistorySchema } from './model/UpdateHistorySchema';
-import { secondsSince } from '@/helpers/util';
-import { spFetchChapterList, spGetManhwas } from './supabase';
-import { Debug } from '@/constants/Debug';
-import { Chapter } from '@/model/Chapter';
-import { Author, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
-import { ReadingStatusSchema } from './model/ReadingStatusSchema';
 
 
 
@@ -379,11 +378,9 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   console.log('[UPDATING DATABASE]')
   const start = Date.now()
 
-  await dbClearDatabase(db)
-
   const manhwas: Manhwa[] = await spGetManhwas()
-
-  console.log
+  
+  await dbClearDatabase(db)
   await dbUpsertManhwas(db, manhwas)
   
   const chapters: Chapter[] = []
