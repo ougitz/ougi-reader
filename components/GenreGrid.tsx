@@ -1,13 +1,11 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Genre } from '@/helpers/types'
+import { useSQLiteContext } from 'expo-sqlite'
+import { dbReadGenres } from '@/lib/database'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
+import { Genre } from '@/helpers/types'
 import { router } from 'expo-router'
-import { spFetchGenres } from '@/lib/supabase'
-import { useGenreState } from '@/store/genreState'
-import { dbReadGenres } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
 
 
 const GenreGrid = () => {
@@ -16,8 +14,7 @@ const GenreGrid = () => {
     const [genres, setGenres] = useState<Genre[]>([])
 
     const init = useCallback(async () => {
-        await dbReadGenres(db)
-            .then(values => setGenres(values))
+        await dbReadGenres(db).then(values => setGenres(values))
     }, [])
 
     useEffect(
@@ -39,7 +36,6 @@ const GenreGrid = () => {
 
     return (
         <View style={styles.container} >
-            <Text style={AppStyle.textHeader}>Genres</Text>
             <FlatList
                 data={genres}
                 keyExtractor={(item, index) => index.toString()}

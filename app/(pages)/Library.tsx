@@ -51,7 +51,6 @@ const Library = () => {
 
   const onEndReached = async () => {
     if (!hasResults.current) { return }
-    console.log("end")
     page.current += 1
     await dbGetManhwasByReadingStatus(
       db,
@@ -76,7 +75,7 @@ const Library = () => {
           loading={loading}          
           numColumns={2}
           hasResults={true}
-          shouldShowChapterDate={false}
+          showChaptersPreview={false}
           onEndReached={onEndReached}
           listMode='FlatList'
         />

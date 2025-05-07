@@ -9,15 +9,13 @@ import {
 } from 'react-native'
 import React, { 
   useCallback,
-  useEffect, 
-  useRef,
+  useEffect,   
   useState
 } from 'react'
 import ManhwaChapterList from '@/components/ManhwaChapterList';
 import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
 import ManhwaAuthorsInfo from '@/components/ManhwaAuthorInfo';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useReadingState } from '@/store/manhwaReadingState'
 import ReturnButton from '@/components/ReturnButton';
 import HomeButton from '@/components/HomeButton';
 import { AppStyle } from '@/styles/AppStyles'
@@ -84,17 +82,17 @@ const ManhwaPage = () => {
                 <View style={{gap: 10, alignSelf: "flex-start"}} >
                     <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>
                 </View>
+                <ManhwaGenreInfo manhwa_id={manhwa_id} />
+                <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
                 <AddToLibray manhwa_id={manhwa_id} />
                 <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
-                  <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa.status == 'Completed' ? Colors.orange : Colors.neonRed }]} >
+                  <View style={styles.item} >
                     <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa.status}</Text>
                   </View>
-                  <View style={[styles.item, { alignSelf: 'flex-start', backgroundColor: manhwa.status == 'Completed' ? Colors.orange : Colors.neonRed }]} >
+                  <View style={styles.item} >
                     <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Views: {manhwa.views}</Text>
                   </View>
                 </View>
-                <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
-                <ManhwaGenreInfo manhwa_id={manhwa_id} />
                 <ManhwaChapterList manhwa={manhwa} />
             </View>
           </>
@@ -121,12 +119,12 @@ const styles = StyleSheet.create({
     height: hp(80)
   },
   item: {
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-    backgroundColor: Colors.gray,
+    height: 52,
+    backgroundColor: Colors.orange,
     borderRadius: 4,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    flex: 1
   },
   topBar: {
     width: '100%', 

@@ -60,7 +60,7 @@ const MostView = () => {
         hasResults={true}
         loading={loading}
         numColumns={2}
-        shouldShowChapterDate={false}
+        showChaptersPreview={false}
         onEndReached={onEndReached}
         listMode='FlatList'/>
     </SafeAreaView>

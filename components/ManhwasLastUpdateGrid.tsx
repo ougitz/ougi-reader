@@ -30,7 +30,7 @@ const ManhwasLastUpdateGrid = () => {
 
     return (
         <ManhwaHorizontalGrid 
-            title='Last Updates 🔥' 
+            title='Lastest Updates 🔥' 
             manhwas={manhwas}
             onPress={onPress}/>
     )

@@ -54,7 +54,7 @@ const LastUpdate = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title='Last Updates 🔥' >
+      <TopBar title='Latest Updates 🔥' >
         <ReturnButton/>        
       </TopBar>
       <ManhwaGrid
@@ -62,7 +62,7 @@ const LastUpdate = () => {
         loading={loading}
         numColumns={2}
         hasResults={true}
-        shouldShowChapterDate={false}
+        showChaptersPreview={false}
         onEndReached={onEndReached}
         listMode='FlatList'
       />

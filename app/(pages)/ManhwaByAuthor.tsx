@@ -46,7 +46,7 @@ const ManhwaByAuthor = () => {
                 loading={loading}
                 hasResults={true}
                 listMode='FlatList'
-                shouldShowChapterDate={false}/>
+                showChaptersPreview={false}/>
         </SafeAreaView>
   )
 }

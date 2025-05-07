@@ -26,7 +26,7 @@ export default CloseBtn
 
 const styles = StyleSheet.create({
   container: {
-    padding: 6, 
+    padding: 8, 
     borderRadius: 32, 
     backgroundColor: Colors.backgroundColor
   }

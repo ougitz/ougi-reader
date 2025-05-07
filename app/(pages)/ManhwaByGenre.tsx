@@ -66,8 +66,8 @@ const ManhwaByGenre = () => {
                 loading={loading}
                 hasResults={true}
                 listMode='FlatList'
-                shouldShowChapterDate={false}
-                onEndReached={onEndReached}/>
+                showChaptersPreview={false}
+                onEndReached={onEndReached}/>            
         </SafeAreaView>
   )
 }

@@ -1,18 +1,22 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { getRelativeHeight, wp } from '@/helpers/util'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { Recommendation } from '@/helpers/types'
 import { router } from 'expo-router'
 import { Image } from 'expo-image'
-import React, { useState } from 'react'
+import React from 'react'
 
-const w = wp(80)
+
+const WIDTH = wp(80)
+
 
 const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}) => {
     
-    const h = getRelativeHeight(
-        w, 
+    const manhwaTitle = recommendation.manhwa.title
+
+    const height = getRelativeHeight(
+        WIDTH, 
         recommendation.image.width, 
         recommendation.image.height
     )
@@ -24,42 +28,15 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
                 manhwa_id: recommendation.manhwa.manhwa_id
             }})
     }
-    
-    return (                    
+        
+    return (
             <Pressable
                 onPress={openManhwaPage}
-                style={{gap: 20, marginRight: 10, alignSelf: "flex-start"}} >
-                <View>
-                    <Image source={recommendation.image.image_url} style={{
-                        alignSelf: "center",
-                        width: w, 
-                        height: h,
-                        borderRadius: 20
-                    }} />
-                    <View 
-                        style={{
-                            position: 'absolute',
-                            left: 10,
-                            top: 10,
-                            paddingHorizontal: 10, 
-                            paddingVertical: 10, 
-                            backgroundColor: Colors.orange, 
-                            borderRadius: 20
-                        }} >
-                        <Text style={AppStyle.textRegular}>{recommendation.manhwa.title}</Text>
-                    </View>
-                    <View
-                        style={{
-                            position: 'absolute',
-                            right: 10,
-                            bottom: 10,
-                            paddingHorizontal: 10, 
-                            paddingVertical: 10, 
-                            backgroundColor: Colors.gray, 
-                            borderRadius: 20
-                        }} >
-                            <Text style={AppStyle.textRegular}>Read Now</Text>
-                    </View>
+                style={styles.container}>
+                <Image source={recommendation.image.image_url} style={[styles.image, {height}]} />
+                <View 
+                    style={styles.title} >
+                    <Text style={AppStyle.textRegular}>{manhwaTitle}</Text>
                 </View>
             </Pressable>
     )
@@ -67,4 +44,25 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
 
 export default ManhwaRecommendation
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        gap: 20, 
+        marginRight: 10, 
+        alignSelf: "flex-start"
+    },
+    image: {
+        alignSelf: "center",
+        width: WIDTH,        
+        borderRadius: 20
+    },
+    title: {
+        position: 'absolute',
+        maxWidth: '95%',
+        left: 10,
+        top: 10,
+        paddingHorizontal: 10, 
+        paddingVertical: 10, 
+        backgroundColor: Colors.orange, 
+        borderRadius: 20
+    }
+})

@@ -55,7 +55,7 @@ const ManhwaGrid = ({
     )
 
     return (
-        <View style={{width: '100%', flex: 1, marginBottom: 10}} >
+        <View style={{width: '100%', flex: 1, marginBottom: 20}} >
             {
                 listMode == 'FlashList' ?
                     <FlashList

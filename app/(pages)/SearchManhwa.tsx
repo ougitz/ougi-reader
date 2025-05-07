@@ -59,7 +59,6 @@ const SearchManhwa = () => {
 
   const onEndReached = async () => {
     if (!hasResults.current || !isInitialized.current) { return }
-    console.log("end")
     page.current += 1
     setLoading(true)
       await dbManhwaSearch(db, searchTerm.current, page.current * PAGE_LIMIT, PAGE_LIMIT)

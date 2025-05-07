@@ -101,6 +101,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
     }
 
     return (
+        
         <ScrollView>
             <View style={styles.container} >
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >

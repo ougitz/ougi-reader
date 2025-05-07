@@ -1,13 +1,13 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
-import DropDownPicker from 'react-native-dropdown-picker';
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { AppConstants } from '@/constants/AppConstants';
-import { Colors } from '@/constants/Colors';
-import { useAuthState } from '@/store/authState';
-import { spUpdateManhwaReadingStatus } from '@/lib/supabase';
-import Toast, { ToastNotLogged } from './Toast';
 import { dbGetManhwaReadingStatus, dbUpdateManhwaReadingStatus } from '@/lib/database';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import DropDownPicker from 'react-native-dropdown-picker';
+import { spUpdateManhwaReadingStatus } from '@/lib/supabase';
+import { AppConstants } from '@/constants/AppConstants';
+import { useAuthState } from '@/store/authState';
+import Toast, { ToastNotLogged } from './Toast';
 import { useSQLiteContext } from 'expo-sqlite';
+import { Colors } from '@/constants/Colors';
 
 
 const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
@@ -54,33 +54,26 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
 
     return (
         <View style={{width: '100%', height: 52}} >
-            {
-                loading ?
-                <View style={{width: '100%', height: 52, backgroundColor: Colors.orange, borderRadius: 4, alignItems: "center", justifyContent: "flex-start"}} >
-                    <ActivityIndicator size={32} color={Colors.white} />
-                </View>
-                :
-                <DropDownPicker
-                    open={open}
-                    style={{height: 52, backgroundColor: Colors.orange}}
-                    dropDownContainerStyle={{backgroundColor: Colors.gray}}
-                    labelStyle={{color: Colors.backgroundColor}}                
-                    textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
-                    showArrowIcon={false}
-                    placeholder='Add To Library'
-                    placeholderStyle={{color: Colors.backgroundColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
-                    value={value as any}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setItems}
-                    listMode='SCROLLVIEW'
-                    theme="DARK"                
-                    onChangeValue={onChangeValue}
-                    multiple={false}
-                    mode="SIMPLE"
-                />
-            }
+            <DropDownPicker
+                open={open}
+                style={{height: 52, backgroundColor: Colors.orange}}
+                dropDownContainerStyle={{backgroundColor: Colors.gray}}
+                labelStyle={{color: Colors.backgroundColor}}                
+                textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
+                showArrowIcon={false}
+                placeholder='Add To Library'
+                placeholderStyle={{color: Colors.backgroundColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
+                value={value as any}
+                items={items}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                listMode='SCROLLVIEW'
+                theme="DARK"                
+                onChangeValue={onChangeValue}
+                multiple={false}
+                mode="SIMPLE"
+            />
         </View>
     )
 }
