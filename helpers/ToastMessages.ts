@@ -26,3 +26,18 @@ export const ToastError = (message: string = '') => Toast.show({
     message, 
     type: "error"
 })
+
+
+export const ToastWaitDatabase = (secondsUntilRefresh: number) => Toast.show({
+    title: "Wait ⌛", 
+    message: `You can try again in ${secondsUntilRefresh} seconds`,
+    type: "info",
+    duration: 3000
+})
+
+
+export const ToastUpdateDatabase = (message: string = '') => Toast.show({
+    title: "Updating database", 
+    message: "", 
+    type: "info"
+})

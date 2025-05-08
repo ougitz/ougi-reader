@@ -10,6 +10,7 @@ import {
 import { AppConstants } from '@/constants/AppConstants'
 import { useReadingState } from '@/store/manhwaReadingState'
 import { spFetchRandomManhwa } from '@/lib/supabase'
+import { hasInternetAvailable } from '@/helpers/util'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useAuthState } from '@/store/authState'
 import { AppStyle } from '@/styles/AppStyles'
@@ -18,13 +19,11 @@ import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
 import React, { useState } from 'react'
 import { Manhwa } from '@/model/Manhwa'
-import { dbReadRandomManhwa } from '@/lib/database'
+import { dbReadRandomManhwa, dbUpdateDatabase, dbShouldUpdate, dbCheckSecondsSinceLastRefresh } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
+import Toast from './Toast'
+import { ToastNoInternet, ToastUpdateDatabase, ToastWaitDatabase } from '@/helpers/ToastMessages'
 
-
-interface LateralMenuProps {
-    closeMenu: () => void
-}
 
 
 const ICON_COLOR = Colors.white
@@ -63,6 +62,10 @@ const Option = ({onPress, title, iconName}: OptionProps) => {
 }
 
 
+interface LateralMenuProps {
+    closeMenu: () => any
+}
+
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const db = useSQLiteContext()
@@ -78,6 +81,30 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const accountPage = () => {
         router.navigate("/(pages)/Account")
+    }
+
+    const updateDatabase = async () => {
+        const hasInternet = await hasInternetAvailable()
+        if (!hasInternet) { 
+            ToastNoInternet()
+            return 
+        }
+
+        const shouldUpdate = await dbShouldUpdate(db, 'database')
+        
+        if (!shouldUpdate) {
+            const secondsUntilRefresh = await dbCheckSecondsSinceLastRefresh(db, 'database')
+            ToastWaitDatabase(secondsUntilRefresh)            
+        } else {
+            ToastUpdateDatabase()
+            try {
+                await dbUpdateDatabase(db)
+                router.replace("/(pages)/Home")
+                return
+            } catch (error) {
+                console.log(error)
+            }
+        }        
     }
 
     const loginPage = () => {
@@ -100,11 +127,15 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         Linking.openURL(AppConstants.PORNWHA_REDDIT_URL)
     }
 
+    const openDonate = () => {
+        router.navigate("/(pages)/Donate")
+    }
+
     return (
         
         <ScrollView>
             <View style={styles.container} >
-                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >
+                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 10}} >
                     <Text style={AppStyle.textHeader}>Menu</Text>
                     <CloseBtn onPress={closeMenu} style={{padding: 2}} />
                 </View>
@@ -125,6 +156,12 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                 }
 
                 <Option 
+                    onPress={updateDatabase} 
+                    title='Update database' 
+                    iconName='layers-outline'
+                    />
+
+                <Option 
                     onPress={libraryPage} 
                     title='Library' 
                     iconName='library-outline'
@@ -132,13 +169,13 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
                 <Option 
                     onPress={randomRead} 
-                    title='Random Manhwa' 
+                    title='Random' 
                     iconName='dice-outline'
                 />
                 
                 <Option 
                     onPress={readingHistoryPage} 
-                    title='Read history' 
+                    title='Reading History' 
                     iconName='reader-outline'
                 />
 
@@ -152,6 +189,12 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     onPress={openReddit} 
                     title='Pornwha' 
                     iconName='logo-reddit'
+                />
+
+                <Option 
+                    onPress={openDonate} 
+                    title='Donate' 
+                    iconName='cash-outline'
                 />
 
             </View>

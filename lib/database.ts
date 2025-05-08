@@ -75,15 +75,18 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       status TEXT NOT NULL,
       updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_reading_status_manhwa FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
-    );
+    );    
 
+    DROP TABLE IF EXISTS reading_history;
     CREATE TABLE IF NOT EXISTS reading_history (
-      manhwa_id   INTEGER NOT NULL,
+      manhwa_id    INTEGER NOT NULL,      
+      chapter_id   INTEGER NOT NULL,
       chapter_num  INTEGER NOT NULL,
-      updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (manhwa_id, chapter_num),              
-      FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
-    );
+      readed_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY  (manhwa_id, chapter_id),              
+      FOREIGN KEY  (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE,
+      FOREIGN KEY  (chapter_id) REFERENCES chapters (chapter_id) ON UPDATE CASCADE ON DELETE CASCADE
+    );    
 
     CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_id ON chapters(manhwa_id);
     CREATE INDEX IF NOT EXISTS idx_ma_manhwa_id ON manhwa_authors(manhwa_id);
@@ -96,7 +99,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
-    VALUES ('database', 60 * 10)
+    VALUES ('database', 60 * 5)
     ON CONFLICT 
       (name) 
     DO UPDATE SET 
@@ -108,6 +111,10 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 }
 
 
+export async function dbCleaTable(db: SQLite.SQLiteDatabase, name: string) {
+  await db.runAsync(`DELETE FROM ${name};`, [name]).catch(error => console.log(error))
+}
+
 export async function dbClearDatabase(db: SQLite.SQLiteDatabase) {
   await db.runAsync('DELETE FROM manhwas;').catch(error => console.log(error))
   await db.runAsync('DELETE FROM chapters;').catch(error => console.log(error))
@@ -116,6 +123,32 @@ export async function dbClearDatabase(db: SQLite.SQLiteDatabase) {
   await db.runAsync('DELETE FROM authors;').catch(error => console.log(error))
   await db.runAsync('DELETE FROM manhwa_authors;').catch(error => console.log(error))
   console.log("[DATABASE CLEARED]")
+}
+
+
+export async function dbUserReadHistory(db: SQLite.SQLiteDatabase) {
+  const rows = await db.getAllAsync(
+    `
+      SELECT
+        m.manhwa_id,
+        m.title,
+        m.cover_image_url,
+        GROUP_CONCAT(rh.chapter_num, ', ') AS capítulos_lidos,
+        MAX(rh.readed_at)        AS última_leitura
+      FROM reading_history AS rh
+      JOIN manhwas           AS m
+        ON m.manhwa_id = rh.manhwa_id
+      GROUP BY
+        m.manhwa_id,
+        m.title
+      ORDER BY
+        última_leitura DESC;
+    `  
+  ).catch(error => console.log("error dbUserReadHistory", error));
+  
+  if (rows) {
+    rows.forEach(item => console.log(item))
+  }
 }
 
 
@@ -160,7 +193,7 @@ export async function dbListTable(db: SQLite.SQLiteDatabase, name: string) {
 export async function dbCheckSecondsSinceLastRefresh(
   db: SQLite.SQLiteDatabase, 
   name: string
-): Promise<{seconds: number, secondsUntilRefresh: number}> {
+): Promise<number> {
   const row = await db.getFirstAsync<{
     last_refreshed_at: string,
     refresh_cycle: number
@@ -179,14 +212,11 @@ export async function dbCheckSecondsSinceLastRefresh(
   
   if (!row) { 
     console.log(`could not read updated_history of ${name}`)
-    return {seconds: -1, secondsUntilRefresh: 0}
+    return -1
   }
   
   const seconds = secondsSince(row.last_refreshed_at)
-  return {
-    seconds,
-    secondsUntilRefresh: row.refresh_cycle - seconds
-  }  
+  return row.refresh_cycle - seconds
 }
 
 
@@ -801,20 +831,22 @@ export async function dbFetchManwaChapterList(
 export async function dbUpsertReadingHistory(
   db: SQLite.SQLiteDatabase,
   manhwa_id: number, 
+  chapter_id: number,
   chapter_num: number
 ) {
   await db.runAsync(
     `
       INSERT INTO reading_history (
         manhwa_id,
+        chapter_id,
         chapter_num,
-        updated_at
+        readed_at
       )
-      VALUES (?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT (manhwa_id, chapter_num)
-      DO UPDATE SET updated_at = CURRENT_TIMESTAMP;
+      VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT (manhwa_id, chapter_id)
+      DO UPDATE SET readed_at = CURRENT_TIMESTAMP;
     `,
-    [manhwa_id, chapter_num]
+    [manhwa_id, chapter_id, chapter_num]
   ).catch(error => console.log(error))
 }
 

@@ -7,13 +7,17 @@ import { AppConstants } from '@/constants/AppConstants'
 
 interface ReadingStatusPickerProps {
     onChangeValue: (v: any) => void
+    defaultValue?: string
 }
 
 
-const ReadingStatusPicker = ({onChangeValue}: ReadingStatusPickerProps) => {
+const ReadingStatusPicker = ({
+    onChangeValue,
+    defaultValue = 'Completed'
+}: ReadingStatusPickerProps) => {
 
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState('Completed')
+    const [value, setValue] = useState(defaultValue)
     const [items, setItems] = useState(
         AppConstants.READING_STATUS.map(i => {return {label: i, value: i}})
     )

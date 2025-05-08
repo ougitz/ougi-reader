@@ -89,7 +89,7 @@ const ManhwaCover = ({
                                 key={item.chapter_num} 
                                 manhwa={manhwa} 
                                 chapter={item} />
-                )}                
+                )}
             </View>
             <ManhwaStatusComponent
                 style={{position: 'absolute', left: 10, top: 10,}}

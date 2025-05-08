@@ -17,9 +17,11 @@ import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
+import { dbClearDatabase, dbCleaTable, dbListTable, dbUserReadHistory } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const MENU_WIDTH = wp(60)
@@ -27,7 +29,7 @@ const ANIMATION_TIME = 300
 
 
 const Home = () => {
-        
+    const db = useSQLiteContext()
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
     const menuVisible = useRef(false)    
 
@@ -58,6 +60,17 @@ const Home = () => {
     const toggleMenu = () => {
         menuVisible.current ? closeMenu() : openMenu()
     }
+
+    const init = async () => {
+        
+    }
+
+    useEffect(
+        () => {
+            init()
+        },
+        []
+    )
     
     return (
         <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >

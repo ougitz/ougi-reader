@@ -117,7 +117,12 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
-      await dbUpsertReadingHistory(db, currentChapter.manhwa_id, currentChapter.chapter_id)
+      await dbUpsertReadingHistory(
+        db, 
+        currentChapter.manhwa_id, 
+        currentChapter.chapter_id,
+        currentChapter.chapter_num
+      )
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))
         .catch(error => console.log(error))        

@@ -19,7 +19,7 @@ const Library = () => {
   const db = useSQLiteContext()
   const [manhwas, setManhwas] = useState<Manhwa[]>([])
   const [loading, setLoading] = useState(false)
-  const status = useRef('Completed')
+  const status = useRef('Reading')
   const page = useRef(0)
   const hasResults = useRef(true)
 
@@ -69,7 +69,7 @@ const Library = () => {
         <ReturnButton/>
       </TopBar>
       <View style={{flex: 1, gap: 20}} >
-        <ReadingStatusPicker onChangeValue={onChangeValue} />
+        <ReadingStatusPicker defaultValue='Reading' onChangeValue={onChangeValue} />
         <ManhwaGrid
           manhwas={manhwas}
           loading={loading}          

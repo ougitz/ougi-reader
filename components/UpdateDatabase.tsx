@@ -1,16 +1,25 @@
 import { dbShouldUpdate, dbCheckSecondsSinceLastRefresh, dbUpdateDatabase } from '@/lib/database'
-import { ToastNoInternet, ToastSuccess } from '@/helpers/ToastMessages'
+import { ToastNoInternet, ToastUpdateDatabase, ToastWaitDatabase } from '@/helpers/ToastMessages'
 import { StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useState } from 'react'
 import { useSQLiteContext } from 'expo-sqlite'
 import { hasInternetAvailable } from '@/helpers/util'
-import Toast from './Toast'
 import { router } from 'expo-router'
+import { Colors } from '@/constants/Colors'
 
 
-const UpdateDatabase = () => {
+interface UpdateDatabaseProps {
+    iconSize?: number
+    iconColor?: string
+}
+
+const UpdateDatabase = ({
+    iconSize = 28, 
+    iconColor = Colors.white
+}: UpdateDatabaseProps) => {
+
     const db = useSQLiteContext()
     const [loading, setLoading] = useState(false)
 
@@ -26,15 +35,10 @@ const UpdateDatabase = () => {
         const shouldUpdate = await dbShouldUpdate(db, 'database')
         
         if (!shouldUpdate) {
-            const { seconds, secondsUntilRefresh } = await dbCheckSecondsSinceLastRefresh(db, 'database')
-            Toast.show({
-                title: "Wait ⌛", 
-                message: `You can try again in ${secondsUntilRefresh} seconds`,
-                type: "info",
-                duration: 3000
-            })
+            const secondsUntilRefresh = await dbCheckSecondsSinceLastRefresh(db, 'database')
+            ToastWaitDatabase(secondsUntilRefresh)
         } else {
-            Toast.show({title: "Updating database", message: "", type: "info"})
+            ToastUpdateDatabase()
             try {
                 await dbUpdateDatabase(db)
                 setLoading(false)
@@ -52,9 +56,9 @@ const UpdateDatabase = () => {
         <>
             {
                 loading ?
-                <ActivityIndicator size={28} color={'white'} /> :
+                <ActivityIndicator size={iconSize} color={iconColor} /> :
                 <Pressable onPress={update} hitSlop={AppConstants.hitSlop} >
-                    <Ionicons name='layers-outline' size={28} color={'white'} />
+                    <Ionicons name='layers-outline' size={iconSize} color={iconColor} />
                 </Pressable>
             }
         </>

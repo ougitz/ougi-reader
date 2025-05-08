@@ -54,7 +54,7 @@ const LastUpdate = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title='Latest Updates 🔥' >
+      <TopBar title='Latest Updates' >
         <ReturnButton/>        
       </TopBar>
       <ManhwaGrid

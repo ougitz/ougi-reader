@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { dbReadManhwasOrderedByUpdateAt } from '@/lib/database'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Pressable, View, Text } from 'react-native'
+import { AppConstants } from '@/constants/AppConstants'
 import { router } from 'expo-router'
 import { Manhwa } from '@/model/Manhwa'
 import { useSQLiteContext } from 'expo-sqlite'
+import Title from './text/Title'
+import { AppStyle } from '@/styles/AppStyles'
 
 
 const ManhwasLastUpdateGrid = () => {
@@ -29,10 +32,15 @@ const ManhwasLastUpdateGrid = () => {
     }
 
     return (
-        <ManhwaHorizontalGrid 
-            title='Lastest Updates 🔥' 
-            manhwas={manhwas}
-            onPress={onPress}/>
+        <View style={{gap: 20}} >
+            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
+                <Title title='Latest Updates' iconName='rocket-outline' />
+                <Pressable onPress={onPress} hitSlop={AppConstants.hitSlopLarge} >
+                        <Text style={[AppStyle.textRegular, {textDecorationLine: 'underline'}]}>view all</Text>
+                </Pressable>
+            </View>
+            <ManhwaHorizontalGrid manhwas={manhwas}/>
+        </View>
     )
 }
 

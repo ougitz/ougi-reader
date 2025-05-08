@@ -6,6 +6,9 @@ import ManhwaRecommendation from './DailyManhwa'
 import { AppStyle } from '@/styles/AppStyles'
 import RotatingButton from './RotatingButton'
 import { debounce } from 'lodash'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Colors } from '@/constants/Colors'
+import Title from './text/Title'
 
 
 const MangaRecommendationGrid = () => {
@@ -37,7 +40,7 @@ const MangaRecommendationGrid = () => {
     return (
         <View style={{gap: 20}} >
             <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
-                <Text style={[AppStyle.textHeader, {fontSize: 24}]}>Random</Text>
+                <Title title='Random' iconName='dice-outline'/>
                 <RotatingButton onPress={debounceReload} duration={800} />
             </View>
             <FlatList
