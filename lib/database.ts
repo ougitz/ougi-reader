@@ -95,7 +95,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
     CREATE INDEX IF NOT EXISTS idx_authors_name ON authors(name);
     CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_num ON chapters(manhwa_id, chapter_num DESC);
     CREATE INDEX IF NOT EXISTS idx_reading_status_manhwa_id_status ON reading_status (manhwa_id, status);
-    CREATE INDEX IF NOT EXISTS idx_reading_history_updated ON reading_history(manhwa_id, chapter_num, updated_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_reading_history_updated ON reading_history(manhwa_id, chapter_num, readed_at DESC);
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
@@ -106,7 +106,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       refresh_cycle = EXCLUDED.refresh_cycle;
 
   `
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("DATABASE MIGRATION ERROR", error));
   console.log("[DATABASE MIGRATION END]")
 }
 

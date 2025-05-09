@@ -26,7 +26,7 @@ import { sleep } from '@/helpers/util';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { Image } from 'expo-image';
-import { dbUpdateDatabase } from '@/lib/database';
+import { dbShouldUpdate, dbUpdateDatabase } from '@/lib/database';
 
 
 const App = () => {
@@ -68,7 +68,10 @@ const App = () => {
     }
 
     await initSession()
-    // await dbUpdateDatabase(db)
+    const shouldUpdate = await dbShouldUpdate(db, 'database')
+    if (shouldUpdate) {
+      await dbUpdateDatabase(db)
+    }
     router.replace("/(pages)/Home")
   }
 
