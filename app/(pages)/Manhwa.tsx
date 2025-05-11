@@ -80,12 +80,12 @@ const ManhwaPage = () => {
                 colors={[manhwa.color, Colors.backgroundColor]}
                 style={styles.linearBackground} />
             <View style={styles.topBar} >
-                <HomeButton/>
+                <HomeButton iconColor={manhwa.color} />
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
                     <Pressable onPress={openBugReport} style={{padding: 6, backgroundColor: Colors.backgroundColor, borderRadius: 4}} >
-                      <Ionicons name='bug-outline' size={28} color={Colors.white} />
+                      <Ionicons name='bug-outline' size={28} color={manhwa.color} />
                     </Pressable>
-                    <ReturnButton/>
+                    <ReturnButton iconColor={manhwa.color} />
                 </View>
             </View>
 

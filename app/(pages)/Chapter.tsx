@@ -26,6 +26,7 @@ import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
+import { Image } from 'expo-image'
 import { hp, wp } from '@/helpers/util'
 
 
@@ -148,6 +149,7 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
+      await Image.clearDiskCache()
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))
         .catch(error => console.log(error))

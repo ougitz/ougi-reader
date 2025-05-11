@@ -24,7 +24,11 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
 
     return (
         <View style={{width, height, alignSelf: "center"}} >
-            <Image source={image.image_url} style={{width, height}} cachePolicy={'none'} />
+            <Image 
+                source={image.image_url} 
+                style={{width, height}} 
+                contentFit='cover' 
+                cachePolicy={'disk'}/>
         </View>
     )
 }

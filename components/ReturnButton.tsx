@@ -6,13 +6,13 @@ import { router } from 'expo-router'
 import React from 'react'
 
 
-const ReturnButton = () => {
+const ReturnButton = ({iconColor = Colors.white}: {iconColor?: string}) => {
   return (
     <Pressable 
       style={styles.container}
       onPress={() => router.back()} 
       hitSlop={AppConstants.hitSlopLarge} >
-        <Ionicons name='return-down-back-outline' size={28} color={Colors.white} />
+        <Ionicons name='return-down-back-outline' size={28} color={iconColor} />
     </Pressable>
   )
 }

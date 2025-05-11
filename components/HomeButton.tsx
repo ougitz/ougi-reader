@@ -6,13 +6,14 @@ import { router } from 'expo-router'
 import React from 'react'
 
 
-const HomeButton = () => {
+const HomeButton = ({iconColor = Colors.white}: {iconColor?: string}) => {
+
   return (
     <Pressable 
       onPress={() => router.replace('/(pages)/Home')} 
       hitSlop={AppConstants.hitSlopLarge} 
       style={styles.container} >
-        <Ionicons name='home' size={22} color={Colors.white} />
+        <Ionicons name='home' size={22} color={iconColor} />
     </Pressable>
   )
 }
