@@ -19,11 +19,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { useState } from 'react'
-import Toast from '../Toast';
+import { dbPopulateReadingStatusTable } from '@/lib/database';
 import * as yup from 'yup';
 import React from 'react'
 import { useAuthState } from '@/store/authState';
 import { ToastError, ToastSuccess } from '@/helpers/ToastMessages';
+import { useSQLiteContext } from 'expo-sqlite';
 
 const schema = yup.object().shape({  
     email: yup
@@ -44,7 +45,8 @@ interface FormData {
 
 
 const SignInForm = () => {
-        
+    
+    const db = useSQLiteContext()
     const { login } = useAuthState()  
     const [isLoading, setLoading] = useState(false)
     
@@ -90,6 +92,8 @@ const SignInForm = () => {
                     login(user, session)
                 }
             })
+
+        dbPopulateReadingStatusTable(db, session.user.id)
 
         setLoading(false)
         ToastSuccess()

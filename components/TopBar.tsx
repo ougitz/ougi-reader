@@ -11,7 +11,7 @@ interface TopBarProps {
 const TopBar = ({title, children}: TopBarProps) => {
   return (
     <View style={{width: '100%', flexDirection: 'row', marginVertical: 20, alignItems: "center", justifyContent: "space-between"}} >
-        <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]}>{title}</Text>
+        <Text style={[AppStyle.textHeader, {alignSelf: "flex-start", maxWidth: '80%'}]}>{title}</Text>
         {children}
     </View>
   )

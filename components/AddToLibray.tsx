@@ -17,7 +17,6 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
 
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState<string>()
-    const [loading, setLoading] = useState(false)
     const [items, setItems] = useState(
         AppConstants.READING_STATUS.map(i => {return {label: i, value: i}})
     )
@@ -46,19 +45,17 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
             return
         }
         if (!value || value == dbValue.current) { return }
-        setLoading(true)
         await dbUpdateManhwaReadingStatus(db, manhwa_id, value)
         spUpdateManhwaReadingStatus(session.user.id, manhwa_id, value)
-        setLoading(false)
     }
 
     return (
-        <View style={{width: '100%', height: 52}} >
+        <View style={{flex: 1, height: 52}} >
             <DropDownPicker
                 open={open}
-                style={{height: 52, backgroundColor: Colors.orange}}
+                style={{height: 52, borderRadius: 4, backgroundColor: Colors.orange}}
                 dropDownContainerStyle={{backgroundColor: Colors.gray}}
-                labelStyle={{color: Colors.backgroundColor}}                
+                labelStyle={{color: Colors.backgroundColor}}
                 textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
                 showArrowIcon={false}
                 placeholder='Add To Library'

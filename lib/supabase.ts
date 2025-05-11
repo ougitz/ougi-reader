@@ -252,7 +252,7 @@ export async function spFetchMostViewManhwas(
 
 export async function spFetchManhwaRecommendations(
     p_offset: number = 0,
-    p_limit: number = 13,
+    p_limit: number = 25,
     p_num_chapters: number = 3
 ): Promise<Recommendation[]> {
     const { data, error } = await supabase
@@ -299,4 +299,33 @@ export async function spUpdateManhwaReadingStatus(
     if (error) {
         console.log("error spUpdateManhwaReadingStatus", error)
     }
+}
+
+
+export async function spFetchUserReadingStatus(
+    user_id: string
+): Promise<{manhwa_id: number, status: string}[]> {
+    const { data, error } = await supabase
+        .from('reading_status')
+        .select("manhwa_id, status")
+        .eq("user_id", user_id)
+
+    if (error) {
+        console.log("error spFetchUserReadingStatus", error)
+        return []
+    }
+
+    return data
+}
+
+export async function spReportBug(title: string, message: string): Promise<boolean> {
+    const { data, error } = await supabase
+        .from("bug_reports")
+        .insert([{title, message}])
+    
+    if (error) {
+        console.log("error spReportBug", error)
+        return false
+    }
+    return true
 }

@@ -60,6 +60,7 @@ const ManhwaGrid = ({
                 listMode == 'FlashList' ?
                     <FlashList
                         ref={ref as any}
+                        keyboardShouldPersistTaps={'always'}
                         data={manhwas}
                         numColumns={numColumns}
                         keyExtractor={(item, index) => index.toString()}
@@ -88,6 +89,7 @@ const ManhwaGrid = ({
                         onEndReachedThreshold={1}/> 
                     :
                     <FlatList
+                        keyboardShouldPersistTaps={'always'}
                         ref={ref as any}
                         data={manhwas}
                         numColumns={numColumns}

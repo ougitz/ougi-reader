@@ -55,11 +55,11 @@ const ToastComponent = forwardRef((_, ref) => {
   return (
     <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>        
         <View style={{marginLeft: 20, paddingVertical: 10}} >
-            <Text style={[AppStyle.textRegular, {fontSize: 16, color: Colors.backgroundColor}]} >
+            <Text style={[AppStyle.textRegular, {fontSize: 16, color: 'white'}]} >
                 {title}
             </Text>
             {message && 
-              <Text style={[AppStyle.textRegular, {fontSize: 14, color: Colors.backgroundColor}]}>
+              <Text style={[AppStyle.textRegular, {fontSize: 14, color: 'white'}]}>
                 {message}
               </Text>
             }            
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     left: "5%",
     right: "5%",       
     justifyContent: "center", 
-    backgroundColor: "white",
+    backgroundColor: Colors.gray,
     borderRadius: 4,
     alignItems: "flex-start"
   },  

@@ -7,10 +7,13 @@ import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa'
+import { dbReadManhwasByAuthorId } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const ManhwaByAuthor = () => {
   
+    const db = useSQLiteContext()
     const params = useLocalSearchParams()
     const author_id: number = parseInt(params.author_id as any)
     const author_name: string = params.author_name as any
@@ -22,7 +25,7 @@ const ManhwaByAuthor = () => {
     const init = useCallback(async () => {        
         if (manhwas.length == 0) {
             setLoading(true)
-            await spFetchManhwasByAuthor(author_id)
+            await dbReadManhwasByAuthorId(db, author_id)
                 .then(values => setManhwas([...values]))
             setLoading(false)
         }

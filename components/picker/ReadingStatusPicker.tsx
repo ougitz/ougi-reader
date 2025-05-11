@@ -25,13 +25,14 @@ const ReadingStatusPicker = ({
     return (
         <DropDownPicker
             open={open}
-            style={{height: 52, backgroundColor: Colors.orange}}
+            style={{height: 52, backgroundColor: Colors.orange, borderRadius: 4}}
             dropDownContainerStyle={{backgroundColor: Colors.gray}}
             labelStyle={{color: Colors.backgroundColor}}                
             textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
             placeholder='Reading Status'
             placeholderStyle={{color: Colors.backgroundColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
             value={value as any}
+            showArrowIcon={false}
             items={items}
             setOpen={setOpen}
             setValue={setValue}

@@ -10,7 +10,7 @@ import {
 import { AppConstants } from '@/constants/AppConstants'
 import { useReadingState } from '@/store/manhwaReadingState'
 import { spFetchRandomManhwa } from '@/lib/supabase'
-import { hasInternetAvailable } from '@/helpers/util'
+import { hasInternetAvailable, hp, wp } from '@/helpers/util'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useAuthState } from '@/store/authState'
 import { AppStyle } from '@/styles/AppStyles'
@@ -131,9 +131,17 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.navigate("/(pages)/Donate")
     }
 
+    const openBugReport = () => {
+        router.navigate("/(pages)/BugReport")
+    }
+
+    const openDisclaimer = () => {
+        router.navigate("/(pages)/Disclaimer")
+    }
+
     return (
         
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false} >
             <View style={styles.container} >
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 10}} >
                     <Text style={AppStyle.textHeader}>Menu</Text>
@@ -157,7 +165,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
                 <Option 
                     onPress={updateDatabase} 
-                    title='Update database' 
+                    title='Update Database' 
                     iconName='layers-outline'
                     />
 
@@ -197,7 +205,19 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     iconName='cash-outline'
                 />
 
-            </View>
+                <Option 
+                    onPress={openBugReport} 
+                    title='Bug Report' 
+                    iconName='bug-outline'
+                />
+
+                <Option 
+                    onPress={openDisclaimer} 
+                    title='Disclaimer' 
+                    iconName='reader-outline'
+                />
+
+            </View>            
         </ScrollView>
     )
 }

@@ -5,11 +5,13 @@ import {
   Text, 
   StyleSheet, 
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  Pressable
 } from 'react-native'
 import React, { 
   useCallback,
   useEffect,   
+  useRef,   
   useState
 } from 'react'
 import ManhwaChapterList from '@/components/ManhwaChapterList';
@@ -22,12 +24,14 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
 import { Image } from 'expo-image';
-import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
+import { dbListTable, dbReadManhwaById, dbUpdateManhwaViews, dbGetMangaReadChapters } from '@/lib/database';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
 import AddToLibray from '@/components/AddToLibray';
 import { useSQLiteContext } from 'expo-sqlite';
+import { ChapterReadLog } from '@/helpers/types';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 const ManhwaPage = () => {
@@ -37,9 +41,7 @@ const ManhwaPage = () => {
   const [manhwa, setManhwa] = useState<Manhwa | null>()
   const manhwa_id: number = parseInt(params.manhwa_id as any)  
   
-  const init = useCallback(async () => {    
-      spUpdateManhwaViews(manhwa_id)
-      dbUpdateManhwaViews(db, manhwa_id)
+  const init = useCallback(async () => {          
       await dbReadManhwaById(db, manhwa_id)
         .then(value => {
           if (value) {
@@ -47,9 +49,11 @@ const ManhwaPage = () => {
           } else {
             Toast.show({title: "Error", message: "invalid manhwa", type: "error"})
             router.replace("/(pages)/Home")
+            return
           }
-        })
-
+      })
+      spUpdateManhwaViews(manhwa_id)
+      dbUpdateManhwaViews(db, manhwa_id)      
   }, [])
 
   useEffect(
@@ -58,6 +62,13 @@ const ManhwaPage = () => {
     },
     []
   )
+
+  const openBugReport = () => {
+    router.navigate({
+      pathname: "/(pages)/BugReport",
+      params: {title: manhwa?.title}
+    })
+  }
 
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
@@ -71,6 +82,9 @@ const ManhwaPage = () => {
             <View style={styles.topBar} >
                 <HomeButton/>
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+                    <Pressable onPress={openBugReport} style={{padding: 6, backgroundColor: Colors.backgroundColor, borderRadius: 4}} >
+                      <Ionicons name='bug-outline' size={28} color={Colors.white} />
+                    </Pressable>
                     <ReturnButton/>
                 </View>
             </View>

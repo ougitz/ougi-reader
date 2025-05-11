@@ -32,12 +32,12 @@ const KoreanTerms = () => {
                 <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
                 
                 <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by females</Text>
-                <Term term='Eonni [언니]' meaning='older sister, older female.' />
+                <Term term='Unnie 언니' meaning='older sister, older female.' />
                 <Term term='Oppa [오빠]' meaning='older brother, older male.' />
                 
                 <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by males</Text>
-                <Term term='Nuna [누나]' meaning='older sister, older female.' />
-                <Term term='Hyeong [형]' meaning='older brother, older male.' />
+                <Term term='Noona 누나' meaning='older sister, older female.' />
+                <Term term='Hyung 형' meaning='older brother, older male.' />
                 
                 <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
 

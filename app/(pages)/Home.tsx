@@ -13,15 +13,13 @@ import UpdateDatabase from '@/components/UpdateDatabase'
 import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import React, { useEffect, useRef } from 'react'
 import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import React, { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
-import { dbClearDatabase, dbCleaTable, dbListTable, dbUserReadHistory } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
 
 
 const MENU_WIDTH = wp(60)
@@ -29,7 +27,7 @@ const ANIMATION_TIME = 300
 
 
 const Home = () => {
-    const db = useSQLiteContext()
+    
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
     const menuVisible = useRef(false)    
 
@@ -93,7 +91,7 @@ const Home = () => {
                     <MangaRecommendationGrid/>
                 </View>
             </ScrollView>
-
+            
             <Animated.View style={[styles.sideMenu, { width: MENU_WIDTH, transform: [{ translateX: menuAnim }] }]}>
                 <LateralMenu closeMenu={closeMenu}/>
             </Animated.View>
@@ -109,12 +107,20 @@ const styles = StyleSheet.create({
         top: 0,
         bottom: 0,
         left: 0,        
-        backgroundColor: Colors.gray,
+        backgroundColor: Colors.backgroundColor,
         elevation: 5,
         shadowColor: Colors.almostBlack,
         shadowOffset: { width: 4, height: 0 },
         shadowOpacity: 0.8,
         shadowRadius: 5,    
         zIndex: 100
+    },
+    background: {
+        width: wp(100), 
+        height: hp(100), 
+        position: 'absolute', 
+        left: 0, 
+        top: 0, 
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
     }
 })

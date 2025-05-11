@@ -26,7 +26,7 @@ import { sleep } from '@/helpers/util';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { Image } from 'expo-image';
-import { dbShouldUpdate, dbUpdateDatabase } from '@/lib/database';
+import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable } from '@/lib/database';
 
 
 const App = () => {
@@ -54,7 +54,8 @@ const App = () => {
       .then(user => user ?
           login(user, session) :
           console.log("error fetching user", session.user.id)
-    )
+    )    
+    dbPopulateReadingStatusTable(db, session.user.id)
   }
 
   const init = async () => {    
@@ -72,6 +73,7 @@ const App = () => {
     if (shouldUpdate) {
       await dbUpdateDatabase(db)
     }
+  
     router.replace("/(pages)/Home")
   }
 

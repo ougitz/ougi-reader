@@ -13,21 +13,20 @@ import React, {
   useRef, 
   useState 
 } from 'react'
-import { AppConstants } from '@/constants/AppConstants'
 import { useReadingState } from '@/store/manhwaReadingState'
+import { router, useLocalSearchParams } from 'expo-router'
+import { dbUpsertReadingHistory } from '@/lib/database'
+import { AppConstants } from '@/constants/AppConstants'
+import { spFetchChapterImages } from '@/lib/supabase'
 import ReturnButton from '@/components/ReturnButton'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { spFetchChapterImages } from '@/lib/supabase'
 import ManhwaImage from '@/components/ManhwaImage'
 import { ChapterImage } from '@/helpers/types'
+import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
-import { Image } from 'expo-image'
-import { useLocalSearchParams } from 'expo-router'
-import { dbUpsertReadingHistory } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
 
 
 interface ChapterHeaderProps {
@@ -42,28 +41,40 @@ const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: C
 
   const { currentChapter } = useReadingState()
   
+  const openBugReport = () => {    
+    router.navigate({
+      pathname: "/(pages)/BugReport",
+      params: {title: `${manhwa_title}/${currentChapter ? currentChapter.chapter_num: '?'}`}
+    })
+  }
+  
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5)}} >
       <TopBar title={manhwa_title} >
         <ReturnButton/>
       </TopBar>
-      <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "flex-start", marginBottom: 20}} >
-        <Text style={AppStyle.textHeader}>Chapter</Text>
-        <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
-          <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
-            <Ionicons name='chevron-back' size={24} color={Colors.white} />
-          </Pressable>
-          <View style={{alignItems: "center", justifyContent: "center"}} >
-            {
-              loading ?
-              <ActivityIndicator size={20} color={Colors.white} /> :
-              <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
-            }
+      <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "space-between", marginBottom: 20}} >
+        <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
+          <Text style={AppStyle.textHeader}>Chapter</Text>
+          <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
+            <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
+              <Ionicons name='chevron-back' size={24} color={Colors.white} />
+            </Pressable>
+            <View style={{alignItems: "center", justifyContent: "center"}} >
+              {
+                loading ?
+                <ActivityIndicator size={20} color={Colors.white} /> :
+                <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
+              }
+            </View>
+            <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
+              <Ionicons name='chevron-forward' size={24} color={Colors.white} />
+            </Pressable>
           </View>
-          <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
-            <Ionicons name='chevron-forward' size={24} color={Colors.white} />
-          </Pressable>
         </View>
+        <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", padding: 12, backgroundColor: Colors.gray, borderRadius: 42, alignSelf: "flex-end"}} >             
+            <Ionicons name='bug-outline' size={32} color={Colors.green} />            
+        </Pressable>
       </View>
     </View>
   )
@@ -71,14 +82,23 @@ const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: C
 
 
 interface ChapterFooterProps {
+  manhwa_title: string
   loading: boolean
   previousChapter: () => void
   nextChapter: () => void
 }
 
 
-const ChapterFooter = ({ loading, previousChapter, nextChapter }: ChapterFooterProps) => {
-  const { currentChapter } = useReadingState()
+const ChapterFooter = ({manhwa_title, loading, previousChapter, nextChapter }: ChapterFooterProps) => {
+  
+  const {  currentChapter } = useReadingState()
+
+  const openBugReport = () => {    
+    router.navigate({
+      pathname: "/(pages)/BugReport",
+      params: {title: `${manhwa_title}/${currentChapter ? currentChapter.chapter_num: '?'}`}
+    })
+  }
 
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5), marginTop: 42, marginBottom: 220}} >
@@ -100,6 +120,17 @@ const ChapterFooter = ({ loading, previousChapter, nextChapter }: ChapterFooterP
             </Pressable>
           </View>
         </View>
+        <View style={{gap: 10}} >
+          <View style={{width: '100%', padding: 12, borderRadius: 4, backgroundColor: Colors.gray}} >
+            <Text style={[AppStyle.textRegular, {fontSize: 20}]}>
+              If you encounter broken or missing images, please use the bug-report option below.
+            </Text>
+          </View>
+          <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", padding: 12, backgroundColor: Colors.gray, borderRadius: 4, alignSelf: "flex-end"}} > 
+            <Text style={AppStyle.textRegular}>Bub Report</Text>
+            <Ionicons name='bug-outline' size={32} color={Colors.green} />            
+          </Pressable>
+        </View>
       </View>
   )
 }
@@ -117,16 +148,16 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
-      await dbUpsertReadingHistory(
+      await spFetchChapterImages(currentChapter.chapter_id)
+        .then(values => setImages([...values]))
+        .catch(error => console.log(error))
+      setLoading(false)
+      dbUpsertReadingHistory(
         db, 
         currentChapter.manhwa_id, 
         currentChapter.chapter_id,
         currentChapter.chapter_num
       )
-      await spFetchChapterImages(currentChapter.chapter_id)
-        .then(values => setImages([...values]))
-        .catch(error => console.log(error))        
-      setLoading(false)
     }
   }, [currentChapter])
 
@@ -140,21 +171,15 @@ const Chapter = () => {
   
   const scrollUp = () => {
     flatListRef.current?.scrollToOffset({animated: false, offset: 0})
-  }
-  
-  const scrollDown = () => {
-    flatListRef.current?.scrollToEnd({animated: false})
-  }
+  }  
 
   const nextChapter = async () => {
     scrollUp()
-    await Image.clearMemoryCache()
     moveToNextChapter()
   }
 
   const previousChapter = async () => {
     scrollUp()
-    await Image.clearMemoryCache()    
     moveToPreviousChapter()
   }
 
@@ -164,12 +189,9 @@ const Chapter = () => {
         <FlatList
           data={images}
           ListHeaderComponent={<ChapterHeader manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
-          ListFooterComponent={<ChapterFooter loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
+          ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
-          maxToRenderPerBatch={1}
-          removeClippedSubviews={true}
           ref={flatListRef as any}
-          initialNumToRender={1}
           renderItem={({item, index}) => <ManhwaImage image={item} />}
         />
         <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >

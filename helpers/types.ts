@@ -69,3 +69,12 @@ export type OugiUser = {
         image_url: string
     } | null
 }
+
+
+export type ChapterReadLog = {
+  chapters: Set<number>,
+  cover_image_url: string,
+  manhwa_id: number,
+  title: string,
+  last_readed_at: Date
+}

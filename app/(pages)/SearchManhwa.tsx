@@ -1,14 +1,14 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import { AppStyle } from '@/styles/AppStyles'
-import { useSQLiteContext } from 'expo-sqlite'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
-import { useCallback } from 'react'
-import TopBar from '@/components/TopBar'
 import ReturnButton from '@/components/ReturnButton'
-import { Manhwa } from '@/model/Manhwa'
-import { dbManhwaSearch } from '@/lib/database'
+import { dbSearchManhwas } from '@/lib/database'
 import ManhwaGrid from '@/components/ManhwaGrid'
+import { useSQLiteContext } from 'expo-sqlite'
+import { AppStyle } from '@/styles/AppStyles'
 import SearchBar from '@/components/SearchBar'
+import TopBar from '@/components/TopBar'
+import { Manhwa } from '@/model/Manhwa'
+import { useCallback } from 'react'
 import { debounce } from 'lodash'
 
 
@@ -29,7 +29,7 @@ const SearchManhwa = () => {
   const init = useCallback(async () => {
     if (manhwas.length == 0) {
       setLoading(true)
-      await dbManhwaSearch(db, searchTerm.current, 0, PAGE_LIMIT)
+      await dbSearchManhwas(db, searchTerm.current, 0, PAGE_LIMIT)
         .then(values => setManhwas(values))
       setLoading(false)
     }
@@ -44,10 +44,10 @@ const SearchManhwa = () => {
   )
 
   const handleSearch = async (value: string) => {
-    searchTerm.current = value
+    searchTerm.current = value.trim()
     page.current = 0
     setLoading(true)
-      await dbManhwaSearch(db, searchTerm.current, page.current * PAGE_LIMIT, PAGE_LIMIT)
+      await dbSearchManhwas(db, searchTerm.current, page.current * PAGE_LIMIT, PAGE_LIMIT)
         .then(values => {
           hasResults.current = values.length > 0
           setManhwas([...values])
@@ -61,7 +61,7 @@ const SearchManhwa = () => {
     if (!hasResults.current || !isInitialized.current) { return }
     page.current += 1
     setLoading(true)
-      await dbManhwaSearch(db, searchTerm.current, page.current * PAGE_LIMIT, PAGE_LIMIT)
+      await dbSearchManhwas(db, searchTerm.current, page.current * PAGE_LIMIT, PAGE_LIMIT)
         .then(values => {
           hasResults.current = values.length > 0
           setManhwas(prev => [...prev, ...values])

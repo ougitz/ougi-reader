@@ -1,28 +1,43 @@
 import { View, Pressable, ActivityIndicator, Text, StyleSheet } from "react-native"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { spFetchChapterList } from "@/lib/supabase"
 import { router } from "expo-router"
+import {dbGetMangaReadChapters} from '@/lib/database'
 import { AppStyle } from "@/styles/AppStyles"
 import { Colors } from "@/constants/Colors"
 import { Chapter } from "@/model/Chapter"
 import { useReadingState } from "@/store/manhwaReadingState"
 import { Manhwa } from "@/model/Manhwa"
+import { useSQLiteContext } from "expo-sqlite"
+import Ionicons from "@expo/vector-icons/Ionicons"
+import RotatingButton from "./RotatingButton"
 
 
-const ChapterItem = ({manhwa_title, chapter}: {manhwa_title: string, chapter: Chapter}) => {
+const ChapterItem = ({
+  isReaded, 
+  manhwa_title, 
+  chapter
+}: {
+  isReaded: boolean,
+  manhwa_title: string, 
+  chapter: Chapter
+}) => {
 
-  const { setChapterNum } = useReadingState()
+  const { setChapterNum } = useReadingState()  
 
   const onPress = () => {
     setChapterNum(chapter.chapter_num)
     router.navigate({pathname: "/(pages)/Chapter", params: {manhwa_title}})
   }
 
+  const bColor = isReaded ? Colors.white : Colors.gray
+  const tColor = isReaded ? Colors.backgroundColor : Colors.white
+
   return (
     <Pressable       
       onPress={onPress}
-      style={styles.chapterItem} >
-        <Text style={AppStyle.textRegular}>{chapter.chapter_num}</Text>
+      style={[styles.chapterItem, {backgroundColor: bColor}]} >
+        <Text style={[AppStyle.textRegular, {color: tColor}]}>{chapter.chapter_num}</Text>
     </Pressable>
   )
 }
@@ -30,19 +45,23 @@ const ChapterItem = ({manhwa_title, chapter}: {manhwa_title: string, chapter: Ch
 
 const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
   
+  const db = useSQLiteContext()
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [loading, setLoading] = useState(false)
   const { setChapterNum, setChapterMap } = useReadingState()
   
+  const chapterAlreadyReaded = useRef<Set<number>>(new Set())
+  
   const init = useCallback(async () => {
     setLoading(true)
     await spFetchChapterList(manhwa.manhwa_id)
-      .then(values => {
-        setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
-        setChapters(values)
-      })
+    .then(values => {
+      setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
+      setChapters(values)
+    })
+    chapterAlreadyReaded.current = await dbGetMangaReadChapters(db, manhwa.manhwa_id)
     setLoading(false)
-  }, [])
+  }, [])  
   
   useEffect(
     () => {
@@ -73,7 +92,11 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
             <ActivityIndicator size={'large'} color={Colors.white} />
           </View>
             :
-          <>
+          <View style={{width: '100%', gap: 20}} >
+            <View style={{flexDirection: 'row', alignItems: "center", gap: 10}} >
+              <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]} >Chapters</Text>
+              <RotatingButton onPress={init} iconName="refresh-outline" iconColor={Colors.white} />
+            </View>
             <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center"}} >
               <Pressable onPress={readFirst} style={{flex: 1, backgroundColor: Colors.white, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
                 <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read First</Text>
@@ -86,14 +109,14 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
               {
                 chapters.map((item, index) => 
                   <ChapterItem 
+                    isReaded={chapterAlreadyReaded.current.has(item.chapter_num)}
                     manhwa_title={manhwa.title} 
                     key={index} 
-                    chapter={item} 
-                    />
+                    chapter={item}/>
                 )
               }
             </View>
-          </>
+          </View>
       }
     </View>
   )
@@ -102,8 +125,7 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
 export default ManhwaChapterList;
 
 const styles = StyleSheet.create({
-  chapterItem: {
-    backgroundColor: Colors.gray, 
+  chapterItem: {    
     width: 48, 
     height: 48, 
     borderRadius: 4, 

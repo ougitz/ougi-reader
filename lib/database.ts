@@ -1,8 +1,8 @@
-import { Author, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
+import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { UpdateHistorySchema } from './model/UpdateHistorySchema';
 import { ReadingStatusSchema } from './model/ReadingStatusSchema';
-import { spFetchChapterList, spGetManhwas } from './supabase';
-import { secondsSince } from '@/helpers/util';
+import { spFetchChapterList, spFetchUserReadingStatus, spGetManhwas } from './supabase';
+import { convertStringListToSet, secondsSince } from '@/helpers/util';
 import { Chapter } from '@/model/Chapter';
 import { Manhwa } from '@/model/Manhwa';
 import * as SQLite from 'expo-sqlite';
@@ -76,8 +76,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_reading_status_manhwa FOREIGN KEY (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE
     );    
-
-    DROP TABLE IF EXISTS reading_history;
+    
     CREATE TABLE IF NOT EXISTS reading_history (
       manhwa_id    INTEGER NOT NULL,      
       chapter_id   INTEGER NOT NULL,
@@ -111,44 +110,18 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 }
 
 
-export async function dbCleaTable(db: SQLite.SQLiteDatabase, name: string) {
-  await db.runAsync(`DELETE FROM ${name};`, [name]).catch(error => console.log(error))
+export async function dbClearTable(db: SQLite.SQLiteDatabase, name: string) {
+  await db.runAsync(`DELETE FROM ${name};`, [name]).catch(error => console.log("error dbClearTableerror", error))
 }
 
 export async function dbClearDatabase(db: SQLite.SQLiteDatabase) {
-  await db.runAsync('DELETE FROM manhwas;').catch(error => console.log(error))
-  await db.runAsync('DELETE FROM chapters;').catch(error => console.log(error))
-  await db.runAsync('DELETE FROM genres;').catch(error => console.log(error))
-  await db.runAsync('DELETE FROM manhwa_genres;').catch(error => console.log(error))
-  await db.runAsync('DELETE FROM authors;').catch(error => console.log(error))
-  await db.runAsync('DELETE FROM manhwa_authors;').catch(error => console.log(error))
+  await db.runAsync('DELETE FROM manhwas;').catch(error => console.log("error dbClearDatabase manhwas", error))
+  await db.runAsync('DELETE FROM chapters;').catch(error => console.log("error dbClearDatabase chapters", error))
+  await db.runAsync('DELETE FROM genres;').catch(error => console.log("error dbClearDatabase genres", error))
+  await db.runAsync('DELETE FROM manhwa_genres;').catch(error => console.log("error dbClearDatabase manhwa_genres", error))
+  await db.runAsync('DELETE FROM authors;').catch(error => console.log("error dbClearDatabase authors", error))
+  await db.runAsync('DELETE FROM manhwa_authors;').catch(error => console.log("error dbClearDatabase manhwa_authors", error))
   console.log("[DATABASE CLEARED]")
-}
-
-
-export async function dbUserReadHistory(db: SQLite.SQLiteDatabase) {
-  const rows = await db.getAllAsync(
-    `
-      SELECT
-        m.manhwa_id,
-        m.title,
-        m.cover_image_url,
-        GROUP_CONCAT(rh.chapter_num, ', ') AS capítulos_lidos,
-        MAX(rh.readed_at)        AS última_leitura
-      FROM reading_history AS rh
-      JOIN manhwas           AS m
-        ON m.manhwa_id = rh.manhwa_id
-      GROUP BY
-        m.manhwa_id,
-        m.title
-      ORDER BY
-        última_leitura DESC;
-    `  
-  ).catch(error => console.log("error dbUserReadHistory", error));
-  
-  if (rows) {
-    rows.forEach(item => console.log(item))
-  }
 }
 
 
@@ -162,17 +135,16 @@ export async function dbListTables(db: SQLite.SQLiteDatabase) {
     WHERE 
       type='table' AND 
       name NOT LIKE 'sqlite_%';`
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbListTables", error));
   if (rows) {
     rows.forEach(item => console.log(item))
   }
 }
 
-
 export async function dbReadlAll<T>(db: SQLite.SQLiteDatabase, name: string): Promise<T[]> {
   const rows = await db.getAllAsync(
     `SELECT * FROM ${name};`
-  ).catch(error => console.log(error));
+  ).catch(error => console.log(`error dbReadlAll ${name}`, error));
 
   return rows ? rows as T[] : []  
 }
@@ -182,7 +154,7 @@ export async function dbListTable(db: SQLite.SQLiteDatabase, name: string) {
   const rows = await db.getAllAsync(
     `SELECT * FROM ${name};`,
     [name]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log(`error dbListTable ${name}`, error));
 
   if (rows) {
     rows.forEach(item => console.log(item))
@@ -208,7 +180,7 @@ export async function dbCheckSecondsSinceLastRefresh(
         name = ?;
     `,
     [name]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log(`error dbCheckSecondsSinceLastRefresh ${name}`, error));
   
   if (!row) { 
     console.log(`could not read updated_history of ${name}`)
@@ -231,7 +203,7 @@ export async function dbShouldUpdate(db: SQLite.SQLiteDatabase, name: string): P
         name = ?;
     `,
     [name]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log(`error dbShouldUpdate ${name}`, error));
   
   if (!row) { 
     console.log(`could not read updated_history of ${name}`)
@@ -255,7 +227,7 @@ export async function dbShouldUpdate(db: SQLite.SQLiteDatabase, name: string): P
         WHERE name = ?;
       `,
       [current_time, name]
-    ).catch(error => console.log(error));
+    ).catch(error => console.log("error dbShouldUpdate update_historyerror", name, error));
     return true
   }
 
@@ -289,7 +261,7 @@ async function dbUpsertManhwas(db: SQLite.SQLiteDatabase, manhwas: Manhwa[]) {
       updated_at
     )
     VALUES ${placeholders};
-  `, params).catch(error => console.log("dbUpsertManhwas", error));
+  `, params).catch(error => console.log("error dbUpsertManhwas", error));
 }
 
 
@@ -314,7 +286,7 @@ async function dbUpsertChapter(db: SQLite.SQLiteDatabase, chapters: Chapter[]) {
       DO NOTHING;
     `, 
     params
-  ).catch(error => console.log("dbUpsertChapter", error));
+  ).catch(error => console.log("error dbUpsertChapter", error));
 }
 
 async function dbUpsertGenres(db: SQLite.SQLiteDatabase, genres: Genre[]) {
@@ -334,7 +306,7 @@ async function dbUpsertGenres(db: SQLite.SQLiteDatabase, genres: Genre[]) {
       DO NOTHING;
     `, 
     params
-  ).catch(error => console.log("dbUpsertGenres", error));
+  ).catch(error => console.log("error dbUpsertGenres", error));
 }
 
 async function dbUpsertManhwaGenres(db: SQLite.SQLiteDatabase, manhwaGenres: ManhwaGenre[]) {
@@ -354,7 +326,7 @@ async function dbUpsertManhwaGenres(db: SQLite.SQLiteDatabase, manhwaGenres: Man
       DO NOTHING;
     `, 
     params
-  ).catch(error => console.log("dbUpsertManhwaGenres", error));
+  ).catch(error => console.log("error dbUpsertManhwaGenres", error));
 }
 
 
@@ -377,7 +349,7 @@ async function dbUpsertAuthors(db: SQLite.SQLiteDatabase, authors: Author[]) {
       DO NOTHING;
     `, 
     params
-  ).catch(error => console.log("dbUpsertAuthors", error));
+  ).catch(error => console.log("error dbUpsertAuthors", error));
 }
 
 
@@ -400,7 +372,7 @@ async function dbUpsertManhwaAuthors(db: SQLite.SQLiteDatabase, manhwaAuthors: M
       DO NOTHING;
     `, 
     params
-  ).catch(error => console.log("dbUpsertManhwaAuthors", error));
+  ).catch(error => console.log("error dbUpsertManhwaAuthors", error));
 }
 
 
@@ -430,36 +402,73 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   await dbUpsertManhwaGenres(db, manhwaGenres)
   await dbUpsertAuthors(db, authors)
   await dbUpsertManhwaAuthors(db, manhwaAuthors)
-
+  
   const end = Date.now()
   console.log((end - start) / 1000)
   console.log("[DATABASE UPDATED]")
 }
 
-export async function dbUpsertUpdateHistory(
+
+export async function dbGetUserReadHistory(
   db: SQLite.SQLiteDatabase,
-  name: string, 
-  minutes: number = 60
-) {
-  await db.runAsync(
+  p_offset: number = 0,
+  p_limit: number = 30
+): Promise<ChapterReadLog[]> {
+  const rows = await db.getAllAsync(
     `
-    INSERT INTO update_history (
-      name,
-      refresh_cycle
-    ) VALUES (?, ?)
-    ON ONFLICT (name)
-    DO UPDATE SET  
-      refresh_cycle = EXCLUDED.refresh_cycle;
+      SELECT
+        m.manhwa_id,
+        m.title,
+        m.cover_image_url,
+        GROUP_CONCAT(rh.chapter_num, ', ') AS chapters,
+        MAX(rh.readed_at)        AS last_readed_at
+      FROM reading_history AS rh
+      JOIN manhwas           AS m
+        ON m.manhwa_id = rh.manhwa_id
+      GROUP BY
+        m.manhwa_id,
+        m.title
+      ORDER BY
+        last_readed_at DESC
+      LIMIT ?
+      OFFSET ?;
     `,
-    [name, minutes]
-  ).catch(error => console.log(error));    
+    [p_limit, p_offset]
+  ).catch(error => console.log("error dbUserReadHistory", error));
+  
+  return rows ? rows.map(
+    (item: any) => {
+      return {...item, chapters: convertStringListToSet(item.chapters)}
+    }) : []
+}
+
+
+export async function dbGetMangaReadChapters(db: SQLite.SQLiteDatabase, manhwa_id: number): Promise<Set<number>> {
+    const rows = await db.getAllAsync(
+    `
+      SELECT
+        chapter_num
+      FROM 
+        reading_history
+      WHERE 
+        manhwa_id = ?;
+    `,
+    [manhwa_id]
+  ).catch(error => console.log("error dpFetchChapterReadedByManhwa", error));
+
+  
+  if (!rows) {
+    return new Set<number>()
+  }
+  
+  return new Set<number>(rows.map((item: any) => item.chapter_num))
 }
 
 export async function dbReadRandomManhwa(db: SQLite.SQLiteDatabase, p_limit: number = 1): Promise<Manhwa[]> {
   const rows = await db.getAllAsync(
     'SELECT * FROM manhwas ORDER BY RANDOM() LIMIT ?',
     [p_limit]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadRandomManhwa", error));
   
   return rows ? rows as Manhwa[]  : []
 }
@@ -486,7 +495,7 @@ export async function dbReadManhwasByGenreName(
       OFFSET ?;
     `,
     [genre, p_limit, p_offset]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwasByGenreName", genre, error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -512,7 +521,7 @@ export async function dbReadManhwasByGenreId(
       OFFSET ?;
     `,
     [genre_id, p_limit, p_offset]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwasByGenreId", genre_id, error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -533,7 +542,7 @@ export async function dbReadManhwaGenres(
       ORDER BY g.genre;
     `,
     [manhwa_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwaGenres", manhwa_id, error));
 
   return rows ? rows as Genre[] : []
 }
@@ -554,7 +563,7 @@ export async function dbReadManhwasByAuthorId(
       ORDER BY m.views DESC;
     `,
     [author_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwasByAuthorId", author_id, error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -575,7 +584,7 @@ export async function dbReadManhwaAuthors(
         ma.manhwa_id = ?;
     `,
     [manhwa_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwaAuthors", manhwa_id, error));
 
   return rows ? rows as ManhwaAuthor[] : []
 }
@@ -588,7 +597,7 @@ export async function dbReadManhwaById(
   const row = await db.getFirstAsync(
     'SELECT * FROM manhwas WHERE manhwa_id = ?;',
     [manhwa_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwaById", manhwa_id, error));
 
   return row ? row as Manhwa : null
 }
@@ -609,7 +618,7 @@ export async function dbReadManhwasOrderedByUpdateAt(
       OFFSET ?;
     `,
     [p_limit, p_offset]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwasOrderedByUpdateAt", error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -630,28 +639,7 @@ export async function dbReadManhwasOrderedByViews(
       OFFSET ?;
     `,
     [p_limit, p_offset]
-  ).catch(error => console.log(error));
-
-  return rows ? rows as Manhwa[]  : []
-}
-
-export async function dbReadManhwasOrderedByRating(
-  db: SQLite.SQLiteDatabase,
-  p_offset: number = 0, 
-  p_limit: number = 30
-): Promise<Manhwa[]> {
-  const rows = await db.getAllAsync(
-    `
-      SELECT
-        *
-      FROM
-        manhwas
-      ORDER BY rating DESC
-      OFFSET ?
-      LIMIT ?;
-    `,
-    [p_limit, p_offset]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadManhwasOrderedByViews", error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -673,7 +661,7 @@ export async function dbReadLast3Chapters(
       LIMIT 3;
     `,
     [manhwa_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadLast3Chapters", manhwa_id, error));
 
   return rows ? rows as Chapter[] : []
 }
@@ -682,7 +670,7 @@ export async function dbReadLast3Chapters(
 export async function dbReadGenres(db: SQLite.SQLiteDatabase): Promise<Genre[]> {
   const rows = await db.getAllAsync(
     'SELECT * FROM genres ORDER BY genre;'    
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbReadGenres", error));
   return rows ? rows as Genre[] : []
 }
 
@@ -701,7 +689,7 @@ export async function dbUpdateManhwaViews(
         manhwa_id = ?
     `,
     [manhwa_id]
-  ).catch(error => console.log(error))
+  ).catch(error => console.log("error dbUpdateManhwaViews", manhwa_id, error))
 }
 
 
@@ -724,7 +712,27 @@ export async function dbUpdateManhwaReadingStatus(
         updated_at = CURRENT_TIMESTAMP;
     `,
     [manhwa_id, status]
-  ).catch(error => console.log(error))
+  ).catch(error => console.log("error dbUpdateManhwaReadingStatus", manhwa_id, status, error))
+}
+
+export async function dbPopulateReadingStatusTable(
+  db: SQLite.SQLiteDatabase,
+  user_id: string
+) {
+  const sts: {manhwa_id: number, status: string}[] = await spFetchUserReadingStatus(user_id)
+  if (sts.length == 0) { return }
+  const placeholders = sts.map(() => '(?,?)').join(',');  
+  const params = sts.flatMap(i => [
+    i.manhwa_id, 
+    i.status    
+  ]);
+  await db.runAsync(`    
+    INSERT OR REPLACE INTO reading_status (
+      manhwa_id, 
+      status
+    )
+    VALUES ${placeholders};
+  `, params).catch(error => console.log("error dbPopulateReadingStatusTable", error));
 }
 
 export async function dbGetManhwasByReadingStatus(
@@ -749,7 +757,7 @@ export async function dbGetManhwasByReadingStatus(
       OFFSET ?;
     `,
     [status, p_limit, p_offset]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbGetManhwasByReadingStatus", status, error));
 
   return rows ? rows as Manhwa[]  : []
 }
@@ -762,69 +770,9 @@ export async function dbGetManhwaReadingStatus(
   const row = await db.getFirstAsync<ReadingStatusSchema>(
     "SELECT status FROM reading_status WHERE manhwa_id = ?", 
     [manhwa_id]
-  ).catch(error => console.log(error));
+  ).catch(error => console.log("error dbGetManhwaReadingStatus", manhwa_id, error));
 
   return row ? row.status : null
-}
-
-
-async function dbUpsertChapters(
-  db: SQLite.SQLiteDatabase,
-  chapters: Chapter[]
-) {
-  const insertChapterStatement = await db.prepareAsync(
-    `
-      INSERT INTO chapters (
-        manhwa_id,
-        chapter_id,
-        chapter_num
-      ) VALUES (?, ?, ?)
-      ON CONFLICT (chapter_id)
-      DO NOTHING;
-    `
-  )
-
-  try {
-    for (const chapter of chapters) {
-      await insertChapterStatement.executeAsync([
-        chapter.manhwa_id, chapter.chapter_id, chapter.chapter_num
-      ]).catch(error => console.log(error))
-    }
-  } finally {
-    await insertChapterStatement.finalizeAsync().catch(error => console.log(error))
-  }
-
-}
-
-
-async function dbReadManhwaChapters(
-  db: SQLite.SQLiteDatabase,
-  manhwa_id: number
-): Promise<Chapter[]> {
-  const rows = await db.getAllAsync(
-    `SELECT * FROM chapters WHERE manhwa_id = ? ORDER BY chapter_num`,
-    [manhwa_id]
-  ).catch(error => console.log(error));
-  return rows ? rows as Chapter[] : []
-}
-
-
-export async function dbFetchManwaChapterList(
-  db: SQLite.SQLiteDatabase,
-  manhwa_id: number
-): Promise<Chapter[]> {
-  const manhwa_key: string = manhwa_id.toString()
-  await dbUpsertUpdateHistory(db, manhwa_key, 60)
-  const shouldUpdate = await dbShouldUpdate(db, manhwa_key);
-
-  if (shouldUpdate) {
-    const chapters: Chapter[] = await spFetchChapterList(manhwa_id)
-    await dbUpsertChapters(db, chapters)
-    return chapters
-  }
-
-  const chapters: Chapter[] = await dbReadManhwaChapters(db, manhwa_id)
-  return chapters
 }
 
 
@@ -834,6 +782,7 @@ export async function dbUpsertReadingHistory(
   chapter_id: number,
   chapter_num: number
 ) {
+  console.log(manhwa_id, chapter_id,chapter_num)
   await db.runAsync(
     `
       INSERT INTO reading_history (
@@ -847,11 +796,11 @@ export async function dbUpsertReadingHistory(
       DO UPDATE SET readed_at = CURRENT_TIMESTAMP;
     `,
     [manhwa_id, chapter_id, chapter_num]
-  ).catch(error => console.log(error))
+  ).catch(error => console.log("error dbUpsertReadingHistory", manhwa_id, chapter_id, chapter_num, error))
 }
 
 
-export async function dbManhwaSearch(
+export async function dbSearchManhwas(
   db: SQLite.SQLiteDatabase, 
   searchTerm: string,
   p_offset: number = 0,
@@ -866,6 +815,6 @@ export async function dbManhwaSearch(
       OFFSET ?;
     `,
     [`%${searchTerm}%`, p_limit, p_offset]
-  ).catch(error => console.log(error))
+  ).catch(error => console.log("error dbManhwaSearch", searchTerm, error))
   return rows ? rows as Manhwa[] : []
 }

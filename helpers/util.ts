@@ -118,3 +118,12 @@ export function secondsToMinutesAndSecondsStr(seconds: number): string {
     const ss = String(s).padStart(2, '0');
     return `${mm}:${ss}`;
 }
+
+
+export function convertStringListToSet(input: string): Set<number> {
+    const parts = input.split(',').map(s => s.trim());
+    const numbers = parts
+        .map(s => parseInt(s, 10))
+        .filter(n => !Number.isNaN(n));
+    return new Set(numbers);
+}

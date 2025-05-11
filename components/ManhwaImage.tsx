@@ -4,9 +4,9 @@ import {
     View 
 } from 'react-native'
 import { ChapterImage } from '@/helpers/types'
-import React, { useState } from 'react'
 import { wp } from '@/helpers/util'
 import { Image } from 'expo-image'
+import React from 'react'
 
 
 interface ManhwaImageProps {
@@ -24,12 +24,7 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
 
     return (
         <View style={{width, height, alignSelf: "center"}} >
-            <Image
-                source={image.image_url}
-                style={{width, height}}
-                contentFit='cover'
-                cachePolicy={'disk'}
-            />
+            <Image source={image.image_url} style={{width, height}} cachePolicy={'none'} />
         </View>
     )
 }
