@@ -32,6 +32,7 @@ import AddToLibray from '@/components/AddToLibray';
 import { useSQLiteContext } from 'expo-sqlite';
 import { ChapterReadLog } from '@/helpers/types';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import RandomManhwaIcon from '@/components/RandomManhwaIcon';
 
 
 const ManhwaPage = () => {
@@ -54,13 +55,13 @@ const ManhwaPage = () => {
       })
       spUpdateManhwaViews(manhwa_id)
       dbUpdateManhwaViews(db, manhwa_id)      
-  }, [])
+  }, [manhwa_id])
 
   useEffect(
     () => {
       init()
     },
-    []
+    [manhwa_id]
   )
 
   const openBugReport = () => {
@@ -85,6 +86,7 @@ const ManhwaPage = () => {
                     <Pressable onPress={openBugReport} style={{padding: 6, backgroundColor: Colors.backgroundColor, borderRadius: 4}} >
                       <Ionicons name='bug-outline' size={28} color={manhwa.color} />
                     </Pressable>
+                    <RandomManhwaIcon iconSize={28} backgroundColor={Colors.backgroundColor} iconColor={manhwa.color} />
                     <ReturnButton iconColor={manhwa.color} />
                 </View>
             </View>

@@ -149,6 +149,7 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
+      await Image.clearMemoryCache()
       await Image.clearDiskCache()
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))

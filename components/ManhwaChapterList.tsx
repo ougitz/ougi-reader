@@ -61,13 +61,13 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
     })
     chapterAlreadyReaded.current = await dbGetMangaReadChapters(db, manhwa.manhwa_id)
     setLoading(false)
-  }, [])  
+  }, [manhwa])  
   
   useEffect(
     () => {
       init()
     },
-    []
+    [manhwa]
   )
 
   const readFirst = () => {
