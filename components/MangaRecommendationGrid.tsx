@@ -9,6 +9,7 @@ import { debounce } from 'lodash'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
 import Title from './text/Title'
+import { sortRecommendations } from '@/helpers/util'
 
 
 const MangaRecommendationGrid = () => {
@@ -18,13 +19,13 @@ const MangaRecommendationGrid = () => {
     const init = useCallback(async () => {
         if (recommendations.length > 0) { return }
         await spFetchManhwaRecommendations()
-            .then(values => setRecommendations([...values]))
+            .then(values => setRecommendations([...sortRecommendations(values)]))
     }, [])
 
 
     const reload = async () => {
         await spFetchManhwaRecommendations()
-            .then(values => setRecommendations([...values]))
+            .then(values => setRecommendations([...sortRecommendations(values)]))
     }
 
     const debounceReload = useCallback(
@@ -36,6 +37,8 @@ const MangaRecommendationGrid = () => {
         () => {init()},
         []
     )
+
+    recommendations.forEach(item => console.log(item.image.height))
 
     return (
         <View style={{gap: 20}} >

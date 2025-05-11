@@ -9,6 +9,7 @@ import ManhwaGrid from '@/components/ManhwaGrid'
 import { useFocusEffect } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
 import { useSQLiteContext } from 'expo-sqlite'
+import { Colors } from '@/constants/Colors'
 
 
 const PAGE_LIMIT = 30
@@ -65,10 +66,10 @@ const Library = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-      <TopBar title='Library' >
-        <ReturnButton/>
+      <TopBar title='Library' titleColor={Colors.libraryColor} >
+        <ReturnButton iconColor={Colors.libraryColor} />
       </TopBar>
-      <View style={{flex: 1, gap: 20}} >
+      <View style={{flex: 1, gap: 10}} >
         <ReadingStatusPicker defaultValue='Reading' onChangeValue={onChangeValue} />
         <ManhwaGrid
           manhwas={manhwas}

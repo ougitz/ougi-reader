@@ -26,8 +26,10 @@ import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import { Image } from 'expo-image'
 import { hp, wp } from '@/helpers/util'
+import { FlashList } from '@shopify/flash-list'
+import FastImage from 'react-native-fast-image'
+import BugIcon from '@/components/BugIcon'
 
 
 interface ChapterHeaderProps {
@@ -73,8 +75,8 @@ const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: C
             </Pressable>
           </View>
         </View>
-        <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", padding: 12, backgroundColor: Colors.gray, borderRadius: 42, alignSelf: "flex-end"}} >             
-            <Ionicons name='bug-outline' size={32} color={Colors.green} />            
+        <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", alignSelf: "flex-end"}} >
+            <BugIcon size={32} />
         </Pressable>
       </View>
     </View>
@@ -149,8 +151,8 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
-      await Image.clearMemoryCache()
-      await Image.clearDiskCache()
+      await FastImage.clearDiskCache()
+      await FastImage.clearMemoryCache()
       await spFetchChapterImages(currentChapter.chapter_id)
         .then(values => setImages([...values]))
         .catch(error => console.log(error))
@@ -189,13 +191,17 @@ const Chapter = () => {
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0, paddingBottom: 10}]} >
       <View style={{flex: 1}} >
-        <FlatList
+        <FlashList
           data={images}
           ListHeaderComponent={<ChapterHeader manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
+          estimatedItemSize={hp(50)}
+          onEndReachedThreshold={hp(200)}
+          drawDistance={hp(200)}
           ref={flatListRef as any}
           renderItem={({item, index}) => <ManhwaImage image={item} />}
+          ListEmptyComponent={<ActivityIndicator size={32} color={Colors.white} />}
         />
         <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
             <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.3)'} />

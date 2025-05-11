@@ -25,7 +25,7 @@ const DATA = [
     },
     {
         title: "Infringement Notification",
-        message: "If you are a rights holder or an authorized representative and believe your protected content is being used without authorization in the App, please contact us immediately at [your-email@domain.com], providing the following information:\n\n • Precise identification of the copyrighted work.\n • Exact location of the infringing material within the App (title, internal URL, or screen reference).\n • A good-faith statement that use of the material is not authorized by the rights holder.\n • A statement of the truthfulness of the information provided, accepting legal responsibility for any false statements."
+        message: "If you are a rights holder or an authorized representative and believe your protected content is being used without authorization in the App, please contact us immediately at ougireader@proton.me, providing the following information:\n\n • Precise identification of the copyrighted work.\n • Exact location of the infringing material within the App (title, internal URL, or screen reference).\n • A good-faith statement that use of the material is not authorized by the rights holder.\n • A statement of the truthfulness of the information provided, accepting legal responsibility for any false statements."
     },
     {
         title: "Amendments to This Disclaimer",
@@ -46,8 +46,8 @@ const DisclaimerText = ({title, message}: {title: string, message: string}) => {
 const Disclaimer = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-        <TopBar title='Disclaimer' >
-            <ReturnButton/>
+        <TopBar title='Disclaimer' titleColor={Colors.disclaimerColor} >
+            <ReturnButton iconColor={Colors.disclaimerColor} />
         </TopBar>
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} >
             <View style={{width: '100%', gap: 20}} >

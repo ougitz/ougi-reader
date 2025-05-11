@@ -37,7 +37,7 @@ export const ToastWaitDatabase = (secondsUntilRefresh: number) => Toast.show({
 
 
 export const ToastUpdateDatabase = (message: string = '') => Toast.show({
-    title: "Updating database", 
+    title: "Updating local database", 
     message: "", 
     type: "info"
 })

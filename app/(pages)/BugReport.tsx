@@ -5,6 +5,7 @@ import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import React from 'react'
 import { useLocalSearchParams } from 'expo-router'
+import { Colors } from '@/constants/Colors'
 
 
 const BugReport = () => {
@@ -14,8 +15,8 @@ const BugReport = () => {
 
     return (
         <SafeAreaView style={AppStyle.safeArea} >
-            <TopBar title='Bug Report' >
-                <ReturnButton/>
+            <TopBar title='Bug Report' titleColor={Colors.BugReportColor} >
+                <ReturnButton iconColor={Colors.BugReportColor} />
             </TopBar>
             <BugReportForm title={title}  />
         </SafeAreaView>

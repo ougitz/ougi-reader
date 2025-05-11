@@ -93,15 +93,11 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
           </View>
             :
           <View style={{width: '100%', gap: 20}} >
-            <View style={{flexDirection: 'row', alignItems: "center", gap: 10}} >
-              <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]} >Chapters</Text>
-              <RotatingButton onPress={init} iconName="refresh-outline" iconColor={Colors.white} />
-            </View>
             <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center"}} >
-              <Pressable onPress={readFirst} style={{flex: 1, backgroundColor: Colors.white, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
+              <Pressable onPress={readFirst} style={{flex: 1, backgroundColor: manhwa.color, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
                 <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read First</Text>
               </Pressable>
-              <Pressable onPress={readLast} style={{flex: 1, backgroundColor: Colors.white, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
+              <Pressable onPress={readLast} style={{flex: 1, backgroundColor: manhwa.color, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
                 <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read Last</Text>
               </Pressable>
             </View>

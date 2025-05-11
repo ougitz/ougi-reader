@@ -1,6 +1,6 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { AppStyle } from '@/styles/AppStyles'
-import React from 'react'
+import React, { useState } from 'react'
 import TopBar from '@/components/TopBar'
 import HomeButton from '@/components/HomeButton'
 import { useAuthState } from '@/store/authState'
@@ -13,12 +13,15 @@ import { Colors } from '@/constants/Colors'
 import { dbClearTable } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
 import { ToastSuccess } from '@/helpers/ToastMessages'
+import ChangeProfileInfoForm from '@/components/form/ChangeProficleInfoForm'
 
 
 const Account = () => {
 
   const { user, session, logout } = useAuthState()
   const db = useSQLiteContext()
+  
+  const [loading, setLoading] = useState(false)
   
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -30,22 +33,12 @@ const Account = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-      <TopBar title='Account' >
-        <ReturnButton/>  
-      </TopBar>
-      <Pressable onPress={handleLogout} hitSlop={AppConstants.hitSlopLarge} >
-        <View style={{width: '100%', alignItems: "center", justifyContent: "center"}} >
-          <Ionicons name='person-circle' size={128} color={Colors.white} />
-          <Text style={AppStyle.textHeader}>{user ? user.username : ''}</Text>
-          <Text style={AppStyle.textHeader}>{session ? session.user.email : ''}</Text>
+      <TopBar title='Account' titleColor={Colors.accountColor} >
+        <View style={{flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "center"}} >
+          <ReturnButton iconColor={Colors.accountColor} />
         </View>
-        <View style={{marginTop: 100}} />
-        <Pressable onPress={handleLogout} hitSlop={AppConstants.hitSlopLarge} >
-          <Text style={AppStyle.textRegular}>
-            Logout
-          </Text>
-        </Pressable>
-      </Pressable>
+      </TopBar>
+      <ChangeProfileInfoForm/>
     </SafeAreaView>
   )
 }

@@ -13,15 +13,16 @@ import { useReadingState } from '@/store/manhwaReadingState'
 import { spFetchChapterList } from '@/lib/supabase'
 import { router } from 'expo-router'
 import { ActivityIndicator } from 'react-native'
+import { Image } from 'expo-image'
 
 
 const PAGE_LIMIT = 20
 
 
-const HistoryChapterItem = ({chapter_num, onPress}: {chapter_num: number, onPress: () => any}) => {
+const HistoryChapterItem = ({chapter_num, color, onPress}: {chapter_num: number, color: string, onPress: () => any}) => {
   return (
-    <Pressable onPress={onPress} style={{width: 48, height: 48, borderRadius: 4, backgroundColor: Colors.backgroundColor, alignItems: "center", justifyContent: "center", paddingVertical: 8}}>
-      <Text style={AppStyle.textRegular} >{chapter_num}</Text>
+    <Pressable onPress={onPress} style={{width: 48, height: 48, borderRadius: 4, backgroundColor: color, alignItems: "center", justifyContent: "center", paddingVertical: 8}}>
+      <Text style={[AppStyle.textRegular, {color: Colors.backgroundColor}]} >{chapter_num}</Text>
     </Pressable>
   )
 }
@@ -52,10 +53,10 @@ const HistoryItem = ({log}: {log: ChapterReadLog}) => {
 
   return (
     <View style={styles.itemContainer} >
-      <Pressable onPress={onImagePress} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} >
-        <FastImage 
-          source={{uri: log.cover_image_url, priority: 'normal'}}
-          resizeMode={FastImage.resizeMode.cover}
+      <Pressable onPress={onImagePress} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 12}} >
+        <Image 
+          source={log.cover_image_url}
+          contentFit='cover'
           style={styles.image}
           />
       </Pressable>
@@ -73,6 +74,7 @@ const HistoryItem = ({log}: {log: ChapterReadLog}) => {
                 (chapter_num, index) => 
                   <HistoryChapterItem 
                     key={index} 
+                    color={log.color}
                     chapter_num={chapter_num} 
                     onPress={() => onPress(chapter_num, log.manhwa_id)}
                   />
@@ -122,8 +124,8 @@ const ReadHistory = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-      <TopBar title='Reading History' >
-        <ReturnButton/>
+      <TopBar title='Reading History' titleColor={Colors.readingHistoryColor} >
+        <ReturnButton iconColor={Colors.readingHistoryColor} />
       </TopBar>
       <FlashList
         data={logs} 
@@ -152,20 +154,17 @@ export default ReadHistory
 
 const styles = StyleSheet.create({
   itemContainer: {
-    width: '100%', 
-    borderRadius: 4, 
-    backgroundColor: Colors.gray, 
-    marginBottom: 20,    
+    width: '100%',
     alignItems: "center",
     justifyContent: "flex-start",
     gap: 10,
-    padding: 10
+    marginBottom: 20    
   },
   image: {
     width: '100%', 
     maxWidth: 380, 
     height: 480, 
-    borderRadius: 4,
+    borderRadius: 12,
     alignSelf: "flex-start"
   },
   itemGrid: {

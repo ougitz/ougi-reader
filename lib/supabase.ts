@@ -1,4 +1,4 @@
-import { ChapterImage, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
+import { ChapterImage, DonateMethod, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
@@ -318,14 +318,28 @@ export async function spFetchUserReadingStatus(
     return data
 }
 
-export async function spReportBug(title: string, message: string): Promise<boolean> {
+export async function spReportBug(title: string, descr: string | null, bug_type: string): Promise<boolean> {
     const { data, error } = await supabase
         .from("bug_reports")
-        .insert([{title, message}])
+        .insert([{title, descr, bug_type}])
     
     if (error) {
         console.log("error spReportBug", error)
         return false
     }
     return true
+}
+
+
+export async function spGetDonationMethods(): Promise<DonateMethod[]> {
+    const { data, error } = await supabase
+        .from("donate_methods")
+        .select("method, value")
+
+    if (error) {
+        console.log("error spGetDonationMethods", error)
+        return []
+    }
+
+    return data
 }

@@ -10,7 +10,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { Colors } from '@/constants/Colors';
 
 
-const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
+const AddToLibray = ({manhwa_id, color = Colors.libraryColor}: {manhwa_id: number, color?: string}) => {
 
     const db = useSQLiteContext()
     const { session } = useAuthState()
@@ -30,13 +30,13 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
                 dbValue.current = value
                 setValue(value)
             })        
-    }, [])
+    }, [manhwa_id])
 
     useEffect(
         () => {
             init()
         },
-        []
+        [manhwa_id]
     )
 
     const onChangeValue = async (value: string | null) => {
@@ -53,7 +53,7 @@ const AddToLibray = ({manhwa_id}: {manhwa_id: number}) => {
         <View style={{flex: 1, height: 52}} >
             <DropDownPicker
                 open={open}
-                style={{height: 52, borderRadius: 4, backgroundColor: Colors.orange}}
+                style={{height: 52, borderRadius: 4, backgroundColor: color}}
                 dropDownContainerStyle={{backgroundColor: Colors.gray}}
                 labelStyle={{color: Colors.backgroundColor}}
                 textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}

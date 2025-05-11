@@ -58,7 +58,7 @@ const UpdateDatabase = ({
                 loading ?
                 <ActivityIndicator size={iconSize} color={iconColor} /> :
                 <Pressable onPress={update} hitSlop={AppConstants.hitSlop} >
-                    <Ionicons name='layers-outline' size={iconSize} color={iconColor} />
+                    <Ionicons name='cloud-download-outline' size={iconSize} color={iconColor} />
                 </Pressable>
             }
         </>

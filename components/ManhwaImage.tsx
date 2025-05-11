@@ -1,11 +1,10 @@
 import { 
     Platform, 
-    StyleSheet, 
-    View 
+    StyleSheet
 } from 'react-native'
 import { ChapterImage } from '@/helpers/types'
 import { wp } from '@/helpers/util'
-import { Image } from 'expo-image'
+import FastImage from 'react-native-fast-image';
 import React from 'react'
 
 
@@ -23,13 +22,10 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
     const height = width * (image.height / image.width)
 
     return (
-        <View style={{width, height, alignSelf: "center"}} >
-            <Image 
-                source={image.image_url} 
-                style={{width, height}} 
-                contentFit='cover' 
-                cachePolicy={'disk'}/>
-        </View>
+        <FastImage
+            style={{ width, height, alignSelf: "center"}}
+            source={{ uri: image.image_url, priority: FastImage.priority.normal }}            
+            resizeMode={FastImage.resizeMode.contain}/>
     )
 }
 

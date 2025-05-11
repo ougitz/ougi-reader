@@ -85,7 +85,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       PRIMARY KEY  (manhwa_id, chapter_id),              
       FOREIGN KEY  (manhwa_id) REFERENCES manhwas (manhwa_id) ON UPDATE CASCADE ON DELETE CASCADE,
       FOREIGN KEY  (chapter_id) REFERENCES chapters (chapter_id) ON UPDATE CASCADE ON DELETE CASCADE
-    );    
+    );
 
     CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_id ON chapters(manhwa_id);
     CREATE INDEX IF NOT EXISTS idx_ma_manhwa_id ON manhwa_authors(manhwa_id);
@@ -420,6 +420,7 @@ export async function dbGetUserReadHistory(
         m.manhwa_id,
         m.title,
         m.cover_image_url,
+        m.color,
         GROUP_CONCAT(rh.chapter_num, ', ') AS chapters,
         MAX(rh.readed_at)        AS last_readed_at
       FROM reading_history AS rh

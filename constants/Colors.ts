@@ -21,8 +21,16 @@ export const Colors = {
   paleYellow: "#FFFDEC",
   clayDust: "#C4A79D",
   frostedBlue: "#D3E0F7",
+  blueIBM: "#052F5F",
 
   backgroundColor: "#111419",
+  accountColor: "#D38B5D",
   accentColor: "#2C2C2C",
-  manhwaStatusColor: "#FFFDEC"
+  manhwaStatusColor: "#FFFDEC",
+  disclaimerColor: "#C3C3C3",
+  readingHistoryColor: "#E77390",
+  libraryColor: "#8746A7",
+  BugReportColor: "#ef4069",
+  donateColor: "#2ECC71",
+  translationColor: "#4984A2"
 };

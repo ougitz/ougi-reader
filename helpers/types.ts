@@ -77,4 +77,11 @@ export type ChapterReadLog = {
   manhwa_id: number,
   title: string,
   last_readed_at: Date
+  color: string
+}
+
+
+export type DonateMethod = {
+    method: string
+    value: string
 }

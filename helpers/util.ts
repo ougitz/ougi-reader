@@ -52,31 +52,6 @@ export function formatTimestamp(timestamp: string): string {
     return date.toLocaleDateString('en-US', options as any);
 }
 
-export function organizeComments(comments: ManhwaComment[]): ManhwaComment[] {
-    const commentMap = new Map<number, ManhwaComment>();
-    const topLevelComments: ManhwaComment[] = [];
-
-    // Primeiro, mapeamos os comentários por comment_id
-    comments.forEach(comment => {
-        comment.thread = []; // Garante que a thread está vazia antes de organizar
-        commentMap.set(comment.comment_id, comment);
-    });
-
-    // Agora, organizamos os comentários dentro de suas respectivas threads
-    comments.forEach(comment => {
-        if (comment.parent_comment_id) {
-            const parent = commentMap.get(comment.parent_comment_id);
-            if (parent) {
-                parent.thread.push(comment);
-            }
-        } else {
-            topLevelComments.push(comment);
-        }
-    });
-
-    return topLevelComments;
-}
-
 
 export async function fetchJson(url: string): Promise<any> {
     return await fetch(url)
@@ -126,4 +101,24 @@ export function convertStringListToSet(input: string): Set<number> {
         .map(s => parseInt(s, 10))
         .filter(n => !Number.isNaN(n));
     return new Set(numbers);
+}
+
+export function choice<T>(arr: T[]): T | undefined {
+    if (!Array.isArray(arr) || arr.length === 0) {
+        return undefined;
+    }
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    return arr[randomIndex];
+}
+
+
+export function sortRecommendations(arr: Recommendation[]): Recommendation[] {
+    return arr.sort((a, b) => {
+        if (a.image.height > b.image.height) {
+            return -1
+        } else if (a.image.height < b.image.height) {
+            return 1
+        }
+        return 0
+    })
 }

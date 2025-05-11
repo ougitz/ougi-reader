@@ -20,16 +20,21 @@ import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
+import RandomManhwaIcon from '@/components/RandomManhwaIcon'
 
 
 const MENU_WIDTH = wp(60)
 const ANIMATION_TIME = 300
+const SCREEN_WIDTH = wp(100)
+const SCREEN_HEIGHT = hp(100)
 
 
 const Home = () => {
     
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
-    const menuVisible = useRef(false)    
+    const backgroundAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current
+
+    const menuVisible = useRef(false)
 
     const searchPress = () => {
         router.navigate("/(pages)/SearchManhwa")
@@ -43,6 +48,13 @@ const Home = () => {
         }).start(() => {
             menuVisible.current = true
         })
+        Animated.timing(backgroundAnim, {
+            toValue: 0,
+            duration: ANIMATION_TIME * 1.2,
+            useNativeDriver: false
+        }).start(() => {
+            
+        })
     }
 
     const closeMenu = () => {
@@ -52,6 +64,13 @@ const Home = () => {
             useNativeDriver: false
         }).start(() => {
             menuVisible.current = false
+        })
+        Animated.timing(backgroundAnim, {
+            toValue: -SCREEN_WIDTH,
+            duration: ANIMATION_TIME,
+            useNativeDriver: false
+        }).start(() => {
+            
         })
     }  
 
@@ -72,12 +91,13 @@ const Home = () => {
     
     return (
         <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >
-            <TopBar title='Ougi'>
-                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+            <TopBar title='Ougi' titleColor={Colors.orange} >
+                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 10}} >
                     <UpdateDatabase/>
                     <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlop} >
                         <Ionicons name='search-outline' size={28} color={'white'} />
                     </Pressable>
+                    <RandomManhwaIcon backgroundColor={Colors.backgroundColor} iconColor={Colors.white} iconSize={28} />
                     <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlop} >
                         <Ionicons name='options-outline' size={28} color={'white'} />
                     </Pressable>
@@ -90,8 +110,12 @@ const Home = () => {
                     <MostViewedManhwasComponent/>
                     <MangaRecommendationGrid/>
                 </View>
-            </ScrollView>
-            
+            </ScrollView>            
+
+            <Animated.View style={[styles.menuBackground, { width: SCREEN_WIDTH, transform: [{ translateX: backgroundAnim }] }]}>
+                <Pressable onPress={closeMenu} style={{width: '100%', height: '100%'}} />
+            </Animated.View>
+
             <Animated.View style={[styles.sideMenu, { width: MENU_WIDTH, transform: [{ translateX: menuAnim }] }]}>
                 <LateralMenu closeMenu={closeMenu}/>
             </Animated.View>
@@ -114,6 +138,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 5,    
         zIndex: 100
+    },
+    menuBackground: {
+        position: 'absolute',
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+        top: 0,
+        left: 0,        
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        elevation: 4,        
+        zIndex: 90
     },
     background: {
         width: wp(100), 

@@ -98,14 +98,14 @@ const ManhwaPage = () => {
                 <View style={{gap: 10, alignSelf: "flex-start"}} >
                     <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>
                 </View>
-                <ManhwaGenreInfo manhwa_id={manhwa_id} />
                 <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
-                <AddToLibray manhwa_id={manhwa_id} />
+                <ManhwaGenreInfo manhwa_id={manhwa_id} />
+                <AddToLibray manhwa_id={manhwa_id} color={manhwa.color} />
                 <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
-                  <View style={styles.item} >
+                  <View style={[styles.item, {backgroundColor: manhwa.color}]} >
                     <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa.status}</Text>
                   </View>
-                  <View style={styles.item} >
+                  <View style={[styles.item, {backgroundColor: manhwa.color}]} >
                     <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Views: {manhwa.views}</Text>
                   </View>
                 </View>
@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
   },
   item: {
     height: 52,
-    backgroundColor: Colors.orange,
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",

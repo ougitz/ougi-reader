@@ -8,7 +8,7 @@ import { Colors } from '@/constants/Colors'
 
 const Term = ({term, meaning}: {term: string, meaning: string}) => {
     return (
-        <View style={{width: '100%', padding: 8, backgroundColor: Colors.gray, borderRadius: 4, alignItems: "flex-start", justifyContent: "flex-start", gap: 10}} >
+        <View style={{width: '100%', alignItems: "flex-start", justifyContent: "flex-start", gap: 10}} >
             <Text style={[AppStyle.textHeader, {fontSize: 24}]}>{term}</Text>
             <Text style={AppStyle.textRegular}>{meaning}</Text>
         </View>
@@ -18,18 +18,11 @@ const Term = ({term, meaning}: {term: string, meaning: string}) => {
 const KoreanTerms = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
-        <TopBar title='Korean Terms'>
-            <ReturnButton/>
+        <TopBar title='Korean Terms' titleColor={Colors.translationColor} >
+            <ReturnButton iconColor={Colors.translationColor} />
         </TopBar>
         <ScrollView style={{flex: 1}} >
             <View style={{width: '100%', gap: 20, marginBottom: 42}} >
-                <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Manhwa</Text>
-                <Term term='Manhwa [만화]' meaning='Korean term for comics and print cartoons.' />
-                <Term term='Manhwaga [만화가]' meaning='The author or artist of a Manhwa.' />
-                <Term term='Aeni [애니]' meaning='South Korean animation.' />
-                <Term term='Webtoon [웹툰]' meaning='A type of digital comic that originated in South Korea.' />
-                
-                <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
                 
                 <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by females</Text>
                 <Term term='Unnie 언니' meaning='older sister, older female.' />
@@ -37,9 +30,7 @@ const KoreanTerms = () => {
                 
                 <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Used by males</Text>
                 <Term term='Noona 누나' meaning='older sister, older female.' />
-                <Term term='Hyung 형' meaning='older brother, older male.' />
-                
-                <View style={{width: '100%', height: 2, backgroundColor: Colors.white}} />
+                <Term term='Hyung 형' meaning='older brother, older male.' />                
 
                 <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>Other</Text>
                 <Term term='Ajumma [아줌마]' meaning='Aunt, middle-aged woman.' />
