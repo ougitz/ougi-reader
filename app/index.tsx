@@ -25,11 +25,9 @@ import { router } from 'expo-router';
 import { sleep } from '@/helpers/util';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { Image } from 'expo-image';
 import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable } from '@/lib/database';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colors } from '@/constants/Colors';
-import TopBar from '@/components/TopBar';
 
 
 const App = () => {

@@ -8,8 +8,11 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { dbReadManhwaAuthors } from "@/lib/database"
 import { useSQLiteContext } from "expo-sqlite"
 
+interface ManhwaAuthorsInfoProps {
+  manhwa_id: number
+}
 
-const ManhwaAuthorsInfo = ({manhwa_id}: {manhwa_id: number}) => {
+const ManhwaAuthorsInfo = ({manhwa_id}: ManhwaAuthorsInfoProps) => {
 
   const db = useSQLiteContext()
   const [authors, setAuthors] = useState<ManhwaAuthor[]>([])

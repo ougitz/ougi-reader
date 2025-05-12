@@ -43,7 +43,13 @@ const ChapterItem = ({
 }
 
 
-const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
+interface ManhwaChapterListProps {
+  manhwa: Manhwa
+  textColor?: string
+}
+
+
+const ManhwaChapterList = ({manhwa, textColor = Colors.backgroundColor}: ManhwaChapterListProps) => {
   
   const db = useSQLiteContext()
   const [chapters, setChapters] = useState<Chapter[]>([])
@@ -95,10 +101,10 @@ const ManhwaChapterList = ({manhwa}: {manhwa: Manhwa}) => {
           <View style={{width: '100%', gap: 20}} >
             <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center"}} >
               <Pressable onPress={readFirst} style={{flex: 1, backgroundColor: manhwa.color, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
-                <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read First</Text>
+                <Text style={[AppStyle.textRegular, {color: textColor}]}>Read First</Text>
               </Pressable>
               <Pressable onPress={readLast} style={{flex: 1, backgroundColor: manhwa.color, height: 52, borderRadius: 4, alignItems: "center", justifyContent: "center"}}  >
-                <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Read Last</Text>
+                <Text style={[AppStyle.textRegular, {color: textColor}]}>Read Last</Text>
               </Pressable>
             </View>
             <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, alignItems: "center", justifyContent: "center"}} >

@@ -818,3 +818,18 @@ export async function dbSearchManhwas(
   ).catch(error => console.log("error dbManhwaSearch", searchTerm, error))
   return rows ? rows as Manhwa[] : []
 }
+
+
+export async function dbHasManhwas(db: SQLite.SQLiteDatabase): Promise<boolean> {
+  const row = await db.getFirstAsync<{manhwa_id: number}>(
+    `
+      SELECT
+        manhwa_id
+      FROM
+        manhwas
+      LIMIT 1
+      OFFSET 0;
+    `    
+  ).catch(error => console.log('dbHasManhwas', error)); 
+  return row != null
+}

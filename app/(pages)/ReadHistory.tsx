@@ -14,15 +14,22 @@ import { spFetchChapterList } from '@/lib/supabase'
 import { router } from 'expo-router'
 import { ActivityIndicator } from 'react-native'
 import { Image } from 'expo-image'
+import { isColorDark } from '@/helpers/util'
 
 
 const PAGE_LIMIT = 20
 
+interface HistoryChapterItemProps {
+  chapter_num: number
+  backgroundColor: string
+  textColor: string
+  onPress: () => any
+}
 
-const HistoryChapterItem = ({chapter_num, color, onPress}: {chapter_num: number, color: string, onPress: () => any}) => {
+const HistoryChapterItem = ({chapter_num, backgroundColor, textColor, onPress}: HistoryChapterItemProps) => {
   return (
-    <Pressable onPress={onPress} style={{width: 48, height: 48, borderRadius: 4, backgroundColor: color, alignItems: "center", justifyContent: "center", paddingVertical: 8}}>
-      <Text style={[AppStyle.textRegular, {color: Colors.backgroundColor}]} >{chapter_num}</Text>
+    <Pressable onPress={onPress} style={[styles.historyChapterItem, {backgroundColor}]}>
+      <Text style={[AppStyle.textRegular, {color: textColor}]} >{chapter_num}</Text>
     </Pressable>
   )
 }
@@ -30,7 +37,7 @@ const HistoryChapterItem = ({chapter_num, color, onPress}: {chapter_num: number,
 const HistoryItem = ({log}: {log: ChapterReadLog}) => {
   
   const { setChapterMap, setChapterNum } = useReadingState()
-  const [loading, setLoading] = useState(false)    
+  const [loading, setLoading] = useState(false)
 
   const onPress = async (chapter_num: number, manhwa_id: number) => {
     setLoading(true)
@@ -73,8 +80,9 @@ const HistoryItem = ({log}: {log: ChapterReadLog}) => {
               Array.from(log.chapters).map(
                 (chapter_num, index) => 
                   <HistoryChapterItem 
-                    key={index} 
-                    color={log.color}
+                    key={index}
+                    textColor={isColorDark(log.color) ? Colors.white : Colors.backgroundColor} 
+                    backgroundColor={log.color}
                     chapter_num={chapter_num} 
                     onPress={() => onPress(chapter_num, log.manhwa_id)}
                   />
@@ -174,5 +182,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', 
     alignItems: "center", 
     justifyContent: "flex-start"
+  },
+  historyChapterItem: {
+    width: 48, 
+    height: 48, 
+    borderRadius: 4,     
+    alignItems: "center", 
+    justifyContent: "center", 
+    paddingVertical: 8
   }
 })

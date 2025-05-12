@@ -5,12 +5,21 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { spUpdateManhwaReadingStatus } from '@/lib/supabase';
 import { AppConstants } from '@/constants/AppConstants';
 import { useAuthState } from '@/store/authState';
-import Toast, { ToastNotLogged } from './Toast';
+import { ToastNotLogged } from './Toast';
 import { useSQLiteContext } from 'expo-sqlite';
 import { Colors } from '@/constants/Colors';
 
+interface AddToLibrayProps {
+    manhwa_id: number
+    backgroundColor?: string
+    textColor?: string
+}
 
-const AddToLibray = ({manhwa_id, color = Colors.libraryColor}: {manhwa_id: number, color?: string}) => {
+const AddToLibray = ({
+    manhwa_id, 
+    backgroundColor = Colors.libraryColor, 
+    textColor = Colors.backgroundColor
+}: AddToLibrayProps) => {
 
     const db = useSQLiteContext()
     const { session } = useAuthState()
@@ -53,13 +62,13 @@ const AddToLibray = ({manhwa_id, color = Colors.libraryColor}: {manhwa_id: numbe
         <View style={{flex: 1, height: 52}} >
             <DropDownPicker
                 open={open}
-                style={{height: 52, borderRadius: 4, backgroundColor: color}}
+                style={{height: 52, borderRadius: 4, backgroundColor, borderWidth: 0}}
                 dropDownContainerStyle={{backgroundColor: Colors.gray}}
-                labelStyle={{color: Colors.backgroundColor}}
-                textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
+                labelStyle={{color: textColor}}
+                textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18, color: Colors.white}}
                 showArrowIcon={false}
                 placeholder='Add To Library'
-                placeholderStyle={{color: Colors.backgroundColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
+                placeholderStyle={{color: textColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
                 value={value as any}
                 items={items}
                 setOpen={setOpen}

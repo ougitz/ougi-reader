@@ -1,4 +1,4 @@
-import { dbShouldUpdate, dbCheckSecondsSinceLastRefresh, dbUpdateDatabase } from '@/lib/database'
+import { dbShouldUpdate, dbCheckSecondsSinceLastRefresh, dbUpdateDatabase, dbHasManhwas } from '@/lib/database'
 import { ToastNoInternet, ToastUpdateDatabase, ToastWaitDatabase } from '@/helpers/ToastMessages'
 import { StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
@@ -33,8 +33,13 @@ const UpdateDatabase = ({
         }
 
         const shouldUpdate = await dbShouldUpdate(db, 'database')
-        
+        let hasManhwas = true
+
         if (!shouldUpdate) {
+            hasManhwas = await dbHasManhwas(db)
+        }
+        
+        if (!shouldUpdate && hasManhwas) {
             const secondsUntilRefresh = await dbCheckSecondsSinceLastRefresh(db, 'database')
             ToastWaitDatabase(secondsUntilRefresh)
         } else {

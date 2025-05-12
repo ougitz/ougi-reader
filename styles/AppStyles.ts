@@ -5,7 +5,7 @@ import { wp } from "@/helpers/util";
 
 export const AppStyle = StyleSheet.create({
     textRegular: {
-        fontSize: 16,
+        fontSize: 18,
         color: 'white',
         fontFamily: 'LeagueSpartan_400Regular'
     },
@@ -13,6 +13,11 @@ export const AppStyle = StyleSheet.create({
         fontSize: 26,
         color: 'white',
         fontFamily: 'LeagueSpartan_400Regular'
+    },
+    textManhwaTitle: {
+        fontSize: 28,
+        color: 'white',
+        fontFamily: 'LeagueSpartan_600SemiBold'
     },
     textLink: {
         fontSize: 16,

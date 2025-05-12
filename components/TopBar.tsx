@@ -12,7 +12,7 @@ interface TopBarProps {
 
 const TopBar = ({title, children, titleColor = Colors.white}: TopBarProps) => {
   return (
-    <View style={{width: '100%', flexDirection: 'row', marginVertical: 20, alignItems: "center", justifyContent: "space-between"}} >
+    <View style={{width: '100%', flexDirection: 'row', marginTop: 20, marginBottom: 10, alignItems: "center", justifyContent: "space-between"}} >
         <Text style={[AppStyle.textHeader, {alignSelf: "flex-start", fontFamily: "LeagueSpartan_600SemiBold", maxWidth: '80%', color: titleColor}]}>{title}</Text>
         {children}
     </View>

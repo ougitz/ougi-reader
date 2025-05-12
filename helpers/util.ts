@@ -1,6 +1,7 @@
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { ManhwaComment, Recommendation } from "./types";
 import { Dimensions } from "react-native";
+import { AppConstants } from '../constants/AppConstants';
 
 
 
@@ -121,4 +122,21 @@ export function sortRecommendations(arr: Recommendation[]): Recommendation[] {
         }
         return 0
     })
+}
+
+
+export function isColorDark(hex: string): boolean {
+  const cleanHex = hex.replace(/^#/, '');
+  
+  const fullHex = cleanHex.length === 3
+    ? cleanHex.split('').map(ch => ch + ch).join('')
+    : cleanHex;
+  
+  const r = parseInt(fullHex.substring(0, 2), 16);
+  const g = parseInt(fullHex.substring(2, 4), 16);
+  const b = parseInt(fullHex.substring(4, 6), 16);
+  
+  const luminance = (0.299 * r) + (0.587 * g) + (0.114 * b);
+
+  return luminance < AppConstants.DARK_COLOR_THRESHOLD;
 }

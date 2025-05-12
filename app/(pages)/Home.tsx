@@ -21,6 +21,7 @@ import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 const MENU_WIDTH = wp(60)
@@ -30,7 +31,7 @@ const SCREEN_HEIGHT = hp(100)
 
 
 const Home = () => {
-    
+        
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
     const backgroundAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current
 
@@ -87,7 +88,7 @@ const Home = () => {
             init()
         },
         []
-    )
+    )    
     
     return (
         <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >

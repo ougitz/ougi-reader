@@ -22,7 +22,7 @@ import ReturnButton from '@/components/ReturnButton';
 import HomeButton from '@/components/HomeButton';
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
-import { wp, hp } from '@/helpers/util';
+import { wp, hp, isColorDark } from '@/helpers/util';
 import { Image } from 'expo-image';
 import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -34,10 +34,16 @@ import RandomManhwaButton from '@/components/RandomManhwaIcon';
 import BugReportButton from '@/components/BugReportButton';
 
 
-const Item = ({text, backgroundColor}: {text: string, backgroundColor: string}) => {
+interface ItemProps {
+  text: string
+  backgroundColor: string
+  textColor?: string
+}
+
+const Item = ({text, backgroundColor, textColor = Colors.backgroundColor}: ItemProps) => {
   return (
     <View style={[styles.item, {backgroundColor}]} >
-      <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{text}</Text>
+      <Text style={[AppStyle.textRegular, {color: textColor}]}>{text}</Text>
     </View>
   )
 }
@@ -49,11 +55,20 @@ const ManhwaPage = () => {
   const params = useLocalSearchParams()
   const [manhwa, setManhwa] = useState<Manhwa | null>()
   const manhwa_id: number = parseInt(params.manhwa_id as any)  
+  const iconColor = useRef(Colors.white)
+  const textColor = useRef(Colors.backgroundColor)
   
   const init = useCallback(async () => {          
       await dbReadManhwaById(db, manhwa_id)
         .then(value => {
           if (value) {
+            if (isColorDark(value.color)) {
+              textColor.current = Colors.white
+              iconColor.current = Colors.white
+            } else {
+              textColor.current = Colors.backgroundColor
+              iconColor.current = value.color
+            }
             setManhwa(value)
           } else {
             Toast.show({title: "Error", message: "invalid manhwa", type: "error"})
@@ -70,7 +85,7 @@ const ManhwaPage = () => {
       init()
     },
     [manhwa_id]
-  )
+  )  
 
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
@@ -83,11 +98,11 @@ const ManhwaPage = () => {
                 colors={[manhwa.color, Colors.backgroundColor]}
                 style={styles.linearBackground} />
             <View style={styles.topBar} >
-                <HomeButton color={manhwa.color} />
+                <HomeButton color={iconColor.current} />
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                    <BugReportButton color={manhwa.color} title={manhwa.title} />                    
-                    <RandomManhwaButton color={manhwa.color} />
-                    <ReturnButton color={manhwa.color} />
+                    <BugReportButton color={iconColor.current} title={manhwa.title} />                    
+                    <RandomManhwaButton color={iconColor.current} />
+                    <ReturnButton color={iconColor.current} />
                 </View>
             </View>
 
@@ -95,18 +110,21 @@ const ManhwaPage = () => {
             <View style={styles.manhwaContainer}>
                 
                 <Image source={manhwa.cover_image_url} style={styles.image} />
-                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold'}]}>{manhwa!.title}</Text>
-                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>                
+                <View style={{alignSelf: "flex-start"}} >
+                  <Text style={AppStyle.textManhwaTitle}>{manhwa!.title}</Text>
+                  <Text style={AppStyle.textRegular}>{manhwa.descr}</Text>
+                </View>
                 
                 <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
                 <ManhwaGenreInfo manhwa_id={manhwa_id} />
-                <AddToLibray manhwa_id={manhwa_id} color={manhwa.color} />
+                <AddToLibray manhwa_id={manhwa_id} textColor={textColor.current} backgroundColor={manhwa.color} />
 
                 <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
-                  <Item text={manhwa.status} backgroundColor={manhwa.color} />
-                  <Item text={`Views: ${manhwa.views}`} backgroundColor={manhwa.color} />
+                  <Item text={manhwa.status} textColor={textColor.current} backgroundColor={manhwa.color} />
+                  <Item text={`Views: ${manhwa.views}`} textColor={textColor.current} backgroundColor={manhwa.color} />
                 </View>
-                <ManhwaChapterList manhwa={manhwa} />
+
+                <ManhwaChapterList textColor={textColor.current} manhwa={manhwa} />
             </View>
           </>
 

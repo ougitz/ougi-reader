@@ -60,5 +60,6 @@ export const AppConstants = {
         "#D69759",
         "#FFDADA",
         "#FFFDC7"
-    ]
+    ],
+    DARK_COLOR_THRESHOLD: 60
 }
