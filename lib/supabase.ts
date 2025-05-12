@@ -359,7 +359,7 @@ export async function spRequestManhwa(manhwa_title: string, message: string | nu
 export async function spGetLatestVersion(): Promise<AppVersion | null> {
     const { data, error } = await supabase
         .from("version")
-        .select("version, apk_url, apk_size")
+        .select("version, apk_url")
         .order("created_at", {ascending: false})
         .range(0, 1)
         .single()

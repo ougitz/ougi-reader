@@ -90,5 +90,4 @@ export type DonateMethod = {
 export type AppVersion = {
     versiom: string
     apk_url: string
-    apk_size: string
 }

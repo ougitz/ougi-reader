@@ -17,6 +17,7 @@ const Account = () => {
       <ChangeProfileInfoForm/>
     </SafeAreaView>
   )
+  
 }
 
 export default Account

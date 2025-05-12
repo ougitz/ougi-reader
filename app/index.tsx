@@ -19,7 +19,7 @@ import {
   LeagueSpartan_800ExtraBold,
   LeagueSpartan_900Black,
 } from '@expo-google-fonts/league-spartan';
-import { spFetchUser, spGetSession } from '@/lib/supabase';
+import { spFetchUser, spGetLatestVersion, spGetSession } from '@/lib/supabase';
 import { AppStyle } from '@/styles/AppStyles';
 import { router } from 'expo-router';
 import { sleep } from '@/helpers/util';
@@ -28,11 +28,13 @@ import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable } from '@/lib/database';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colors } from '@/constants/Colors';
+import { useAppVersionState } from '@/store/appVersionState';
 
 
 const App = () => {
   
   const { login } = useAuthState()    
+  const { setAppVersion } = useAppVersionState()
   const db: SQLiteDatabase = useSQLiteContext();
 
   let [fontsLoaded] = useFonts({
@@ -70,6 +72,8 @@ const App = () => {
     }
 
     await initSession()
+    await spGetLatestVersion().then(value => setAppVersion(value))
+    
     const shouldUpdate = await dbShouldUpdate(db, 'database')
     if (shouldUpdate) {
       await dbUpdateDatabase(db)

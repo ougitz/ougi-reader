@@ -1,12 +1,11 @@
 import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { UpdateHistorySchema } from './model/UpdateHistorySchema';
 import { ReadingStatusSchema } from './model/ReadingStatusSchema';
-import { spFetchChapterList, spFetchUserReadingStatus, spGetManhwas } from './supabase';
+import { spFetchUserReadingStatus, spGetManhwas } from './supabase';
 import { convertStringListToSet, secondsSince } from '@/helpers/util';
 import { Chapter } from '@/model/Chapter';
 import { Manhwa } from '@/model/Manhwa';
 import * as SQLite from 'expo-sqlite';
-
 
 
 export async function dbMigrate(db: SQLite.SQLiteDatabase) {
