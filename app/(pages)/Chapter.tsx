@@ -139,8 +139,9 @@ const Chapter = () => {
   const manhwa_title: string = params.manhwa_title as any
   const flatListRef = useRef<FlatList>()
 
-  const init = useCallback(async () => {
+  const init = async () => {
     if (currentChapter) {
+      console.log("change chapter")
       setLoading(true)
         await FastImage.clearDiskCache()
         await FastImage.clearMemoryCache()
@@ -154,7 +155,7 @@ const Chapter = () => {
         currentChapter.chapter_num
       )
     }
-  }, [currentChapter])
+  }
 
 
   useEffect(
