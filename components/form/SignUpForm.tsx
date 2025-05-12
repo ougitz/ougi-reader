@@ -9,16 +9,16 @@ import {
     Text, 
     View 
 } from 'react-native'
+import { ToastError, ToastSuccess, ToastWeakPassword } from '@/helpers/ToastMessages';
 import { supabase, spCreateUser } from '@/lib/supabase';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { useState } from 'react'
-import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
-import { ToastError, ToastSuccess, ToastWeakPassword } from '@/helpers/ToastMessages';
 
 
 const schema = yup.object().shape({  
@@ -100,13 +100,13 @@ const SignUpForm = () => {
     <KeyboardAvoidingView style={{width: '100%', gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{width: '100%'}} >
             {/* Name */}
-            <Text style={styles.inputHeaderText}>Username</Text>
+            <Text style={AppStyle.inputHeaderText}>Username</Text>
             <Controller
                 control={control}
                 name="name"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}                    
+                    style={AppStyle.input}                    
                     autoComplete='name'
                     autoCapitalize='none'                    
                     onBlur={onBlur}
@@ -114,15 +114,15 @@ const SignUpForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.name && (<Text style={styles.error}>{errors.name.message}</Text>)}
+            {errors.name && (<Text style={AppStyle.error}>{errors.name.message}</Text>)}
             {/* Email */}
-            <Text style={styles.inputHeaderText}>Email</Text>
+            <Text style={AppStyle.inputHeaderText}>Email</Text>
             <Controller
                 control={control}
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}                    
+                    style={AppStyle.input}                    
                     keyboardType="email-address"
                     autoCapitalize="none"
                     onBlur={onBlur}
@@ -130,16 +130,16 @@ const SignUpForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.email && (<Text style={styles.error}>{errors.email.message}</Text>)}
+            {errors.email && (<Text style={AppStyle.error}>{errors.email.message}</Text>)}
             
             {/* Password */}
-            <Text style={styles.inputHeaderText}>Password</Text>
+            <Text style={AppStyle.inputHeaderText}>Password</Text>
             <Controller
                 name="password"
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}
+                    style={AppStyle.input}
                     secureTextEntry
                     autoCapitalize="none"
                     onBlur={onBlur}
@@ -147,16 +147,16 @@ const SignUpForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.password && (<Text style={styles.error}>{errors.password.message}</Text>)}
+            {errors.password && (<Text style={AppStyle.error}>{errors.password.message}</Text>)}
 
             {/* Confirm Password */}
-            <Text style={styles.inputHeaderText}>Confirm password</Text>
+            <Text style={AppStyle.inputHeaderText}>Confirm password</Text>
             <Controller
                 name="confirmPassword"
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}
+                    style={AppStyle.input}
                     secureTextEntry
                     autoCapitalize="none"
                     onBlur={onBlur}
@@ -164,14 +164,14 @@ const SignUpForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.confirmPassword && (<Text style={styles.error}>{errors.confirmPassword.message}</Text>)}
+            {errors.confirmPassword && (<Text style={AppStyle.error}>{errors.confirmPassword.message}</Text>)}
     
             {/* Login Button */}
-            <Pressable onPress={handleSubmit(onSubmit)} style={styles.formButton} >
+            <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
                 {
                     isLoading ? 
                     <ActivityIndicator size={32} color={Colors.white} /> :
-                    <Text style={styles.formButtonText} >Register</Text>
+                    <Text style={AppStyle.formButtonText} >Register</Text>
                 }
             </Pressable>
 
@@ -189,42 +189,3 @@ const SignUpForm = () => {
 }
 
 export default SignUpForm
-
-const styles = StyleSheet.create({
-    input: {
-        backgroundColor: Colors.gray1,
-        borderRadius: 4,
-        height: 50,
-        fontSize: 18,
-        paddingHorizontal: 10,
-        color: Colors.white,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10
-    },
-    inputHeaderText: {
-        color: Colors.white,
-        fontSize: 20,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10
-    },
-    error: {
-        color: Colors.neonRed,
-        alignSelf: "flex-start",
-        fontSize: 16,
-        fontFamily: "LeagueSpartan_200ExtraLight"
-    },
-    formButton: {
-        width: '100%',
-        marginTop: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        height: 50,
-        borderRadius: 4,
-        backgroundColor: Colors.orange
-    },
-    formButtonText: {
-        color: Colors.white,
-        fontSize: 22,
-        fontFamily: "LeagueSpartan_400Regular",
-    }
-})

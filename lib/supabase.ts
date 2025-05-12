@@ -1,4 +1,4 @@
-import { ChapterImage, DonateMethod, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
+import { AppVersion, ChapterImage, DonateMethod, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
@@ -342,4 +342,29 @@ export async function spGetDonationMethods(): Promise<DonateMethod[]> {
     }
 
     return data
+}
+
+
+export async function spRequestManhwa(manhwa_title: string, message: string | null) {
+    const { error } = await supabase
+        .from("manhwa_requests")
+        .insert([{manhwa_title, message}])
+
+    if (error) {
+        console.log("error spRequestManhwa")
+    }
+}
+
+
+export async function spGetLatestVersion(): Promise<AppVersion | null> {
+    const { data, error } = await supabase
+        .from("version")
+        .select("version, apk_url, apk_size")
+        .order("created_at", {ascending: false})
+        .range(0, 1)
+        .single()
+
+    if (error) { return null }
+
+    return data as any
 }

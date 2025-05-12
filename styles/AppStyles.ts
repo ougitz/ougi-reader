@@ -31,9 +31,46 @@ export const AppStyle = StyleSheet.create({
         padding: wp(5), 
         backgroundColor: Colors.backgroundColor        
     },
+    formButtonText: {
+        color: Colors.backgroundColor,
+        fontSize: 22,
+        fontFamily: "LeagueSpartan_400Regular",
+    },
     buttonBackground: {
         padding: 6, 
         borderRadius: 4, 
         backgroundColor: Colors.almostBlack  
+    },
+
+    input: {
+        backgroundColor: Colors.gray1,
+        borderRadius: 4,
+        height: 50,
+        fontSize: 18,
+        paddingHorizontal: 10,
+        color: Colors.white,
+        fontFamily: "LeagueSpartan_400Regular",
+        marginBottom: 10
+    },
+    inputHeaderText: {
+        color: Colors.white,
+        fontSize: 20,
+        fontFamily: "LeagueSpartan_400Regular",
+        marginBottom: 10
+    },
+    error: {
+        color: Colors.neonRed,
+        alignSelf: "flex-start",
+        fontSize: 16,
+        fontFamily: "LeagueSpartan_200ExtraLight"
+    },
+    formButton: {
+        width: '100%',
+        marginTop: 10,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 50,
+        borderRadius: 4,
+        backgroundColor: Colors.orange
     }
 })

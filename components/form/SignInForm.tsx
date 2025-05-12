@@ -25,6 +25,7 @@ import React from 'react'
 import { useAuthState } from '@/store/authState';
 import { ToastError, ToastSuccess } from '@/helpers/ToastMessages';
 import { useSQLiteContext } from 'expo-sqlite';
+import { AppStyle } from '@/styles/AppStyles';
 
 const schema = yup.object().shape({  
     email: yup
@@ -104,13 +105,13 @@ const SignInForm = () => {
     <KeyboardAvoidingView style={{width: '100%', gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{width: '100%'}} >
             {/* Email */}
-            <Text style={styles.inputHeaderText}>Email</Text>
+            <Text style={AppStyle.inputHeaderText}>Email</Text>
             <Controller
                 control={control}
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}                    
+                    style={AppStyle.input}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoComplete='email'                    
@@ -119,16 +120,16 @@ const SignInForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.email && (<Text style={styles.error}>{errors.email.message}</Text>)}
+            {errors.email && (<Text style={AppStyle.error}>{errors.email.message}</Text>)}
             
             {/* Password */}
-            <Text style={styles.inputHeaderText}>Password</Text>
+            <Text style={AppStyle.inputHeaderText}>Password</Text>
             <Controller
                 name="password"
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}                    
+                    style={AppStyle.input}                    
                     secureTextEntry
                     autoCapitalize="none"
                     onBlur={onBlur}
@@ -136,14 +137,14 @@ const SignInForm = () => {
                     value={value}/>
                 )}
             />
-            {errors.password && (<Text style={styles.error}>{errors.password.message}</Text>)}
+            {errors.password && (<Text style={AppStyle.error}>{errors.password.message}</Text>)}
     
             {/* Login Button */}
-            <Pressable onPress={handleSubmit(onSubmit)} style={styles.formButton} >
+            <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
                 {
                     isLoading ? 
                     <ActivityIndicator size={32} color={Colors.white} /> :
-                    <Text style={styles.formButtonText} >Login</Text>
+                    <Text style={AppStyle.formButtonText} >Login</Text>
                 }
             </Pressable>
         <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
@@ -158,42 +159,3 @@ const SignInForm = () => {
 }
 
 export default SignInForm
-
-const styles = StyleSheet.create({
-    input: {
-        backgroundColor: Colors.gray1,
-        borderRadius: 4,
-        height: 50,
-        fontSize: 18,
-        paddingHorizontal: 10,
-        color: Colors.white,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10
-    },
-    inputHeaderText: {
-        color: Colors.white,
-        fontSize: 20,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10
-    },
-    error: {
-        color: Colors.neonRed,
-        alignSelf: "flex-start",
-        fontSize: 16,
-        fontFamily: "LeagueSpartan_200ExtraLight"
-    },
-    formButton: {
-        width: '100%',
-        marginTop: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        height: 50,
-        borderRadius: 4,
-        backgroundColor: Colors.orange
-    },
-    formButtonText: {
-        color: Colors.white,
-        fontSize: 22,
-        fontFamily: "LeagueSpartan_400Regular",
-    }
-})

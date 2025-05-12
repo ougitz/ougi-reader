@@ -25,7 +25,7 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
         <FastImage
             style={{ width, height, alignSelf: "center"}}
             source={{ uri: image.image_url, priority: FastImage.priority.normal }}            
-            resizeMode={FastImage.resizeMode.contain}/>
+            resizeMode={FastImage.resizeMode.cover}/>
     )
 }
 

@@ -14,6 +14,11 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     PRAGMA synchronous = NORMAL;
+
+    CREATE TABLE IF NOT EXISTS app_info (
+      name TEXT NOT NULL PRIMARY KEY,
+      value TEXT NOT NULL
+    );
     
     CREATE TABLE IF NOT EXISTS update_history (
       name TEXT NOT NULL PRIMARY KEY,
@@ -95,6 +100,12 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
     CREATE INDEX IF NOT EXISTS idx_chapters_manhwa_num ON chapters(manhwa_id, chapter_num DESC);
     CREATE INDEX IF NOT EXISTS idx_reading_status_manhwa_id_status ON reading_status (manhwa_id, status);
     CREATE INDEX IF NOT EXISTS idx_reading_history_updated ON reading_history(manhwa_id, chapter_num, readed_at DESC);
+
+    DELETE FROM app_info;
+
+    INSERT INTO 
+      app_info (name, value)
+    VALUES ('version', '0.1');
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
@@ -832,4 +843,20 @@ export async function dbHasManhwas(db: SQLite.SQLiteDatabase): Promise<boolean> 
     `    
   ).catch(error => console.log('dbHasManhwas', error)); 
   return row != null
+}
+
+
+export async function dbGetAppVersion(db: SQLite.SQLiteDatabase): Promise<string> {
+  const row = await db.getFirstAsync<{value: string}>(
+    `
+      SELECT
+        value
+      FROM
+        app_info
+      WHERE
+        name = 'version';
+    `    
+  ).catch(error => console.log('dbGetAppVersion', error)); 
+
+  return row!.value
 }

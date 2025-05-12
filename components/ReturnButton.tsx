@@ -9,14 +9,19 @@ import React from 'react'
 interface ReturnButtonProps {
   size?: number
   color?: string
+  onPress?: () => any
 }
 
 
-const ReturnButton = ({size = 28, color = Colors.white}: ReturnButtonProps) => {
+const ReturnButton = ({
+  size = 28, 
+  color = Colors.white, 
+  onPress = () => router.back()
+}: ReturnButtonProps) => {
   return (
     <Pressable 
       style={styles.container}
-      onPress={() => router.back()} 
+      onPress={onPress} 
       hitSlop={AppConstants.hitSlopLarge} >
         <Ionicons name='return-down-back-outline' size={size} color={color} />
     </Pressable>

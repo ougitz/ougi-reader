@@ -32,14 +32,14 @@ const AddToLibray = ({
 
     const dbValue = useRef('')
 
-    const init = useCallback(async () => {
+    const init = async () => {
         await dbGetManhwaReadingStatus(db, manhwa_id)
             .then(value => {
                 if (!value) { return }
                 dbValue.current = value
                 setValue(value)
-            })        
-    }, [manhwa_id])
+            })
+    }
 
     useEffect(
         () => {

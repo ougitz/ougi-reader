@@ -32,5 +32,7 @@ export const Colors = {
   libraryColor: "#8746A7",
   BugReportColor: "#ef4069",
   donateColor: "#2ECC71",
-  translationColor: "#4984A2"
+  translationColor: "#4984A2",
+  requestManhwaColor: "#A76545"
+
 };

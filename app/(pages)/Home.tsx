@@ -21,10 +21,12 @@ import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
+import EmptyFooter from '@/components/EmptyFooter'
+import { dbListTable } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
 
 
-const MENU_WIDTH = wp(60)
+const MENU_WIDTH = wp(70)
 const ANIMATION_TIME = 300
 const SCREEN_WIDTH = wp(100)
 const SCREEN_HEIGHT = hp(100)
@@ -79,8 +81,10 @@ const Home = () => {
         menuVisible.current ? closeMenu() : openMenu()
     }
 
+    const db = useSQLiteContext()
     const init = async () => {
-        
+        await dbListTable(db, 'app_info')
+    
     }
 
     useEffect(
@@ -91,7 +95,7 @@ const Home = () => {
     )    
     
     return (
-        <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >
+        <SafeAreaView style={AppStyle.safeArea} >
 
             {/* Header */}
             <TopBar title='Ougi' titleColor={Colors.orange} >
@@ -115,16 +119,17 @@ const Home = () => {
                     <MostViewedManhwasComponent/>
                     <MangaRecommendationGrid/>
                 </View>
+                <EmptyFooter/>
             </ScrollView>            
             
             {/* Lateral Menu */}
             <Animated.View style={[styles.menuBackground, { width: SCREEN_WIDTH, transform: [{ translateX: backgroundAnim }] }]}>
                 <Pressable onPress={closeMenu} style={{width: '100%', height: '100%'}} />
             </Animated.View>
-
             <Animated.View style={[styles.sideMenu, { width: MENU_WIDTH, transform: [{ translateX: menuAnim }] }]}>
                 <LateralMenu closeMenu={closeMenu}/>
             </Animated.View>
+
         </SafeAreaView>
     )
 }

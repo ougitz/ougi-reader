@@ -7,8 +7,7 @@ import {
   Text, 
   View 
 } from 'react-native'
-import React, { 
-  useCallback, 
+import React, {
   useEffect, 
   useRef, 
   useState 
@@ -46,13 +45,22 @@ const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChap
   const { currentChapter } = useReadingState()
 
   const reportTitle = `${manhwaTitle}/${currentChapter ? currentChapter.chapter_num: '?'}`
+
+  const exitChapter = async () => {
+    await FastImage.clearDiskCache()
+    await FastImage.clearMemoryCache()
+    router.back()
+  }
   
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5)}} >
       <TopBar title={manhwaTitle} >
-        <ReturnButton/>
+        <ReturnButton onPress={exitChapter} />
       </TopBar>
+
       <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "space-between", marginBottom: 20}} >
+        
+        {/* Chapter Controller Button */}
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
           <Text style={AppStyle.textHeader}>Chapter</Text>
           <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
@@ -71,7 +79,9 @@ const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChap
             </Pressable>
           </View>
         </View>
+
         <BugReportButton size={32} title={reportTitle} />
+
       </View>
     </View>
   )
@@ -99,6 +109,8 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
 
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5), marginTop: 42, marginBottom: 220}} >
+        
+        {/* Chapter Controller Button */}
         <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "center", marginBottom: 20}} >
           <Text style={AppStyle.textHeader}>Chapter</Text>
           <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
@@ -116,7 +128,10 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
               <Ionicons name='chevron-forward' size={24} color={Colors.white} />
             </Pressable>
           </View>
-        </View>        
+        </View>
+            
+          
+        {/* Custom Bug Report Button */}
         <Pressable onPress={openBugReport} style={{width: '100%', padding: 12, flexDirection: 'row', borderRadius: 4, backgroundColor: Colors.gray}} >
           <Text style={[AppStyle.textRegular, {fontSize: 18, flex: 0.8}]}>
             If you encounter broken or missing images, please use the bug-report option.
@@ -125,6 +140,7 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
             <BugIcon size={48} />
           </View>
         </Pressable>
+
       </View>
   )
 }
@@ -180,7 +196,7 @@ const Chapter = () => {
   }
 
   return (
-    <SafeAreaView style={[AppStyle.safeArea, {padding: 0, paddingBottom: 10}]} >
+    <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
       <View style={{flex: 1}} >
         <FlashList
           data={images}
@@ -188,8 +204,8 @@ const Chapter = () => {
           ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
           estimatedItemSize={hp(50)}
-          onEndReachedThreshold={hp(200)}
-          drawDistance={hp(200)}
+          onEndReachedThreshold={3}
+          drawDistance={hp(300)}
           ref={flatListRef as any}
           renderItem={({item, index}) => <ManhwaImage image={item} />}
           ListEmptyComponent={<ActivityIndicator size={32} color={Colors.white} />}
@@ -207,8 +223,8 @@ export default Chapter
 const styles = StyleSheet.create({
   arrowUp: {
     position: 'absolute', 
-    bottom: 50, 
-    right: 10, 
+    bottom: 60, 
+    right: 12, 
     padding: 6, 
     borderRadius: 32, 
     backgroundColor: 'rgba(255, 255, 255, 0.3)'

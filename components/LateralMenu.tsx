@@ -113,6 +113,10 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.replace("/(pages)/Home")
     }
 
+    const openRequestManhwa = () => {
+        router.navigate("/(pages)/RequestManhwa")
+    }
+
     return (
         
         <ScrollView showsVerticalScrollIndicator={false} >
@@ -179,6 +183,13 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     title='Donate' 
                     iconName='cash-outline'
                     iconColor={Colors.donateColor}
+                />
+
+                <Option 
+                    onPress={openRequestManhwa} 
+                    title='Request Manhwa' 
+                    iconName='megaphone-outline'
+                    iconColor={Colors.requestManhwaColor}
                 />
 
                 <Option 

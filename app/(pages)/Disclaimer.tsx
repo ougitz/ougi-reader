@@ -1,9 +1,9 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import ReturnButton from '@/components/ReturnButton'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
-import ReturnButton from '@/components/ReturnButton'
 import { Colors } from '@/constants/Colors'
+import React from 'react'
 
 
 const DATA = [
@@ -55,7 +55,7 @@ const Disclaimer = () => {
                     DATA.map((item, index) => <DisclaimerText key={index} title={item.title} message={item.message} />)
                 }            
             </View>
-            <View style={{marginBottom: 100}} />
+            <View style={{marginBottom: 50}} />
         </ScrollView>
     </SafeAreaView>
   )

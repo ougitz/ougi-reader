@@ -18,7 +18,7 @@ const BugReport = () => {
             <TopBar title='Bug Report' titleColor={Colors.BugReportColor} >
                 <ReturnButton color={Colors.BugReportColor} />
             </TopBar>
-            <BugReportForm title={title}  />
+            <BugReportForm title={title}/>
         </SafeAreaView>
     )
 }

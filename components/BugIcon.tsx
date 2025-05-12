@@ -3,6 +3,7 @@ import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
 
+
 interface BugIconProps {
   size?: number
   color?: string
@@ -17,5 +18,3 @@ const BugIcon = ({size = 28, color = Colors.BugReportColor}: BugIconProps) => {
 
 
 export default BugIcon
-
-const styles = StyleSheet.create({})

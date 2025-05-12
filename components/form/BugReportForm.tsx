@@ -27,6 +27,7 @@ import { ToastSuccess } from '@/helpers/ToastMessages';
 import { hp } from '@/helpers/util';
 import Toast from '../Toast';
 import { AppStyle } from '@/styles/AppStyles';
+import EmptyFooter from '../EmptyFooter';
 
 
 
@@ -131,7 +132,8 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
   return (
     <KeyboardAvoidingView style={{flex: 1, gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{flex: 1}} >
-            {/* Email */}
+            
+            {/* Title */}
             <Text style={styles.inputHeaderText}>Title</Text>
             <Controller
                 control={control}
@@ -185,6 +187,7 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
                     <Text style={styles.formButtonText} >Report</Text>
                 }
             </Pressable>
+            <EmptyFooter height={40} />
         </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -225,7 +228,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.BugReportColor
     },
     formButtonText: {
-        color: Colors.white,
+        color: Colors.backgroundColor,
         fontSize: 22,
         fontFamily: "LeagueSpartan_400Regular",
     }
