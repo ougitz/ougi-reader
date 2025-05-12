@@ -33,6 +33,6 @@ export const Colors = {
   BugReportColor: "#ef4069",
   donateColor: "#2ECC71",
   translationColor: "#4984A2",
-  requestManhwaColor: "#A76545"
-
+  requestManhwaColor: "#A76545",
+  releasesColor: "#F24E4E"
 };

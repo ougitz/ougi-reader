@@ -23,6 +23,11 @@ export default TopBar
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', flexDirection: 'row', marginTop: 20, marginBottom: 10, alignItems: "center", justifyContent: "space-between"
+    width: '100%', 
+    flexDirection: 'row', 
+    marginTop: 20, 
+    marginBottom: 10, 
+    alignItems: "center", 
+    justifyContent: "space-between"
   }
 })

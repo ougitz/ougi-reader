@@ -25,7 +25,7 @@ import { router } from 'expo-router';
 import { sleep } from '@/helpers/util';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable } from '@/lib/database';
+import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable, dbGetAppVersion } from '@/lib/database';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colors } from '@/constants/Colors';
 import { useAppVersionState } from '@/store/appVersionState';
@@ -34,7 +34,7 @@ import { useAppVersionState } from '@/store/appVersionState';
 const App = () => {
   
   const { login } = useAuthState()    
-  const { setAppVersion } = useAppVersionState()
+  const { setLocalVersion } = useAppVersionState()
   const db: SQLiteDatabase = useSQLiteContext();
 
   let [fontsLoaded] = useFonts({
@@ -72,7 +72,7 @@ const App = () => {
     }
 
     await initSession()
-    await spGetLatestVersion().then(value => setAppVersion(value))
+    await dbGetAppVersion(db).then(value => setLocalVersion(value))
     
     const shouldUpdate = await dbShouldUpdate(db, 'database')
     if (shouldUpdate) {

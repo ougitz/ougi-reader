@@ -32,6 +32,7 @@ const _layout = () => {
               <Stack.Screen name='(pages)/BugReport' options={{headerShown: false}} />
               <Stack.Screen name='(pages)/Disclaimer' options={{headerShown: false}} />
               <Stack.Screen name='(pages)/RequestManhwa' options={{headerShown: false}} />
+              <Stack.Screen name='(pages)/Releases' options={{headerShown: false}} />
           </Stack>
           <Toast.Component/>
         </SQLiteProvider>

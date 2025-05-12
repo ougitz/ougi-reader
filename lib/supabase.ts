@@ -356,15 +356,13 @@ export async function spRequestManhwa(manhwa_title: string, message: string | nu
 }
 
 
-export async function spGetLatestVersion(): Promise<AppVersion | null> {
+export async function spGetLatestVersion(): Promise<AppVersion[]> {
     const { data, error } = await supabase
-        .from("version")
+        .from("versions")
         .select("version, apk_url")
         .order("created_at", {ascending: false})
-        .range(0, 1)
-        .single()
-
-    if (error) { return null }
+        
+    if (error) { return [] }
 
     return data as any
 }

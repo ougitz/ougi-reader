@@ -1,18 +1,18 @@
-import { AppVersion, OugiUser } from '@/helpers/types'
 import { create }  from 'zustand'
 
 
 type AppVersionState = {
-    appVersion: AppVersion | null
-    setAppVersion: (AppVersion: AppVersion | null) => void
+    localVersion: string | null
+    setLocalVersion: (version: string | null) => void
 }
+
 
 export const useAppVersionState = create<AppVersionState>(
 
     (set) => ({
-        appVersion: null,
-        setAppVersion: (appVersion: AppVersion | null) => {
-            (set((state) => {return {...state, appVersion}}))
+        localVersion: null,
+        setLocalVersion: (localVersion: string | null) => {
+            (set((state) => {return {...state, localVersion}}))
         }
     })
 )

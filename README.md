@@ -21,13 +21,13 @@ In the output, you'll find options to open the app in a
 
 ## Apk
 
-Clone this repository and generate a apk or download a apk in the releases page
+Clone this repository and build an APK using the commands below, or download an APK from the [Releases](https://github.com/VitorTz/ougi-reader/releases) page.
 
 ```bash
 export EAS_NO_VCS=1
 eas build -p android --profile preview
 ```
 
-<img title="" src="./presentation/Got a Room.jpeg" alt="" width="339" data-align="center">
+<img title="" src="./presentation/Got a Room.jpeg" alt="" width="339" style="display: block; margin: 0 auto;">
 
-<img title="" src="./presentation/Menu.jpeg" alt="" width="342" data-align="center">
+<img title="" src="./presentation/Menu.jpeg" alt="" width="339" style="display: block; margin: 0 auto;">

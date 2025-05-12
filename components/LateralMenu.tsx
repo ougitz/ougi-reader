@@ -19,6 +19,7 @@ import CloseBtn from './CloseBtn'
 import { ToastSuccess } from '@/helpers/ToastMessages'
 import { dbClearTable } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
+import { wp } from '@/helpers/util'
 
 
 
@@ -47,13 +48,15 @@ const Option = ({onPress, title, iconName, iconColor = Colors.white}: OptionProp
     return (
         <Pressable 
             onPress={p} 
-            style={[styles.link, {paddingVertical: 10}]} 
+            style={styles.link} 
             hitSlop={AppConstants.hitSlop} >
-            {
-                loading ?
-                <ActivityIndicator size={ICON_SIZE} color={ICON_COLOR} /> :
-                <Ionicons name={iconName as any} size={ICON_SIZE} color={iconColor} />
-            }
+            <View style={{padding: 3, backgroundColor: iconColor, borderRadius: 4}} >
+                {
+                    loading ?
+                        <ActivityIndicator size={ICON_SIZE} color={Colors.backgroundColor} /> :
+                        <Ionicons name={iconName as any} size={ICON_SIZE} color={Colors.backgroundColor} />
+                }
+            </View>
             <Text style={[AppStyle.textRegular]}>{title}</Text>
         </Pressable>
     )
@@ -117,8 +120,11 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.navigate("/(pages)/RequestManhwa")
     }
 
+    const openReleases = () => {
+        router.navigate("/(pages)/Releases")
+    }
+
     return (
-        
         <ScrollView showsVerticalScrollIndicator={false} >
             <View style={styles.container} >
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 10}} >
@@ -169,14 +175,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     title='Pornwha' 
                     iconName='logo-reddit'
                     iconColor={Colors.orange}
-                />                
-
-                <Option 
-                    onPress={openBugReport} 
-                    title='Bug Report' 
-                    iconName='bug-outline'
-                    iconColor={Colors.BugReportColor}
-                />
+                />                                
 
                 <Option 
                     onPress={openDonate} 
@@ -190,6 +189,20 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     title='Request Manhwa' 
                     iconName='megaphone-outline'
                     iconColor={Colors.requestManhwaColor}
+                />
+
+                <Option 
+                    onPress={openReleases} 
+                    title='Releases' 
+                    iconName='git-branch-outline'
+                    iconColor={Colors.releasesColor}
+                />
+
+                <Option 
+                    onPress={openBugReport} 
+                    title='Bug Report' 
+                    iconName='bug-outline'
+                    iconColor={Colors.BugReportColor}
                 />
 
                 <Option 
@@ -219,13 +232,14 @@ export default LateralMenu
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        gap: 10,
-        paddingVertical: 40,
-        paddingHorizontal: 20
+        gap: 20,
+        padding: wp(5),
+        marginTop: 20, 
+        marginBottom: 10, 
     },
     link: {
         width: '100%',
-        gap: 20,
+        gap: 16,
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "flex-start"

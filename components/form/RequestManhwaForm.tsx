@@ -108,7 +108,7 @@ const RequestManhwaForm = () => {
             <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
                 {
                     isLoading ? 
-                    <ActivityIndicator size={32} color={Colors.white} /> :
+                    <ActivityIndicator size={32} color={Colors.backgroundColor} /> :
                     <Text style={AppStyle.formButtonText} >Request</Text>
                 }
             </Pressable>

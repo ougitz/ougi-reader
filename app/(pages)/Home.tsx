@@ -3,6 +3,7 @@ import {
     Pressable, 
     Animated, 
     StyleSheet, 
+    Text,
     View, 
     ScrollView 
 } from 'react-native'
@@ -24,6 +25,7 @@ import { hp, wp } from '@/helpers/util'
 import EmptyFooter from '@/components/EmptyFooter'
 import { dbListTable } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
+import { useAppVersionState } from '@/store/appVersionState'
 
 
 const MENU_WIDTH = wp(70)
@@ -34,6 +36,7 @@ const SCREEN_HEIGHT = hp(100)
 
 const Home = () => {
         
+    const { localVersion } = useAppVersionState()
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
     const backgroundAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current
 
@@ -119,6 +122,14 @@ const Home = () => {
                     <MostViewedManhwasComponent/>
                     <MangaRecommendationGrid/>
                 </View>
+
+                {
+                    localVersion &&
+                    <View style={{width: '100%', marginTop: 100, alignItems: "center", justifyContent: "center"}} >
+                        <Text style={AppStyle.textRegular} >App version: {localVersion}</Text>
+                    </View>
+                }
+
                 <EmptyFooter/>
             </ScrollView>            
             

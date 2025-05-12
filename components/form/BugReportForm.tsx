@@ -183,7 +183,7 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
             <Pressable onPress={handleSubmit(onSubmit)} style={styles.formButton} >
                 {
                     isLoading ? 
-                    <ActivityIndicator size={32} color={Colors.white} /> :
+                    <ActivityIndicator size={32} color={Colors.backgroundColor} /> :
                     <Text style={styles.formButtonText} >Report</Text>
                 }
             </Pressable>
