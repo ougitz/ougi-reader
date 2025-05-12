@@ -49,7 +49,7 @@ const Donate = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
         <TopBar title='Donate' titleColor={Colors.donateColor} >
-            <ReturnButton iconColor={Colors.donateColor} />
+            <ReturnButton color={Colors.donateColor} />
         </TopBar>
 
         {
@@ -59,6 +59,21 @@ const Donate = () => {
             {
               donateMethods.map((item, index) => <DonateMethodComponent key={index} donateMethod={item} />)
             }
+            <View style={{width: '100%', height: 2, backgroundColor: Colors.donateColor}} />
+            <View style={{gap: 10}} >
+              <Text style={[AppStyle.textRegular, {fontSize: 20}]} >
+                Ougi contains no paid subscriptions, in-app purchases, or advertising interruptions—every feature is offered entirely free of charge.
+              </Text>
+              <Text style={[AppStyle.textRegular, {fontSize: 20}]} >
+                However, operating and maintaining the servers that store and deliver thousands of images and user data does incur ongoing expenses.
+              </Text>
+              <Text style={[AppStyle.textRegular, {fontSize: 20}]} >
+                To ensure that Ougi continues running smoothly and to fund future enhancements, we kindly invite you to consider making a voluntary contribution. Your support is completely optional, but any gift helps us keep delivering the best possible experience.
+              </Text>
+              <Text style={[AppStyle.textRegular, {fontSize: 20}]} >
+                Your support is completely optional, but any gift helps us keep delivering the best possible experience.
+              </Text>
+            </View>
           </View>
         }
 

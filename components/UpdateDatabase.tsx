@@ -2,12 +2,12 @@ import { dbShouldUpdate, dbCheckSecondsSinceLastRefresh, dbUpdateDatabase } from
 import { ToastNoInternet, ToastUpdateDatabase, ToastWaitDatabase } from '@/helpers/ToastMessages'
 import { StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import React, { useState } from 'react'
-import { useSQLiteContext } from 'expo-sqlite'
 import { hasInternetAvailable } from '@/helpers/util'
-import { router } from 'expo-router'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useSQLiteContext } from 'expo-sqlite'
 import { Colors } from '@/constants/Colors'
+import React, { useState } from 'react'
+import { router } from 'expo-router'
 
 
 interface UpdateDatabaseProps {

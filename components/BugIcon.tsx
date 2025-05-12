@@ -1,12 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
 
+interface BugIconProps {
+  size?: number
+  color?: string
+}
 
-const BugIcon = ({size}: {size: number}) => {
+
+const BugIcon = ({size = 28, color = Colors.BugReportColor}: BugIconProps) => {
   return (
-    <Ionicons name='bug-outline' color={Colors.BugReportColor} size={size} />
+    <Ionicons name='bug-outline' color={color} size={size} />
   )
 }
 

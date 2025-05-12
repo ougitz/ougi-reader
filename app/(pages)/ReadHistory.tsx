@@ -125,7 +125,7 @@ const ReadHistory = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <TopBar title='Reading History' titleColor={Colors.readingHistoryColor} >
-        <ReturnButton iconColor={Colors.readingHistoryColor} />
+        <ReturnButton color={Colors.readingHistoryColor} />
       </TopBar>
       <FlashList
         data={logs} 

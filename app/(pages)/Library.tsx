@@ -67,7 +67,7 @@ const Library = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
       <TopBar title='Library' titleColor={Colors.libraryColor} >
-        <ReturnButton iconColor={Colors.libraryColor} />
+        <ReturnButton color={Colors.libraryColor} />
       </TopBar>
       <View style={{flex: 1, gap: 10}} >
         <ReadingStatusPicker defaultValue='Reading' onChangeValue={onChangeValue} />

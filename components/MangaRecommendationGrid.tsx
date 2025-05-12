@@ -36,9 +36,7 @@ const MangaRecommendationGrid = () => {
     useEffect(
         () => {init()},
         []
-    )
-
-    recommendations.forEach(item => console.log(item.image.height))
+    )    
 
     return (
         <View style={{gap: 20}} >

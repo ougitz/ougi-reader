@@ -30,37 +30,33 @@ import { hp, wp } from '@/helpers/util'
 import { FlashList } from '@shopify/flash-list'
 import FastImage from 'react-native-fast-image'
 import BugIcon from '@/components/BugIcon'
+import BugReportButton from '@/components/BugReportButton'
 
 
 interface ChapterHeaderProps {
-  manhwa_title: string
+  manhwaTitle: string
   loading: boolean
-  previousChapter: () => void
-  nextChapter: () => void
+  goToPreviousChapter: () => void
+  goToNextChapter: () => void
 }
 
 
-const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: ChapterHeaderProps) => {
+const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChapter}: ChapterHeaderProps) => {
 
   const { currentChapter } = useReadingState()
-  
-  const openBugReport = () => {    
-    router.navigate({
-      pathname: "/(pages)/BugReport",
-      params: {title: `${manhwa_title}/${currentChapter ? currentChapter.chapter_num: '?'}`}
-    })
-  }
+
+  const reportTitle = `${manhwaTitle}/${currentChapter ? currentChapter.chapter_num: '?'}`
   
   return (
     <View style={{width: '100%', paddingHorizontal: wp(5)}} >
-      <TopBar title={manhwa_title} >
+      <TopBar title={manhwaTitle} >
         <ReturnButton/>
       </TopBar>
       <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "space-between", marginBottom: 20}} >
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
           <Text style={AppStyle.textHeader}>Chapter</Text>
           <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
-            <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
+            <Pressable onPress={goToPreviousChapter} hitSlop={AppConstants.hitSlop} >
               <Ionicons name='chevron-back' size={24} color={Colors.white} />
             </Pressable>
             <View style={{alignItems: "center", justifyContent: "center"}} >
@@ -70,14 +66,12 @@ const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: C
                 <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
               }
             </View>
-            <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
+            <Pressable onPress={goToNextChapter} hitSlop={AppConstants.hitSlop}>
               <Ionicons name='chevron-forward' size={24} color={Colors.white} />
             </Pressable>
           </View>
         </View>
-        <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", alignSelf: "flex-end"}} >
-            <BugIcon size={32} />
-        </Pressable>
+        <BugReportButton size={32} title={reportTitle} />
       </View>
     </View>
   )
@@ -87,12 +81,12 @@ const ChapterHeader = ({ manhwa_title, loading, previousChapter, nextChapter}: C
 interface ChapterFooterProps {
   manhwa_title: string
   loading: boolean
-  previousChapter: () => void
-  nextChapter: () => void
+  goToPreviousChapter: () => void
+  goToNextChapter: () => void
 }
 
 
-const ChapterFooter = ({manhwa_title, loading, previousChapter, nextChapter }: ChapterFooterProps) => {
+const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChapter }: ChapterFooterProps) => {
   
   const {  currentChapter } = useReadingState()
 
@@ -108,7 +102,7 @@ const ChapterFooter = ({manhwa_title, loading, previousChapter, nextChapter }: C
         <View style={{width: '100%', flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "center", marginBottom: 20}} >
           <Text style={AppStyle.textHeader}>Chapter</Text>
           <View style={{flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "center"}} >
-            <Pressable onPress={previousChapter} hitSlop={AppConstants.hitSlop} >
+            <Pressable onPress={goToPreviousChapter} hitSlop={AppConstants.hitSlop} >
               <Ionicons name='chevron-back' size={24} color={Colors.white} />
             </Pressable>
             <View style={{alignItems: "center", justifyContent: "center"}} >
@@ -118,22 +112,19 @@ const ChapterFooter = ({manhwa_title, loading, previousChapter, nextChapter }: C
                 <Text style={AppStyle.textHeader}>{currentChapter!.chapter_num}</Text>
               }
             </View>
-            <Pressable onPress={nextChapter} hitSlop={AppConstants.hitSlop}>
+            <Pressable onPress={goToNextChapter} hitSlop={AppConstants.hitSlop}>
               <Ionicons name='chevron-forward' size={24} color={Colors.white} />
             </Pressable>
           </View>
-        </View>
-        <View style={{gap: 10}} >
-          <View style={{width: '100%', padding: 12, borderRadius: 4, backgroundColor: Colors.gray}} >
-            <Text style={[AppStyle.textRegular, {fontSize: 20}]}>
-              If you encounter broken or missing images, please use the bug-report option below.
-            </Text>
+        </View>        
+        <Pressable onPress={openBugReport} style={{width: '100%', padding: 12, flexDirection: 'row', borderRadius: 4, backgroundColor: Colors.gray}} >
+          <Text style={[AppStyle.textRegular, {fontSize: 18, flex: 0.8}]}>
+            If you encounter broken or missing images, please use the bug-report option.
+          </Text>
+          <View style={{flex: 0.2, height: 64, alignSelf: "flex-start", alignItems: "center", justifyContent: "center"}} > 
+            <BugIcon size={48} />
           </View>
-          <Pressable onPress={openBugReport} style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center", padding: 12, backgroundColor: Colors.gray, borderRadius: 4, alignSelf: "flex-end"}} > 
-            <Text style={AppStyle.textRegular}>Bub Report</Text>
-            <Ionicons name='bug-outline' size={32} color={Colors.green} />            
-          </Pressable>
-        </View>
+        </Pressable>
       </View>
   )
 }
@@ -151,11 +142,10 @@ const Chapter = () => {
   const init = useCallback(async () => {
     if (currentChapter) {
       setLoading(true)
-      await FastImage.clearDiskCache()
-      await FastImage.clearMemoryCache()
-      await spFetchChapterImages(currentChapter.chapter_id)
-        .then(values => setImages([...values]))
-        .catch(error => console.log(error))
+        await FastImage.clearDiskCache()
+        await FastImage.clearMemoryCache()
+        await spFetchChapterImages(currentChapter.chapter_id)
+          .then(values => setImages([...values]))
       setLoading(false)
       dbUpsertReadingHistory(
         db, 
@@ -178,12 +168,12 @@ const Chapter = () => {
     flatListRef.current?.scrollToOffset({animated: false, offset: 0})
   }  
 
-  const nextChapter = async () => {
+  const goToNextChapter = async () => {
     scrollUp()
     moveToNextChapter()
   }
 
-  const previousChapter = async () => {
+  const goToPreviousChapter = async () => {
     scrollUp()
     moveToPreviousChapter()
   }
@@ -193,8 +183,8 @@ const Chapter = () => {
       <View style={{flex: 1}} >
         <FlashList
           data={images}
-          ListHeaderComponent={<ChapterHeader manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
-          ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} nextChapter={nextChapter} previousChapter={previousChapter}/>}
+          ListHeaderComponent={<ChapterHeader manhwaTitle={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
+          ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
           keyExtractor={(item, index) => index.toFixed()}
           estimatedItemSize={hp(50)}
           onEndReachedThreshold={hp(200)}

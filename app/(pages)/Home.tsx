@@ -9,6 +9,7 @@ import {
 import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
 import MangaRecommendationGrid from '@/components/MangaRecommendationGrid'
 import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
+import RandomManhwaButton from '@/components/RandomManhwaIcon'
 import UpdateDatabase from '@/components/UpdateDatabase'
 import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
@@ -20,7 +21,6 @@ import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
-import RandomManhwaIcon from '@/components/RandomManhwaIcon'
 
 
 const MENU_WIDTH = wp(60)
@@ -91,18 +91,22 @@ const Home = () => {
     
     return (
         <SafeAreaView style={[AppStyle.safeArea, {paddingBottom: 60}]} >
+
+            {/* Header */}
             <TopBar title='Ougi' titleColor={Colors.orange} >
-                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 10}} >
+                <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
                     <UpdateDatabase/>
                     <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlop} >
                         <Ionicons name='search-outline' size={28} color={'white'} />
                     </Pressable>
-                    <RandomManhwaIcon backgroundColor={Colors.backgroundColor} iconColor={Colors.white} iconSize={28} />
+                    <RandomManhwaButton color={Colors.white} size={28} />
                     <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlop} >
                         <Ionicons name='options-outline' size={28} color={'white'} />
                     </Pressable>
                 </View>
             </TopBar>
+
+            {/* Content */}
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} >
                 <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
@@ -111,7 +115,8 @@ const Home = () => {
                     <MangaRecommendationGrid/>
                 </View>
             </ScrollView>            
-
+            
+            {/* Lateral Menu */}
             <Animated.View style={[styles.menuBackground, { width: SCREEN_WIDTH, transform: [{ translateX: backgroundAnim }] }]}>
                 <Pressable onPress={closeMenu} style={{width: '100%', height: '100%'}} />
             </Animated.View>

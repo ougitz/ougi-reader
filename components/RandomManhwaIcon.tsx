@@ -5,26 +5,26 @@ import { dbReadRandomManhwa } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
 import { Manhwa } from '@/model/Manhwa'
 import { router } from 'expo-router'
-import Toast from './Toast'
+import { Colors } from '@/constants/Colors'
+import { ToastError } from '@/helpers/ToastMessages'
 
 
 interface RandomManhwaIconProps {
-    iconColor: string
-    iconSize: number
-    backgroundColor: string
+    size?: number
+    color?: string
 }
 
-const RandomManhwaIcon = ({iconColor, iconSize, backgroundColor}: RandomManhwaIconProps) => {
+
+const RandomManhwaButton = ({size = 28, color = Colors.white}: RandomManhwaIconProps) => {
 
     const db = useSQLiteContext()
     const [loading, setLoading] = useState(false)
 
     const openRandomManhwa = async () => {
         setLoading(true)
-        console.log("oi")
         const m: Manhwa[] = await dbReadRandomManhwa(db, 1)
         if (m.length == 0) {
-            Toast.show({title: "Error", message: "No manhwas!", type: "error"})
+            ToastError("No manhwas!")
             setLoading(false)
             return
         }
@@ -37,16 +37,16 @@ const RandomManhwaIcon = ({iconColor, iconSize, backgroundColor}: RandomManhwaIc
     }
 
     return (
-        <Pressable onPress={openRandomManhwa}  style={{padding: 6, backgroundColor, borderRadius: 4}}>
+        <Pressable onPress={openRandomManhwa}  style={{padding: 6, backgroundColor: Colors.backgroundColor, borderRadius: 4}}>
             {
                 loading ?
-                <ActivityIndicator size={iconSize} color={iconColor}/> :                
-                <Ionicons name='dice-outline' size={iconSize} color={iconColor}/>
+                <ActivityIndicator size={size} color={color}/> :                
+                <Ionicons name='dice-outline' size={size} color={color}/>
             }
         </Pressable>
     )
 }
 
-export default RandomManhwaIcon
+export default RandomManhwaButton
 
 const styles = StyleSheet.create({})

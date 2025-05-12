@@ -27,6 +27,9 @@ import { ToastNoInternet } from '@/helpers/ToastMessages';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { Image } from 'expo-image';
 import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable } from '@/lib/database';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Colors } from '@/constants/Colors';
+import TopBar from '@/components/TopBar';
 
 
 const App = () => {
@@ -85,10 +88,10 @@ const App = () => {
   )
 
   return (
-    <SafeAreaView style={AppStyle.safeArea} >
+    <SafeAreaView style={AppStyle.safeArea} >      
       <View style={{flex: 1, alignItems: "center", justifyContent: "center", gap: 20}}>
-        <Image source={require('@/assets/images/loading2.gif')} style={styles.image} />
-        <Text style={[AppStyle.textRegular, {fontSize: 22}]}>Loading database...</Text>
+        <Ionicons name='cloud-download-outline' size={64} color={Colors.white} />
+        <Text style={[AppStyle.textRegular, {fontSize: 22}]}>Downloading database...</Text>        
       </View>
     </SafeAreaView>
   )

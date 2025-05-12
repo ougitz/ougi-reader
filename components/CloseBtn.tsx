@@ -8,16 +8,18 @@ import React from 'react'
 interface CloseBtnProps {
     onPress: () => void
     style?: StyleProp<ViewStyle>
+    size?: number
+    color?: string
 }
 
 
-const CloseBtn = ({onPress, style}: CloseBtnProps) => {
+const CloseBtn = ({size = 28, color = Colors.white, onPress, style}: CloseBtnProps) => {
   return (
     <Pressable
         onPress={onPress}
         hitSlop={AppConstants.hitSlopLarge}
         style={[styles.container, style]}>
-        <Ionicons name='close' size={22} color={'white'} />
+        <Ionicons name='close' size={size} color={color} />
     </Pressable>
   )
 }

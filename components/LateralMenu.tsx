@@ -7,19 +7,18 @@ import {
     Text, 
     View 
 } from 'react-native'
-import { dbReadRandomManhwa, dbUpdateDatabase, dbShouldUpdate, dbCheckSecondsSinceLastRefresh } from '@/lib/database'
-import { ToastNoInternet, ToastUpdateDatabase, ToastWaitDatabase } from '@/helpers/ToastMessages'
-import { choice, hasInternetAvailable, hp, wp } from '@/helpers/util'
 import { AppConstants } from '@/constants/AppConstants'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { supabase } from '@/lib/supabase'
 import { useAuthState } from '@/store/authState'
-import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import React, { useState } from 'react'
-import { Manhwa } from '@/model/Manhwa'
 import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
+import { ToastSuccess } from '@/helpers/ToastMessages'
+import { dbClearTable } from '@/lib/database'
+import { useSQLiteContext } from 'expo-sqlite'
 
 
 
@@ -48,14 +47,14 @@ const Option = ({onPress, title, iconName, iconColor = Colors.white}: OptionProp
     return (
         <Pressable 
             onPress={p} 
-            style={[styles.link, {paddingVertical: 8, paddingHorizontal: 6, borderRadius: 4}]} 
+            style={[styles.link, {paddingVertical: 10}]} 
             hitSlop={AppConstants.hitSlop} >
-            <Text style={[AppStyle.textRegular]}>{title}</Text>
             {
                 loading ?
                 <ActivityIndicator size={ICON_SIZE} color={ICON_COLOR} /> :
                 <Ionicons name={iconName as any} size={ICON_SIZE} color={iconColor} />
             }
+            <Text style={[AppStyle.textRegular]}>{title}</Text>
         </Pressable>
     )
 }
@@ -66,45 +65,13 @@ interface LateralMenuProps {
 }
 
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
-
-    const db = useSQLiteContext()
-    const { session } = useAuthState()
     
-    const randomRead = async () => {
-        const manhwaList: Manhwa[] = await dbReadRandomManhwa(db)
-        router.navigate({
-            pathname: "/(pages)/Manhwa", 
-            params: {manhwa_id: manhwaList[0].manhwa_id}
-        })
-    }
-
+    const db = useSQLiteContext()
+    const { session, logout } = useAuthState()
+    
     const accountPage = () => {
         router.navigate("/(pages)/Account")
-    }
-
-    const updateDatabase = async () => {
-        const hasInternet = await hasInternetAvailable()
-        if (!hasInternet) { 
-            ToastNoInternet()
-            return 
-        }
-
-        const shouldUpdate = await dbShouldUpdate(db, 'database')
-        
-        if (!shouldUpdate) {
-            const secondsUntilRefresh = await dbCheckSecondsSinceLastRefresh(db, 'database')
-            ToastWaitDatabase(secondsUntilRefresh)            
-        } else {
-            ToastUpdateDatabase()
-            try {
-                await dbUpdateDatabase(db)
-                router.replace("/(pages)/Home")
-                return
-            } catch (error) {
-                console.log(error)
-            }
-        }        
-    }
+    }    
 
     const loginPage = () => {
         router.navigate("/(auth)/SignIn")
@@ -136,6 +103,14 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const openDisclaimer = () => {
         router.navigate("/(pages)/Disclaimer")
+    }
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        await dbClearTable(db, 'reading_status')
+        logout()
+        ToastSuccess()
+        router.replace("/(pages)/Home")
     }
 
     return (
@@ -213,6 +188,16 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     iconColor={Colors.disclaimerColor}
                 />
 
+                {
+                    session &&
+                    <Option 
+                        onPress={handleLogout} 
+                        title='Logout' 
+                        iconName='log-out-outline'
+                        iconColor={Colors.neonRed}
+                    />
+                }
+
             </View>            
         </ScrollView>
     )
@@ -229,8 +214,9 @@ const styles = StyleSheet.create({
     },
     link: {
         width: '100%',
+        gap: 20,
         flexDirection: 'row',
         alignItems: "center",
-        justifyContent: "space-between"
+        justifyContent: "flex-start"
     }
 })

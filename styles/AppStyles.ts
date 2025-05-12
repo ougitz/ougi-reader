@@ -25,5 +25,10 @@ export const AppStyle = StyleSheet.create({
         flex: 1, 
         padding: wp(5), 
         backgroundColor: Colors.backgroundColor        
+    },
+    buttonBackground: {
+        padding: 6, 
+        borderRadius: 4, 
+        backgroundColor: Colors.almostBlack  
     }
 })

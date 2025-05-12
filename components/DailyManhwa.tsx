@@ -30,15 +30,15 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
     }
         
     return (
-            <Pressable
-                onPress={openManhwaPage}
-                style={styles.container}>
-                <Image source={recommendation.image.image_url} style={[styles.image, {height}]} />
-                <View 
-                    style={styles.title} >
-                    <Text style={AppStyle.textRegular}>{manhwaTitle}</Text>
-                </View>
-            </Pressable>
+        <Pressable
+            onPress={openManhwaPage}
+            style={styles.container}>
+            <Image source={recommendation.image.image_url} style={[styles.image, {height}]} />
+            <View 
+                style={styles.title} >
+                <Text style={AppStyle.textRegular}>{manhwaTitle}</Text>
+            </View>
+        </Pressable>
     )
 }
 

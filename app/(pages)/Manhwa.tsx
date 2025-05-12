@@ -24,15 +24,23 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { wp, hp } from '@/helpers/util';
 import { Image } from 'expo-image';
-import { dbListTable, dbReadManhwaById, dbUpdateManhwaViews, dbGetMangaReadChapters } from '@/lib/database';
+import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
 import AddToLibray from '@/components/AddToLibray';
 import { useSQLiteContext } from 'expo-sqlite';
-import { ChapterReadLog } from '@/helpers/types';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import RandomManhwaIcon from '@/components/RandomManhwaIcon';
+import RandomManhwaButton from '@/components/RandomManhwaIcon';
+import BugReportButton from '@/components/BugReportButton';
+
+
+const Item = ({text, backgroundColor}: {text: string, backgroundColor: string}) => {
+  return (
+    <View style={[styles.item, {backgroundColor}]} >
+      <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{text}</Text>
+    </View>
+  )
+}
 
 
 const ManhwaPage = () => {
@@ -64,55 +72,46 @@ const ManhwaPage = () => {
     [manhwa_id]
   )
 
-  const openBugReport = () => {
-    router.navigate({
-      pathname: "/(pages)/BugReport",
-      params: {title: manhwa?.title}
-    })
-  }
-
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
       <ScrollView style={{flex: 1}} >
         {
           manhwa ?
           <>
+            {/* Header */}
             <LinearGradient 
                 colors={[manhwa.color, Colors.backgroundColor]}
                 style={styles.linearBackground} />
             <View style={styles.topBar} >
-                <HomeButton iconColor={manhwa.color} />
+                <HomeButton color={manhwa.color} />
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                    <Pressable onPress={openBugReport} style={{padding: 6, backgroundColor: Colors.backgroundColor, borderRadius: 4}} >
-                      <Ionicons name='bug-outline' size={28} color={manhwa.color} />
-                    </Pressable>
-                    <RandomManhwaIcon iconSize={28} backgroundColor={Colors.backgroundColor} iconColor={manhwa.color} />
-                    <ReturnButton iconColor={manhwa.color} />
+                    <BugReportButton color={manhwa.color} title={manhwa.title} />                    
+                    <RandomManhwaButton color={manhwa.color} />
+                    <ReturnButton color={manhwa.color} />
                 </View>
             </View>
 
+            {/* Manhwa Info */}
             <View style={styles.manhwaContainer}>
+                
                 <Image source={manhwa.cover_image_url} style={styles.image} />
                 <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28, fontFamily: 'LeagueSpartan_600SemiBold'}]}>{manhwa!.title}</Text>
-                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start', fontSize: 28}]}>Summary</Text>
-                <View style={{gap: 10, alignSelf: "flex-start"}} >
-                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>
-                </View>
+                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 18}]}>{manhwa.descr}</Text>                
+                
                 <ManhwaAuthorsInfo manhwa_id={manhwa_id} />
                 <ManhwaGenreInfo manhwa_id={manhwa_id} />
                 <AddToLibray manhwa_id={manhwa_id} color={manhwa.color} />
+
                 <View style={{flexDirection: 'row', width: '100%', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
-                  <View style={[styles.item, {backgroundColor: manhwa.color}]} >
-                    <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>{manhwa.status}</Text>
-                  </View>
-                  <View style={[styles.item, {backgroundColor: manhwa.color}]} >
-                    <Text style={[AppStyle.textRegular, {color: Colors.almostBlack}]}>Views: {manhwa.views}</Text>
-                  </View>
+                  <Item text={manhwa.status} backgroundColor={manhwa.color} />
+                  <Item text={`Views: ${manhwa.views}`} backgroundColor={manhwa.color} />
                 </View>
                 <ManhwaChapterList manhwa={manhwa} />
             </View>
           </>
+
           :
+          
           <View style={{flex: 1, height: hp(100), alignItems: "center", justifyContent: "center"}} >
               <ActivityIndicator size={'large'} color={Colors.white} />
           </View>

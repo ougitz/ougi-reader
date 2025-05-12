@@ -19,7 +19,7 @@ const KoreanTerms = () => {
   return (
     <SafeAreaView style={AppStyle.safeArea} >
         <TopBar title='Korean Terms' titleColor={Colors.translationColor} >
-            <ReturnButton iconColor={Colors.translationColor} />
+            <ReturnButton color={Colors.translationColor} />
         </TopBar>
         <ScrollView style={{flex: 1}} >
             <View style={{width: '100%', gap: 20, marginBottom: 42}} >

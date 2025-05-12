@@ -40,15 +40,13 @@ const LastUpdate = () => {
 
   const onEndReached = async () => {
     if (!hasResults.current || !isInitialized.current) { return }
-    console.log("end")
     page.current += 1
     setLoading(true)
       await dbReadManhwasOrderedByUpdateAt(db, page.current * PAGE_LIMIT, PAGE_LIMIT)
         .then(values => {
           hasResults.current = values.length > 0
           setManhwas(prev => [...prev, ...values])
-
-        })    
+        })
     setLoading(false)
   }  
 
