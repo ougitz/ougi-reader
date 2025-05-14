@@ -1,31 +1,36 @@
-import { ActivityIndicator, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import { ActivityIndicator, Linking, Pressable, SafeAreaView, Text, View } from 'react-native'
+import React from 'react'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Colors } from '@/constants/Colors'
 import ReturnButton from '@/components/ReturnButton'
 import { AppVersion } from '@/helpers/types'
 import { useAppVersionState } from '@/store/appVersionState'
-import { spGetAllAppVersions } from '@/lib/supabase'
+import { ToastError } from '@/helpers/ToastMessages'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import * as Clipboard from 'expo-clipboard'
-import Toast from '@/components/Toast'
 
 
 const ReleaseItem = ({release}: {release: AppVersion}) => {
 
-    const copyToClipboard = async (value: string) => {
-        await Clipboard.setStringAsync(value);
-        Toast.show({title: "Copied to clipboard!", message: "", type: "success"})   
-    }
+    const openUrl = async () => {
+        try {
+            const supported = await Linking.canOpenURL(release.apk_url);
+            if (supported) {
+                await Linking.openURL(release.apk_url);
+            } else {
+                ToastError(`Cannot open this URL: ${release.apk_url}`)
+            }
+        } catch (error) {
+            ToastError("Unable to open the browser")
+        }
+    };
 
     return (
-        <Pressable onPress={() => copyToClipboard(release.apk_url)} style={{width: '100%', padding: 10, borderRadius: 4, backgroundColor: Colors.gray}}>
+        <Pressable onPress={openUrl} style={{width: '100%', padding: 10, paddingVertical: 12, borderRadius: 4, backgroundColor: Colors.gray}}>
             <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
                 <Text style={[AppStyle.textHeader, {color: Colors.releasesColor}]} >{release.version}</Text>
-                <Ionicons name='copy-outline' size={28} color={Colors.releasesColor} />                
-            </View>
-            <Text style={AppStyle.textRegular} >{release.apk_url}</Text>
+                <Ionicons name='download-outline' size={28} color={Colors.releasesColor} />                
+            </View>            
         </Pressable>
     )
 }

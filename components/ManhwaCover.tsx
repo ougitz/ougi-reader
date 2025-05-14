@@ -14,10 +14,10 @@ import { Chapter } from '@/model/Chapter';
 import { Manhwa } from '@/model/Manhwa';
 import ChapterLink from './ChapterLink';
 import { router } from 'expo-router';
-import { Image } from 'expo-image';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { dbReadLast3Chapters } from '@/lib/database';
 import { useSQLiteContext } from 'expo-sqlite';
+import FastImage from 'react-native-fast-image';
 
 
 
@@ -74,9 +74,9 @@ const ManhwaCover = ({
 
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
-            <Image 
-                source={manhwa.cover_image_url} 
-                contentFit='cover'
+            <FastImage
+                source={{uri: manhwa.cover_image_url, cache: 'web', priority: 'normal'}} 
+                resizeMode={FastImage.resizeMode.cover}
                 style={[{borderRadius: 22, width, height}]}/>
             <View style={styles.container} >
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>

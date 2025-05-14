@@ -32,6 +32,7 @@ import AddToLibray from '@/components/AddToLibray';
 import { useSQLiteContext } from 'expo-sqlite';
 import RandomManhwaButton from '@/components/RandomManhwaButton';
 import BugReportButton from '@/components/BugReportButton';
+import FastImage from 'react-native-fast-image';
 
 
 interface ItemProps {
@@ -109,7 +110,7 @@ const ManhwaPage = () => {
             {/* Manhwa Info */}
             <View style={styles.manhwaContainer}>
                 
-                <Image source={manhwa.cover_image_url} style={styles.image} />
+                <FastImage source={{uri: manhwa.cover_image_url, cache: 'web', priority: "high"}} resizeMode={FastImage.resizeMode.cover} style={styles.image} />
                 <View style={{alignSelf: "flex-start"}} >
                   <Text style={AppStyle.textManhwaTitle}>{manhwa!.title}</Text>
                   <Text style={AppStyle.textRegular}>{manhwa.descr}</Text>

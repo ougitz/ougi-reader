@@ -1,5 +1,5 @@
 import { 
-  ActivityIndicator, 
+  ActivityIndicator,  
   FlatList, 
   Pressable, 
   SafeAreaView, 
@@ -29,6 +29,7 @@ import { hp, wp } from '@/helpers/util'
 import { FlashList } from '@shopify/flash-list'
 import FastImage from 'react-native-fast-image'
 import BugIcon from '@/components/BugIcon'
+import { Image } from 'expo-image'
 import BugReportButton from '@/components/BugReportButton'
 
 
@@ -145,6 +146,7 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
   )
 }
 
+
 const Chapter = () => {
 
   const db = useSQLiteContext()
@@ -155,12 +157,13 @@ const Chapter = () => {
   const manhwa_title: string = params.manhwa_title as any
   const flatListRef = useRef<FlatList>()
 
+
   const init = async () => {
     if (currentChapter) {
       console.log("change chapter")
       setLoading(true)
-        await FastImage.clearDiskCache()
-        await FastImage.clearMemoryCache()
+        await Image.clearDiskCache()
+        await Image.clearMemoryCache()
         await spFetchChapterImages(currentChapter.chapter_id)
           .then(values => setImages([...values]))
       setLoading(false)
@@ -202,12 +205,12 @@ const Chapter = () => {
           data={images}
           ListHeaderComponent={<ChapterHeader manhwaTitle={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
           ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
-          keyExtractor={(item, index) => index.toFixed()}
-          estimatedItemSize={hp(50)}
+          keyExtractor={(item, index) => item.image_url}          
           onEndReachedThreshold={3}
+          estimatedItemSize={hp(50)}
           drawDistance={hp(300)}
           ref={flatListRef as any}
-          renderItem={({item, index}) => <ManhwaImage image={item} />}
+          renderItem={({item, index}) => <ManhwaImage imageUrl={item.image_url} originalWidth={item.width} originalHeight={item.height} />}
           ListEmptyComponent={<ActivityIndicator size={32} color={Colors.white} />}
         />
         <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >

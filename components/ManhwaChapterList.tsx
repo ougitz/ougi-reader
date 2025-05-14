@@ -111,7 +111,7 @@ const ManhwaChapterList = ({manhwa, textColor = Colors.backgroundColor}: ManhwaC
                   <ChapterItem 
                     isReaded={chapterAlreadyReaded.current.has(item.chapter_num)}
                     manhwa_title={manhwa.title} 
-                    key={index} 
+                    key={item.chapter_id} 
                     chapter={item}/>
                 )
               }
