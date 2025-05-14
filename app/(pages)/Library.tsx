@@ -5,7 +5,7 @@ import TopBar from '@/components/TopBar'
 import ReadingStatusPicker from '@/components/picker/ReadingStatusPicker'
 import { Manhwa } from '@/model/Manhwa'
 import { dbGetManhwasByReadingStatus } from '@/lib/database'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import { useFocusEffect } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
 import { useSQLiteContext } from 'expo-sqlite'
@@ -71,14 +71,16 @@ const Library = () => {
       </TopBar>
       <View style={{flex: 1, gap: 10}} >
         <ReadingStatusPicker defaultValue='Reading' onChangeValue={onChangeValue} />
-        <ManhwaGrid
+        <ManhwaList
           manhwas={manhwas}
           loading={loading}          
           numColumns={2}
+          estimatedItemSize={400}
           hasResults={true}
-          showChaptersPreview={false}
+          showChaptersPreview={true}
+          shouldShowChapterDate={false}
           onEndReached={onEndReached}
-          listMode='FlatList'
+          listMode='FlashList'
         />
       </View>
     </SafeAreaView>

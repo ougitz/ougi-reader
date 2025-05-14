@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native'
-import { getItemGridDimensions, wp } from '@/helpers/util'
+import { getItemGridDimensions, hp, wp } from '@/helpers/util'
 import { AppConstants } from '@/constants/AppConstants'
 import React, { useEffect, useRef } from 'react'
 import { FlashList } from '@shopify/flash-list'
@@ -8,7 +8,7 @@ import { Manhwa } from '@/model/Manhwa'
 import ManhwaCover from './ManhwaCover'
 
 
-interface ManhwaGridProps {
+interface ManhwaListProps {
     manhwas: Manhwa[]
     onEndReached?: () => void
     loading?: boolean
@@ -20,9 +20,10 @@ interface ManhwaGridProps {
     shouldShowChapterDate?: boolean
     showChaptersPreview?: boolean
     listMode?: 'FlashList' | 'FlatList'
+    estimatedItemSize?: number
 }
 
-const ManhwaGrid = ({
+const ManhwaList = ({
     manhwas, 
     onEndReached, 
     loading = false, 
@@ -33,8 +34,9 @@ const ManhwaGrid = ({
     numColumns = 1,
     shouldShowChapterDate = true,
     showChaptersPreview = true,
-    listMode = 'FlashList'
-}: ManhwaGridProps) => {    
+    listMode = 'FlashList',
+    estimatedItemSize = AppConstants.ManhwaCoverDimension.height + 180
+}: ManhwaListProps) => {    
 
     const ref = useRef<FlashList<Manhwa>>()
     const {width, height} = getItemGridDimensions(
@@ -73,7 +75,7 @@ const ManhwaGrid = ({
                                 marginBottom={6} 
                                 manhwa={item} />
                         }
-                        estimatedItemSize={AppConstants.ManhwaCoverDimension.height + 180}
+                        estimatedItemSize={estimatedItemSize}
                         ListFooterComponent={
                             <>
                                 {
@@ -84,9 +86,10 @@ const ManhwaGrid = ({
                                 }
                             </>
                         }
+                        drawDistance={hp(100)}
                         onEndReached={onEndReached}
                         scrollEventThrottle={4}
-                        onEndReachedThreshold={1}/> 
+                        onEndReachedThreshold={2}/>
                     :
                     <FlatList
                         keyboardShouldPersistTaps={'always'}
@@ -106,7 +109,7 @@ const ManhwaGrid = ({
                         initialNumToRender={4}
                         onEndReached={onEndReached}
                         scrollEventThrottle={4}
-                        onEndReachedThreshold={1}
+                        onEndReachedThreshold={3}
                         ListFooterComponent={
                             <>
                                 {
@@ -123,6 +126,6 @@ const ManhwaGrid = ({
     )
 }
 
-export default ManhwaGrid
+export default ManhwaList
 
 const styles = StyleSheet.create({})

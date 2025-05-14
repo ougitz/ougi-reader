@@ -2,7 +2,7 @@ import { SafeAreaView, StyleSheet, View } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import ReturnButton from '@/components/ReturnButton'
 import { dbSearchManhwas } from '@/lib/database'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import SearchBar from '@/components/SearchBar'
@@ -76,14 +76,16 @@ const SearchManhwa = () => {
       </TopBar>
       <View style={{flex: 1, gap: 10}} >
         <SearchBar onChangeValue={debounceSearch} />      
-        <ManhwaGrid
+        <ManhwaList
           manhwas={manhwas}
           loading={loading}
+          estimatedItemSize={400}
           numColumns={2}
           hasResults={true}
-          showChaptersPreview={false}
+          showChaptersPreview={true}
+          shouldShowChapterDate={false}
           onEndReached={onEndReached}
-          listMode='FlatList'
+          listMode='FlashList'
         />
       </View>
     </SafeAreaView>

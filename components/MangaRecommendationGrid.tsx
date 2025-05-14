@@ -1,15 +1,12 @@
-import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationStores'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationState'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
+import { FlatList, StyleSheet, View } from 'react-native'
 import React, { useCallback, useEffect } from 'react'
+import { sortRecommendations } from '@/helpers/util'
 import ManhwaRecommendation from './DailyManhwa'
-import { AppStyle } from '@/styles/AppStyles'
 import RotatingButton from './RotatingButton'
 import { debounce } from 'lodash'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { Colors } from '@/constants/Colors'
 import Title from './text/Title'
-import { sortRecommendations } from '@/helpers/util'
 
 
 const MangaRecommendationGrid = () => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SafeAreaView, StyleSheet} from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa'
@@ -55,14 +55,16 @@ const LastUpdate = () => {
       <TopBar title='Latest Updates' >
         <ReturnButton/>        
       </TopBar>
-      <ManhwaGrid
+      <ManhwaList
         manhwas={manhwas}
         loading={loading}
         numColumns={2}
+        estimatedItemSize={400}
         hasResults={true}
-        showChaptersPreview={false}
+        showChaptersPreview={true}
+        shouldShowChapterDate={false}
         onEndReached={onEndReached}
-        listMode='FlatList'
+        listMode='FlashList'
       />
     </SafeAreaView>
   )

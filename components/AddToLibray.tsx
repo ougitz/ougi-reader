@@ -1,19 +1,21 @@
 import { dbGetManhwaReadingStatus, dbUpdateManhwaReadingStatus } from '@/lib/database';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import DropDownPicker from 'react-native-dropdown-picker';
 import { spUpdateManhwaReadingStatus } from '@/lib/supabase';
+import React, { useEffect, useRef, useState } from 'react'
+import DropDownPicker from 'react-native-dropdown-picker';
 import { AppConstants } from '@/constants/AppConstants';
 import { useAuthState } from '@/store/authState';
-import { ToastNotLogged } from './Toast';
+import { StyleSheet, View } from 'react-native'
 import { useSQLiteContext } from 'expo-sqlite';
 import { Colors } from '@/constants/Colors';
+import { ToastNotLogged } from './Toast';
+
 
 interface AddToLibrayProps {
     manhwa_id: number
     backgroundColor?: string
     textColor?: string
 }
+
 
 const AddToLibray = ({
     manhwa_id, 

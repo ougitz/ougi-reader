@@ -14,7 +14,7 @@ import { spFetchChapterList } from '@/lib/supabase'
 import { router } from 'expo-router'
 import { ActivityIndicator } from 'react-native'
 import { Image } from 'expo-image'
-import { isColorDark } from '@/helpers/util'
+import { hp, isColorDark } from '@/helpers/util'
 
 
 const PAGE_LIMIT = 20
@@ -141,6 +141,7 @@ const ReadHistory = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => <HistoryItem log={item}/>} 
         onEndReached={onEndReached}
+        drawDistance={hp(100)}
         scrollEventThrottle={4}
         onEndReachedThreshold={1}
         ListFooterComponent={

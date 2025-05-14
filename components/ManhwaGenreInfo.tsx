@@ -1,12 +1,11 @@
 import { Text, View, Pressable, StyleSheet, FlatList } from "react-native"
-import { AppStyle } from "@/styles/AppStyles"
-import { Colors } from "@/constants/Colors"
-import { useReadingState } from "@/store/manhwaReadingState"
-import { Genre } from "@/helpers/types"
-import { router } from "expo-router"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { dbReadManhwaGenres } from "@/lib/database"
 import { useSQLiteContext } from "expo-sqlite"
+import { AppStyle } from "@/styles/AppStyles"
+import { Colors } from "@/constants/Colors"
+import { Genre } from "@/helpers/types"
+import { router } from "expo-router"
 
 
 const ManhwaGenreInfo = ({manhwa_id}: {manhwa_id: number}) => {

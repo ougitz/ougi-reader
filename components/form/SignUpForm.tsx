@@ -1,6 +1,5 @@
 import { 
     ActivityIndicator,
-    StyleSheet, 
     TextInput, 
     Platform, 
     ScrollView, 
@@ -99,7 +98,8 @@ const SignUpForm = () => {
   return (
     <KeyboardAvoidingView style={{width: '100%', gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{width: '100%'}} >
-            {/* Name */}
+
+            {/* Username */}
             <Text style={AppStyle.inputHeaderText}>Username</Text>
             <Controller
                 control={control}
@@ -115,6 +115,7 @@ const SignUpForm = () => {
                 )}
             />
             {errors.name && (<Text style={AppStyle.error}>{errors.name.message}</Text>)}
+
             {/* Email */}
             <Text style={AppStyle.inputHeaderText}>Email</Text>
             <Controller
@@ -166,7 +167,7 @@ const SignUpForm = () => {
             />
             {errors.confirmPassword && (<Text style={AppStyle.error}>{errors.confirmPassword.message}</Text>)}
     
-            {/* Login Button */}
+            {/* Sign Up Button */}
             <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
                 {
                     isLoading ? 
@@ -175,14 +176,16 @@ const SignUpForm = () => {
                 }
             </Pressable>
 
-        <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
-            <Text style={{color: Colors.white, fontSize: 14}} >Already Have an Account?</Text> 
-            <Pressable onPress={() => router.replace("/(auth)/SignIn")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
-                <Text style={{textDecorationLine: "underline", fontWeight: "bold", color: Colors.white, fontSize: 14}} >
-                    Sign In
-                </Text> 
-            </Pressable>
-        </View>
+            {/* Already Have an Account? */}
+            <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
+                <Text style={{color: Colors.white, fontSize: 14}} >Already Have an Account?</Text> 
+                <Pressable onPress={() => router.replace("/(auth)/SignIn")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
+                    <Text style={{textDecorationLine: "underline", fontWeight: "bold", color: Colors.white, fontSize: 14}} >
+                        Sign In
+                    </Text> 
+                </Pressable>
+            </View>
+            
         </ScrollView>
     </KeyboardAvoidingView>
   )

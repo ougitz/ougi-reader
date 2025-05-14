@@ -38,5 +38,3 @@ const ManhwaStatusComponent = ({
 }
 
 export default ManhwaStatusComponent
-
-const styles = StyleSheet.create({})

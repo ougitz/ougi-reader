@@ -1,7 +1,7 @@
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
-import { ManhwaComment, Recommendation } from "./types";
-import { Dimensions } from "react-native";
 import { AppConstants } from '../constants/AppConstants';
+import { Recommendation } from "./types";
+import { Dimensions } from "react-native";
 
 
 

@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AppStyle } from '@/styles/AppStyles'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import TopBar from '@/components/TopBar'
 import { useLocalSearchParams } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
@@ -60,13 +60,15 @@ const ManhwaByGenre = () => {
             <TopBar title={genre}>
                 <ReturnButton/>
             </TopBar>
-            <ManhwaGrid
+            <ManhwaList
                 manhwas={manhwas}
                 numColumns={2}
                 loading={loading}
+                estimatedItemSize={400}
                 hasResults={true}
-                listMode='FlatList'
-                showChaptersPreview={false}
+                listMode='FlashList'
+                showChaptersPreview={true}
+                shouldShowChapterDate={false}
                 onEndReached={onEndReached}/>            
         </SafeAreaView>
   )

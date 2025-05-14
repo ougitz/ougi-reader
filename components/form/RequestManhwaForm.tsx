@@ -68,6 +68,7 @@ const RequestManhwaForm = () => {
   return (
     <KeyboardAvoidingView style={{flex: 1, gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{flex: 1}} >
+            
             {/* Manhwa Name */}
             <Text style={AppStyle.inputHeaderText}>Name</Text>
             <Controller
@@ -104,8 +105,8 @@ const RequestManhwaForm = () => {
             />
             {errors.descr && (<Text style={AppStyle.error}>{errors.descr.message}</Text>)}            
     
-            {/* Login Button */}
-            <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
+            {/* Request Button */}
+            <Pressable onPress={handleSubmit(onSubmit)} style={[AppStyle.formButton, {backgroundColor: Colors.requestManhwaColor}]} >
                 {
                     isLoading ? 
                     <ActivityIndicator size={32} color={Colors.backgroundColor} /> :
@@ -114,6 +115,7 @@ const RequestManhwaForm = () => {
             </Pressable>
             
             <EmptyFooter/>
+
         </ScrollView>
     </KeyboardAvoidingView>
   )

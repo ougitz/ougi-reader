@@ -13,7 +13,12 @@ interface CloseBtnProps {
 }
 
 
-const CloseBtn = ({size = 28, color = Colors.white, onPress, style}: CloseBtnProps) => {
+const CloseBtn = ({
+  onPress, 
+  style,
+  size = 28, 
+  color = Colors.white
+}: CloseBtnProps) => {
   return (
     <Pressable
         onPress={onPress}

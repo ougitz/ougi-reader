@@ -10,22 +10,22 @@ import {
 import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
 import MangaRecommendationGrid from '@/components/MangaRecommendationGrid'
 import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
-import RandomManhwaButton from '@/components/RandomManhwaIcon'
+import RandomManhwaButton from '@/components/RandomManhwaButton'
 import UpdateDatabase from '@/components/UpdateDatabase'
 import { AppConstants } from '@/constants/AppConstants'
+import NewAppVersionButton from './NewAppVersionButton'
 import LateralMenu from '@/components/LateralMenu'
+import EmptyFooter from '@/components/EmptyFooter'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useEffect, useRef } from 'react'
 import GenreGrid from '@/components/GenreGrid'
+import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
+import { dbListTable } from '@/lib/database'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import { router } from 'expo-router'
 import { hp, wp } from '@/helpers/util'
-import EmptyFooter from '@/components/EmptyFooter'
-import { dbListTable } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
-import { useAppVersionState } from '@/store/appVersionState'
+import { router } from 'expo-router'
 
 
 const MENU_WIDTH = wp(70)
@@ -35,8 +35,7 @@ const SCREEN_HEIGHT = hp(100)
 
 
 const Home = () => {
-        
-    const { localVersion } = useAppVersionState()
+            
     const menuAnim = useRef(new Animated.Value(-MENU_WIDTH)).current 
     const backgroundAnim = useRef(new Animated.Value(-SCREEN_WIDTH)).current
 
@@ -123,12 +122,7 @@ const Home = () => {
                     <MangaRecommendationGrid/>
                 </View>
 
-                {
-                    localVersion &&
-                    <View style={{width: '100%', marginTop: 100, alignItems: "center", justifyContent: "center"}} >
-                        <Text style={AppStyle.textRegular} >App version: {localVersion}</Text>
-                    </View>
-                }
+                <NewAppVersionButton/>
 
                 <EmptyFooter/>
             </ScrollView>            

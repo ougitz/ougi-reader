@@ -80,7 +80,7 @@ const SignInForm = () => {
         const session = await spGetSession()
 
         if (!session) {
-            ToastError('server error')            
+            ToastError('server error')
             setLoading(false)
             return
         }
@@ -104,6 +104,7 @@ const SignInForm = () => {
   return (
     <KeyboardAvoidingView style={{width: '100%', gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{width: '100%'}} >
+
             {/* Email */}
             <Text style={AppStyle.inputHeaderText}>Email</Text>
             <Controller
@@ -147,12 +148,15 @@ const SignInForm = () => {
                     <Text style={AppStyle.formButtonText} >Login</Text>
                 }
             </Pressable>
-        <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
-            <Text style={{color: Colors.white, fontSize: 14}} >Don't Have an Account?</Text> 
-            <Pressable onPress={() => router.replace("/(auth)/SignUp")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
-                <Text style={{textDecorationLine: "underline", fontWeight: "bold", color: Colors.white, fontSize: 14}} >Sign Up</Text> 
-            </Pressable>
-        </View>
+
+            {/* Don't Have an Account? */}
+            <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
+                <Text style={{color: Colors.white, fontSize: 14}} >Don't Have an Account?</Text> 
+                <Pressable onPress={() => router.replace("/(auth)/SignUp")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
+                    <Text style={{textDecorationLine: "underline", fontWeight: "bold", color: Colors.white, fontSize: 14}} >Sign Up</Text> 
+                </Pressable>
+            </View>
+
         </ScrollView>
     </KeyboardAvoidingView>
   )

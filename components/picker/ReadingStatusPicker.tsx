@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
-import React, { useState } from 'react'
-import { Colors } from '@/constants/Colors'
 import { AppConstants } from '@/constants/AppConstants'
+import { Colors } from '@/constants/Colors'
+import { StyleSheet } from 'react-native'
+import React, { useState } from 'react'
 
 
 interface ReadingStatusPickerProps {

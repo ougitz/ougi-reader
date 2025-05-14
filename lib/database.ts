@@ -1,6 +1,4 @@
 import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
-import { UpdateHistorySchema } from './model/UpdateHistorySchema';
-import { ReadingStatusSchema } from './model/ReadingStatusSchema';
 import { spFetchUserReadingStatus, spGetManhwas } from './supabase';
 import { convertStringListToSet, secondsSince } from '@/helpers/util';
 import { Chapter } from '@/model/Chapter';
@@ -203,10 +201,16 @@ export async function dbCheckSecondsSinceLastRefresh(
 
 
 export async function dbShouldUpdate(db: SQLite.SQLiteDatabase, name: string): Promise<boolean> {
-  const row = await db.getFirstAsync<UpdateHistorySchema>(
+  const row = await db.getFirstAsync<{
+    name: string,
+    refresh_cycle: number,
+    last_refreshed_at: string
+  }>(
     `
       SELECT
-        *
+        name,
+        refresh_cycle,
+        last_refreshed_at
       FROM
         update_history
       WHERE
@@ -778,7 +782,7 @@ export async function dbGetManhwaReadingStatus(
   db: SQLite.SQLiteDatabase,
   manhwa_id: number
 ): Promise<string | null> {
-  const row = await db.getFirstAsync<ReadingStatusSchema>(
+  const row = await db.getFirstAsync<{status: string}>(
     "SELECT status FROM reading_status WHERE manhwa_id = ?", 
     [manhwa_id]
   ).catch(error => console.log("error dbGetManhwaReadingStatus", manhwa_id, error));

@@ -1,8 +1,9 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useRef } from 'react'
-import { Colors } from '@/constants/Colors'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import { Pressable, StyleSheet, TextInput, View } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Colors } from '@/constants/Colors'
+import React, { useRef } from 'react'
+
 
 interface SearchBarProps {
     onChangeValue: (value: string) => any

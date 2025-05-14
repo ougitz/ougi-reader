@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
+import { Pressable, StyleSheet } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'

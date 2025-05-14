@@ -1,16 +1,17 @@
 import { View, Pressable, Text, StyleSheet, FlatList } from "react-native"
-import { router } from "expo-router"
-import { useReadingState } from "@/store/manhwaReadingState"
-import { Colors } from "@/constants/Colors"
-import { AppStyle } from "@/styles/AppStyles"
-import { ManhwaAuthor } from "@/helpers/types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { dbReadManhwaAuthors } from "@/lib/database"
+import { ManhwaAuthor } from "@/helpers/types"
+import { AppStyle } from "@/styles/AppStyles"
+import { Colors } from "@/constants/Colors"
 import { useSQLiteContext } from "expo-sqlite"
+import { router } from "expo-router"
+
 
 interface ManhwaAuthorsInfoProps {
   manhwa_id: number
 }
+
 
 const ManhwaAuthorsInfo = ({manhwa_id}: ManhwaAuthorsInfoProps) => {
 

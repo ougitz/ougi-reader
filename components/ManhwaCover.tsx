@@ -69,7 +69,7 @@ const ManhwaCover = ({
         () => {
             init()
         },
-        []
+        [manhwa]
     )
 
     return (

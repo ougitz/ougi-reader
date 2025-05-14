@@ -1,5 +1,4 @@
 import { Chapter } from "@/model/Chapter"
-import { Manhwa } from "@/model/Manhwa"
 import { create } from "zustand"
 
 

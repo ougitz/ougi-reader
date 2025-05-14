@@ -81,7 +81,7 @@ const Donate = () => {
                 However, operating and maintaining the servers that store and deliver thousands of images and user data does incur ongoing expenses.
               </Text>
               <Text style={AppStyle.textRegular} >
-                To ensure that Ougi continues running smoothly and to fund future enhancements, we kindly invite you to consider making a voluntary contribution. Your support is completely optional, but any gift helps us keep delivering the best possible experience.
+                To ensure that Ougi continues running smoothly and to fund future enhancements, we kindly invite you to consider making a voluntary contribution.
               </Text>
               <Text style={AppStyle.textRegular} >
                 Your support is completely optional, but any gift helps us keep delivering the best possible experience.

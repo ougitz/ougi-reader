@@ -1,16 +1,14 @@
 import { View, Pressable, ActivityIndicator, Text, StyleSheet } from "react-native"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { spFetchChapterList } from "@/lib/supabase"
-import { router } from "expo-router"
+import { useReadingState } from "@/store/manhwaReadingState"
 import {dbGetMangaReadChapters} from '@/lib/database'
+import { spFetchChapterList } from "@/lib/supabase"
+import { useSQLiteContext } from "expo-sqlite"
 import { AppStyle } from "@/styles/AppStyles"
 import { Colors } from "@/constants/Colors"
 import { Chapter } from "@/model/Chapter"
-import { useReadingState } from "@/store/manhwaReadingState"
 import { Manhwa } from "@/model/Manhwa"
-import { useSQLiteContext } from "expo-sqlite"
-import Ionicons from "@expo/vector-icons/Ionicons"
-import RotatingButton from "./RotatingButton"
+import { router } from "expo-router"
 
 
 const ChapterItem = ({

@@ -39,6 +39,7 @@ const GenreGrid = () => {
             <FlatList
                 data={genres}
                 keyExtractor={(item, index) => index.toString()}
+                showsHorizontalScrollIndicator={false}
                 horizontal={true}
                 renderItem={({item, index}) => 
                     <Pressable onPress={() => onPress(item)} style={styles.button} >

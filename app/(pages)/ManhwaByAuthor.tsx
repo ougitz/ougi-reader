@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet } from 'react-native'
 import { spFetchManhwasByAuthor } from '@/lib/supabase'
 import ReturnButton from '@/components/ReturnButton'
 import { useLocalSearchParams } from 'expo-router'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa'
@@ -43,7 +43,7 @@ const ManhwaByAuthor = () => {
             <TopBar title={`${author_role}: ${author_name}`}>
                 <ReturnButton/>
             </TopBar>
-            <ManhwaGrid
+            <ManhwaList
                 manhwas={manhwas}
                 numColumns={2}
                 loading={loading}

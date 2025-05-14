@@ -1,13 +1,13 @@
+import { StyleSheet, View, Text, Pressable } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { dbReadManhwasOrderedByViews } from '@/lib/database'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import { StyleSheet, View, Text, Pressable } from 'react-native'
-import { AppStyle } from '@/styles/AppStyles'
-import { router } from 'expo-router'
-import { Manhwa } from '@/model/Manhwa'
-import { useSQLiteContext } from 'expo-sqlite'
-import Title from './text/Title'
 import { AppConstants } from '@/constants/AppConstants'
+import { useSQLiteContext } from 'expo-sqlite'
+import { AppStyle } from '@/styles/AppStyles'
+import { Manhwa } from '@/model/Manhwa'
+import { router } from 'expo-router'
+import Title from './text/Title'
 
 
 const MostViewedManhwasComponent = () => {

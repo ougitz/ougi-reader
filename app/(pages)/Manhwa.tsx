@@ -30,7 +30,7 @@ import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
 import AddToLibray from '@/components/AddToLibray';
 import { useSQLiteContext } from 'expo-sqlite';
-import RandomManhwaButton from '@/components/RandomManhwaIcon';
+import RandomManhwaButton from '@/components/RandomManhwaButton';
 import BugReportButton from '@/components/BugReportButton';
 
 

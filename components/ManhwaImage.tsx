@@ -1,10 +1,7 @@
-import { 
-    Platform, 
-    StyleSheet
-} from 'react-native'
+import FastImage from 'react-native-fast-image'
 import { ChapterImage } from '@/helpers/types'
+import { Platform } from 'react-native'
 import { wp } from '@/helpers/util'
-import FastImage from 'react-native-fast-image';
 import React from 'react'
 
 
@@ -30,5 +27,3 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
 }
 
 export default ManhwaImage
-
-const styles = StyleSheet.create({})

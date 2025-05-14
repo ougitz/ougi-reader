@@ -9,13 +9,13 @@ import { Colors } from '@/constants/Colors'
 import { ToastError } from '@/helpers/ToastMessages'
 
 
-interface RandomManhwaIconProps {
+interface RandomManhwaButtonProps {
     size?: number
     color?: string
 }
 
 
-const RandomManhwaButton = ({size = 28, color = Colors.white}: RandomManhwaIconProps) => {
+const RandomManhwaButton = ({size = 28, color = Colors.white}: RandomManhwaButtonProps) => {
 
     const db = useSQLiteContext()
     const [loading, setLoading] = useState(false)

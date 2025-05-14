@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { dbReadManhwasOrderedByViews } from '@/lib/database';
 import { SafeAreaView, StyleSheet} from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
-import ManhwaGrid from '@/components/ManhwaGrid'
+import ManhwaList from '@/components/ManhwaList'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa';
@@ -55,18 +55,18 @@ const MostView = () => {
       <TopBar title='Most Views' >
         <ReturnButton/>        
       </TopBar>
-      <ManhwaGrid
+      <ManhwaList
         manhwas={manhwas}
         hasResults={true}
         loading={loading}
         numColumns={2}
-        showChaptersPreview={false}
+        estimatedItemSize={400}
+        showChaptersPreview={true}
+        shouldShowChapterDate={false}
         onEndReached={onEndReached}
-        listMode='FlatList'/>
+        listMode='FlashList'/>
     </SafeAreaView>
   )
 }
 
 export default MostView
-
-const styles = StyleSheet.create({})

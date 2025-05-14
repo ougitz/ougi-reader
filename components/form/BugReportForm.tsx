@@ -179,7 +179,7 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
             />
             {errors.descr && (<Text style={styles.error}>{errors.descr.message}</Text>)}            
     
-            {/* Login Button */}
+            {/* Report Button */}
             <Pressable onPress={handleSubmit(onSubmit)} style={styles.formButton} >
                 {
                     isLoading ? 
@@ -187,7 +187,9 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
                     <Text style={styles.formButtonText} >Report</Text>
                 }
             </Pressable>
+
             <EmptyFooter height={40} />
+            
         </ScrollView>
     </KeyboardAvoidingView>
   )

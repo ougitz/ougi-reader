@@ -5,7 +5,7 @@ import {
     ActivityIndicator, 
     ViewStyle 
 } from 'react-native'
-import { spFetchChapterList } from '@/lib/supabase'
+import { spFetchChapterList, spUpdateManhwaViews } from '@/lib/supabase'
 import { useReadingState } from '@/store/manhwaReadingState'
 import { formatTimestamp } from '@/helpers/util'
 import { AppStyle } from '@/styles/AppStyles'
@@ -13,7 +13,7 @@ import { Colors } from '@/constants/Colors'
 import { Chapter } from '@/model/Chapter'
 import { Manhwa } from '@/model/Manhwa'
 import { StyleProp } from 'react-native'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { router } from 'expo-router'
 
 
@@ -34,14 +34,19 @@ const ChapterLink = ({
 }: ChapterLinkProps) => {
 
     const { setChapterMap, setChapterNum } = useReadingState()
-    const [loading, setLoading] = useState(false)    
+    const [loading, setLoading] = useState(false)
+    const isActive = useRef(false)
 
     const onPress = async () => {
+        if (isActive.current) { return }
+        isActive.current = true
         setLoading(true)
+        spUpdateManhwaViews(manhwa.manhwa_id)
         await spFetchChapterList(manhwa.manhwa_id)
             .then(values => setChapterMap(new Map(values.map(i => [i.chapter_num, i]))))
         setChapterNum(chapter.chapter_num)
         setLoading(false)
+        isActive.current = false
         router.navigate({pathname: "/(pages)/Chapter", params: {manhwa_title: manhwa.title}})
     }
 

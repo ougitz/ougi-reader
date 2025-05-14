@@ -1,13 +1,13 @@
+import { StyleSheet, Pressable, View, Text } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { dbReadManhwasOrderedByUpdateAt } from '@/lib/database'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import { StyleSheet, Pressable, View, Text } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
-import { router } from 'expo-router'
-import { Manhwa } from '@/model/Manhwa'
 import { useSQLiteContext } from 'expo-sqlite'
-import Title from './text/Title'
 import { AppStyle } from '@/styles/AppStyles'
+import { Manhwa } from '@/model/Manhwa'
+import { router } from 'expo-router'
+import Title from './text/Title'
 
 
 const ManhwasLastUpdateGrid = () => {

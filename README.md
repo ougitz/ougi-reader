@@ -1,4 +1,4 @@
-# Ougi +18 Mobile Manhwa Reader
+# Ougi - Mobile Manhwa Reader +18
 
 1. Install dependencies
    
@@ -21,7 +21,7 @@ In the output, you'll find options to open the app in a
 
 ## Apk
 
-Clone this repository and build an APK using the commands below, or download an APK from the [Releases](https://github.com/VitorTz/ougi-reader/releases) page.
+Clone this repository, install dependencies, and build an APK using the commands below — or download one from the [Releases](https://github.com/VitorTz/ougi-reader/releases) page.
 
 ```bash
 export EAS_NO_VCS=1

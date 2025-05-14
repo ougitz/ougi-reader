@@ -53,7 +53,7 @@ const ChangeProfileInfoForm = () => {
         },
     });
     
-    const onSubmit = async (form_data: FormData) => {
+    const onSubmit = async (form_data: FormData) => {        
         Toast.show({
             title: "Sorry", 
             message: 'At the moment, it is not possible to modify user data.',
@@ -65,7 +65,8 @@ const ChangeProfileInfoForm = () => {
   return (
     <KeyboardAvoidingView style={{width: '100%', gap: 20}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
         <ScrollView style={{width: '100%'}} >
-            {/* Name */}
+
+            {/* Username */}
             <Text style={AppStyle.inputHeaderText}>Username</Text>
             <Controller
                 control={control}
@@ -81,6 +82,7 @@ const ChangeProfileInfoForm = () => {
                 )}
             />
             {errors.name && (<Text style={AppStyle.error}>{errors.name.message}</Text>)}
+
             {/* Email */}
             <Text style={AppStyle.inputHeaderText}>Email</Text>
             <Controller
@@ -98,8 +100,8 @@ const ChangeProfileInfoForm = () => {
             />
             {errors.email && (<Text style={AppStyle.error}>{errors.email.message}</Text>)}
         
-            {/* Login Button */}
-            <Pressable onPress={handleSubmit(onSubmit)} style={AppStyle.formButton} >
+            {/* Save Changes Button */}
+            <Pressable onPress={handleSubmit(onSubmit)} style={[AppStyle.formButton, {backgroundColor: Colors.accountColor}]} >
                 {
                     isLoading ? 
                     <ActivityIndicator size={32} color={Colors.backgroundColor} /> :
