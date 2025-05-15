@@ -9,7 +9,7 @@ import { AppStyle } from '@/styles/AppStyles'
 import { useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 
 
 const PAGE_LIMIT = 30

@@ -1,4 +1,4 @@
-import { Chapter } from "@/model/Chapter"
+import { Chapter } from '@/helpers/types';
 import { create } from "zustand"
 
 

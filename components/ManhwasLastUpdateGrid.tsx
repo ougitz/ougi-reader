@@ -5,7 +5,7 @@ import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { AppConstants } from '@/constants/AppConstants'
 import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 import { router } from 'expo-router'
 import Title from './text/Title'
 

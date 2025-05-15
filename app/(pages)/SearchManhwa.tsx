@@ -7,7 +7,7 @@ import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import SearchBar from '@/components/SearchBar'
 import TopBar from '@/components/TopBar'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 import { useCallback } from 'react'
 import { debounce } from 'lodash'
 

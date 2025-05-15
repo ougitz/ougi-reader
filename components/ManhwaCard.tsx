@@ -10,8 +10,8 @@ import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { AppConstants } from '@/constants/AppConstants';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
-import { Chapter } from '@/model/Chapter';
-import { Manhwa } from '@/model/Manhwa';
+import { Chapter } from '@/helpers/types';
+import { Manhwa } from '@/helpers/types'
 import ChapterLink from './ChapterLink';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';

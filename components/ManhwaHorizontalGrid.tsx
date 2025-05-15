@@ -1,10 +1,10 @@
 import { AppConstants } from '@/constants/AppConstants'
 import { StyleSheet, View } from 'react-native'
 import { FlashList } from '@shopify/flash-list'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 import ManhwaCard from './ManhwaCard'
-import React from 'react'
 import { hp, wp } from '@/helpers/util'
+import React from 'react'
 
 
 const width: number = AppConstants.ManhwaCoverDimension.width

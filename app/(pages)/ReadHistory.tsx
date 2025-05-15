@@ -155,7 +155,6 @@ const ReadHistory = () => {
               }
           </>}
         />
-      <View style={{marginBottom: 40}} />
     </SafeAreaView>
   )
 }
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     gap: 10,
-    marginBottom: 20    
+    marginBottom: 40
   },
   image: {
     width: '100%', 

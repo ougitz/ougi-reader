@@ -1,8 +1,8 @@
 import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { spFetchUserReadingStatus, spGetManhwas } from './supabase';
 import { convertStringListToSet, secondsSince } from '@/helpers/util';
-import { Chapter } from '@/model/Chapter';
-import { Manhwa } from '@/model/Manhwa';
+import { Chapter } from '@/helpers/types';
+import { Manhwa } from '@/helpers/types'
 import * as SQLite from 'expo-sqlite';
 
 

@@ -3,11 +3,10 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useReadingState } from "@/store/manhwaReadingState"
 import {dbGetMangaReadChapters} from '@/lib/database'
 import { spFetchChapterList } from "@/lib/supabase"
+import { Chapter, Manhwa } from '@/helpers/types';
 import { useSQLiteContext } from "expo-sqlite"
 import { AppStyle } from "@/styles/AppStyles"
 import { Colors } from "@/constants/Colors"
-import { Chapter } from "@/model/Chapter"
-import { Manhwa } from "@/model/Manhwa"
 import { router } from "expo-router"
 
 

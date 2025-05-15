@@ -6,7 +6,7 @@ import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import TopBar from '@/components/TopBar'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 
 
 const PAGE_LIMIT = 30

@@ -1,12 +1,12 @@
-import { StyleSheet, Pressable, Text, View, ActivityIndicator } from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import React, { useState } from 'react'
-import { dbReadRandomManhwa } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
-import { Manhwa } from '@/model/Manhwa'
-import { router } from 'expo-router'
-import { Colors } from '@/constants/Colors'
+import { StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { ToastError } from '@/helpers/ToastMessages'
+import { dbReadRandomManhwa } from '@/lib/database'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useSQLiteContext } from 'expo-sqlite'
+import { Colors } from '@/constants/Colors'
+import { Manhwa } from '@/helpers/types'
+import React, { useState } from 'react'
+import { router } from 'expo-router'
 
 
 interface RandomManhwaButtonProps {

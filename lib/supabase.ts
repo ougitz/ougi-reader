@@ -2,8 +2,8 @@ import { AppRelease, ChapterImage, DonateMethod, Genre, OugiUser, Recommendation
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
-import { Manhwa } from '@/model/Manhwa';
-import { Chapter } from '@/model/Chapter';
+import { Manhwa } from '@/helpers/types'
+import { Chapter } from '@/helpers/types';
 
 
 // All tables in supabase have RLS

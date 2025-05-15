@@ -4,7 +4,7 @@ import { AppConstants } from '@/constants/AppConstants'
 import React, { useEffect, useRef } from 'react'
 import { FlashList } from '@shopify/flash-list'
 import { Colors } from '@/constants/Colors'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 import ManhwaCard from './ManhwaCard'
 
 

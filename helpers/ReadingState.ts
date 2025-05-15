@@ -1,5 +1,5 @@
-import { Chapter } from "@/model/Chapter"
-import { Manhwa } from "@/model/Manhwa"
+import { Chapter } from '@/helpers/types';
+import { Manhwa } from '@/helpers/types'
 
 
 export type ReadingState = {

@@ -1,4 +1,19 @@
-import { Manhwa } from "@/model/Manhwa"
+
+
+export type Manhwa = {
+    manhwa_id: number
+    title: string
+    descr: string
+    cover_image_url: string
+    status: "OnGoing" | "Completed"
+    color: string
+    updated_at: string
+    views: number
+    rating: number | null        
+    genres: Genre[]
+    authors: ManhwaAuthor[]
+    chapters: Chapter[]
+}
 
 export type RatingRegister = {
     rating: number
@@ -91,4 +106,11 @@ export type AppRelease = {
     version: string
     url: string
     descr: string | null
+}
+
+export type Chapter = {
+    chapter_id: number
+    manhwa_id: number
+    chapter_num: number
+    created_at: string
 }

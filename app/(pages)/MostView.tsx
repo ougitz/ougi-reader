@@ -6,7 +6,7 @@ import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { SafeAreaView } from 'react-native'
 import TopBar from '@/components/TopBar'
-import { Manhwa } from '@/model/Manhwa'
+import { Manhwa } from '@/helpers/types'
 
 
 const PAGE_LIMIT = 30

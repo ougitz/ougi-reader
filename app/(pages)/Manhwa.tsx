@@ -29,7 +29,7 @@ import FastImage from 'react-native-fast-image';
 import { useSQLiteContext } from 'expo-sqlite';
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
-import { Manhwa } from '@/model/Manhwa';
+import { Manhwa } from '@/helpers/types'
 import Toast from '@/components/Toast';
 
 
