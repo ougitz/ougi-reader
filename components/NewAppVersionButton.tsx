@@ -1,19 +1,18 @@
-import { useAppVersionState } from '@/store/appVersionState'
+import { useAppVersionState } from '@/store/appReleasesState'
 import { AppConstants } from '@/constants/AppConstants'
 import { Pressable, Text, View } from 'react-native'
 import { AppStyle } from '@/styles/AppStyles'
-import { AppVersion } from '@/helpers/types'
+import { AppRelease } from '@/helpers/types'
 import { router } from 'expo-router'
 import React from 'react'
 
 
 const NewAppVersionButton = () => {
     
-    const { localVersion, allVersions } = useAppVersionState()
-
-    const latestVersion: AppVersion | null = allVersions.length > 0 ? allVersions[-1] : null
+    const { localVersion, allReleases } = useAppVersionState()
+    const latestVersion: AppRelease | null = allReleases.length > 0 ? allReleases[allReleases.length - 1] : null
     const isNotLatestVersion = latestVersion && localVersion && latestVersion.version != localVersion
-
+        
     const onPress = () => {
         router.navigate("/(pages)/Releases")
     }

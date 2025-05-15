@@ -20,10 +20,10 @@ import { ToastSuccess } from '@/helpers/ToastMessages'
 import { dbClearTable } from '@/lib/database'
 import { useSQLiteContext } from 'expo-sqlite'
 import { wp } from '@/helpers/util'
+import NewAppVersionButton from '@/components/NewAppVersionButton'
 
 
 
-const ICON_COLOR = Colors.white
 const ICON_SIZE = 26
 
 
@@ -221,6 +221,10 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                         iconColor={Colors.neonRed}
                     />
                 }
+
+                <View style={{alignSelf: "flex-start"}} >
+                    <NewAppVersionButton/>
+                </View>
 
             </View>            
         </ScrollView>

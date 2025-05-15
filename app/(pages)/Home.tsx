@@ -1,30 +1,19 @@
-import { 
-    SafeAreaView, 
-    Pressable, 
-    Animated, 
-    StyleSheet, 
-    Text,
-    View, 
-    ScrollView 
-} from 'react-native'
+import { SafeAreaView, Pressable, Animated, StyleSheet,View, ScrollView } from 'react-native'
 import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
-import MangaRecommendationGrid from '@/components/MangaRecommendationGrid'
 import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
 import RandomManhwaButton from '@/components/RandomManhwaButton'
+import RandomManhwaGrid from '@/components/RandomManhwaGrid'
 import UpdateDatabase from '@/components/UpdateDatabase'
 import { AppConstants } from '@/constants/AppConstants'
-import NewAppVersionButton from './NewAppVersionButton'
 import LateralMenu from '@/components/LateralMenu'
 import EmptyFooter from '@/components/EmptyFooter'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import React, { useEffect, useRef } from 'react'
 import GenreGrid from '@/components/GenreGrid'
-import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
-import { dbListTable } from '@/lib/database'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
+import React, { useRef } from 'react'
 import { router } from 'expo-router'
 
 
@@ -81,20 +70,7 @@ const Home = () => {
 
     const toggleMenu = () => {
         menuVisible.current ? closeMenu() : openMenu()
-    }
-
-    const db = useSQLiteContext()
-    const init = async () => {
-        await dbListTable(db, 'app_info')
-    
-    }
-
-    useEffect(
-        () => {
-            init()
-        },
-        []
-    )    
+    }        
     
     return (
         <SafeAreaView style={AppStyle.safeArea} >
@@ -119,10 +95,8 @@ const Home = () => {
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
                     <ManhwasLastUpdateGrid/>
                     <MostViewedManhwasComponent/>
-                    <MangaRecommendationGrid/>
+                    <RandomManhwaGrid/>
                 </View>
-
-                <NewAppVersionButton/>
 
                 <EmptyFooter/>
             </ScrollView>            
@@ -164,13 +138,5 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         elevation: 4,        
         zIndex: 90
-    },
-    background: {
-        width: wp(100), 
-        height: hp(100), 
-        position: 'absolute', 
-        left: 0, 
-        top: 0, 
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    }
+    }    
 })

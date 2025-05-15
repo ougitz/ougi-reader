@@ -1,28 +1,27 @@
 import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationState'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
-import { FlatList, StyleSheet, View } from 'react-native'
 import React, { useCallback, useEffect } from 'react'
-import { sortRecommendations } from '@/helpers/util'
-import ManhwaRecommendation from './DailyManhwa'
+import { ManhwaRecommendation } from './ManhwaCardBig'
 import RotatingButton from './RotatingButton'
+import { FlatList, View } from 'react-native'
 import { debounce } from 'lodash'
 import Title from './text/Title'
 
 
-const MangaRecommendationGrid = () => {
+const RandomManhwaGrid = () => {
 
     const { recommendations, setRecommendations } = useManhwaRecommendationsState()
     
     const init = useCallback(async () => {
         if (recommendations.length > 0) { return }
         await spFetchManhwaRecommendations()
-            .then(values => setRecommendations([...sortRecommendations(values)]))
+            .then(values => setRecommendations([...values]))
     }, [])
 
 
     const reload = async () => {
         await spFetchManhwaRecommendations()
-            .then(values => setRecommendations([...sortRecommendations(values)]))
+            .then(values => setRecommendations([...values]))
     }
 
     const debounceReload = useCallback(
@@ -31,7 +30,9 @@ const MangaRecommendationGrid = () => {
     )
 
     useEffect(
-        () => {init()},
+        () => {
+            init()
+        },
         []
     )    
 
@@ -43,9 +44,9 @@ const MangaRecommendationGrid = () => {
             </View>
             <FlatList
                 showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
                 data={recommendations}
                 horizontal={true}
-                initialNumToRender={2}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => <ManhwaRecommendation recommendation={item} />}
             />
@@ -53,6 +54,5 @@ const MangaRecommendationGrid = () => {
     )
 }
 
-export default MangaRecommendationGrid
 
-const styles = StyleSheet.create({})
+export default RandomManhwaGrid

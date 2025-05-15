@@ -1,4 +1,4 @@
-import { AppVersion, ChapterImage, DonateMethod, Genre, ManhwaAuthor, ManhwaGenre, OugiUser, Recommendation } from '@/helpers/types'
+import { AppRelease, ChapterImage, DonateMethod, Genre, OugiUser, Recommendation } from '@/helpers/types'
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
@@ -6,6 +6,7 @@ import { Manhwa } from '@/model/Manhwa';
 import { Chapter } from '@/model/Chapter';
 
 
+// All tables in supabase have RLS
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldnl2eWx3c2ZjeGdidXFhd3V1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTUyMDMsImV4cCI6MjA1ODU5MTIwM30.EXGkpsPue5o2OD5WOpu4IfOZEgqo3FYKV2QDLNW7P6g'
 
@@ -51,7 +52,7 @@ export async function spUpdateUserLastLogin(user_id: string) {
 
 export async function spFetchUser(
     user_id: string, 
-    update_login_time: boolean = false
+    update_login_time: boolean = true
 ): Promise<OugiUser | null> {
 
     const { data, error } = await supabase
@@ -101,7 +102,6 @@ export async function spFetchChapterImages(chapter_id: number): Promise<ChapterI
         .select("image_url, width, height")
         .eq("chapter_id", chapter_id)
         .order('index', {ascending: true})
-        .overrideTypes<ChapterImage[]>()
 
     if (error) {
         console.log("error spFetchChapterImages", error)
@@ -111,35 +111,6 @@ export async function spFetchChapterImages(chapter_id: number): Promise<ChapterI
     return data
 }
 
-
-
-export async function spFetchRandomManhwa(
-    p_limit: number = 30
-): Promise<Manhwa[]> {
-    const { data, error } = await supabase
-        .rpc('get_random_manhwas', { p_limit });
-
-    if (error) {
-        console.log("error fetchRandomManhwa", error)
-        return []
-    }
-
-    return data
-}
-
-export async function spFetchAllManhwas(
-    p_num_chapters: number = 3
-): Promise<Manhwa[]> {
-    const { data, error } = await supabase
-        .rpc('get_manhwas', { p_num_chapters });
-
-    if (error) {
-        console.error('error spFetchAllManhwas', error);
-        return [];
-    }
-
-    return data
-}
 
 export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> {
     
@@ -157,19 +128,6 @@ export async function spFetchChapterList(manhwa_id: number): Promise<Chapter[]> 
     return data
 }
 
-export async function spFetchGenres(): Promise<Genre[]> {
-    const { data, error } = await supabase
-        .from("genres")
-        .select("genre, genre_id")
-    
-    if (error) {
-        console.log("error spFetchGenres", error)
-        return []
-    }
-
-    return data
-}
-
 
 export async function spUpdateManhwaViews(p_manhwa_id: number) {
     const { error } = await supabase
@@ -179,74 +137,6 @@ export async function spUpdateManhwaViews(p_manhwa_id: number) {
         console.error('error updateManhwaViews', error);
         return null;
     }  
-}
-
-
-export async function spFetchLatestManhwas(
-    p_offset: number = 0,
-    p_limit: number = 30    
-): Promise<Manhwa[]> {
-    const { data, error } = await supabase
-        .rpc("get_manhwas_ordered_by_update", { p_offset, p_limit })
-
-    if (error) {
-        console.log("error spFetchLatestManhwas", error)
-        return []
-    }
-
-    return data
-}
-
-
-export async function spFetchManhwasByAuthor(
-    p_author_id: number,
-    p_offset: number = 0,
-    p_limit: number = 666,
-    p_num_chapters: number = 3
-): Promise<Manhwa[]> {
-    const { data, error } = await supabase
-        .rpc("get_manhwas_by_author", {p_author_id, p_offset, p_limit, p_num_chapters })
-    
-    if (error) {
-        console.log("error spFetchManhwasByAuthor", error)
-        return []
-    }
-
-    return data
-}
-
-
-export async function spFetchManhwasByGenre(
-    p_genre_id: number,
-    p_offset: number = 0,
-    p_limit: number = 30,
-    p_num_chapters: number = 3
-): Promise<Manhwa[]> {
-
-    const { data, error } = await supabase
-        .rpc("get_manhwas_by_genre", {p_genre_id, p_offset, p_limit, p_num_chapters})
-
-    if (error) {
-        console.log("error spFetchManhwasByGenre", error)
-        return []
-    }
-
-    return data
-}
-
-export async function spFetchMostViewManhwas(
-    p_offset: number = 0,
-    p_limit: number = 30    
-): Promise<Manhwa[]> {
-    const { data, error } = await supabase
-        .rpc("get_manhwas_ordered_by_views", {p_offset, p_limit})
-
-    if (error) {
-        console.log("error spFetchMostViewManhwas", error)
-        return []
-    }
-
-    return data
 }
 
 
@@ -275,9 +165,9 @@ export async function spFetchManhwaRecommendations(
 }
 
 
-export async function spGetManhwas(p_limit: number | null = null): Promise<Manhwa[]> {
+export async function spGetManhwas(p_offset: number | null = null, p_limit: number | null = null): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc("get_manhwas", { p_limit })
+        .rpc("get_manhwas", { p_limit, p_offset })
     
     if (error) {
         console.log("error spGetManhwas", error)
@@ -319,7 +209,7 @@ export async function spFetchUserReadingStatus(
 }
 
 export async function spReportBug(title: string, descr: string | null, bug_type: string): Promise<boolean> {
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from("bug_reports")
         .insert([{title, descr, bug_type}])
     
@@ -356,13 +246,16 @@ export async function spRequestManhwa(manhwa_title: string, message: string | nu
 }
 
 
-export async function spGetAllAppVersions(): Promise<AppVersion[]> {
+export async function spGetReleases(): Promise<AppRelease[]> {
     const { data, error } = await supabase
-        .from("versions")
-        .select("version, apk_url")
+        .from("releases")
+        .select("version, url, descr")
         .order("created_at", {ascending: false})
         
-    if (error) { return [] }
+    if (error) { 
+        console.log("error spGetAllAppVersions", error)
+        return [] 
+    }    
 
     return data as any
 }

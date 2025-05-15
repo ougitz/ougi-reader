@@ -20,5 +20,3 @@ const Title = ({title, iconName}: TitleProps) => {
 }
 
 export default Title
-
-const styles = StyleSheet.create({})

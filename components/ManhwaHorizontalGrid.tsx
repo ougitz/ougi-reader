@@ -2,9 +2,9 @@ import { AppConstants } from '@/constants/AppConstants'
 import { StyleSheet, View } from 'react-native'
 import { FlashList } from '@shopify/flash-list'
 import { Manhwa } from '@/model/Manhwa'
-import ManhwaCover from './ManhwaCover'
+import ManhwaCard from './ManhwaCard'
 import React from 'react'
-import { wp } from '@/helpers/util'
+import { hp, wp } from '@/helpers/util'
 
 
 const width: number = AppConstants.ManhwaCoverDimension.width
@@ -23,9 +23,10 @@ const ManhwaHorizontalGrid = ({manhwas}: ManhwaHorizontalGridProps) => {
                 data={manhwas}
                 horizontal={true}
                 estimatedItemSize={wp(90)}
+                drawDistance={hp(200)}
                 onEndReachedThreshold={3}
                 keyExtractor={(item: Manhwa, index: number) => index.toString()}
-                renderItem={({item}) => <ManhwaCover manhwa={item} marginRight={4} />}
+                renderItem={({item}) => <ManhwaCard manhwa={item} marginRight={4} />}
             />
         </View>
     )

@@ -10,24 +10,18 @@ import {
     View, 
     FlatList
 } from 'react-native'
-import { 
-    supabase, 
-    spGetSession, 
-    spFetchUser,    
-    spReportBug
-} from '@/lib/supabase';
+import { spReportBug } from '@/lib/supabase';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
+import EmptyFooter from '../EmptyFooter';
 import { router } from 'expo-router';
+import { hp } from '@/helpers/util';
 import { useState } from 'react'
+import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
-import { ToastSuccess } from '@/helpers/ToastMessages';
-import { hp } from '@/helpers/util';
-import Toast from '../Toast';
-import { AppStyle } from '@/styles/AppStyles';
-import EmptyFooter from '../EmptyFooter';
 
 
 
@@ -134,20 +128,20 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
         <ScrollView style={{flex: 1}} >
             
             {/* Title */}
-            <Text style={styles.inputHeaderText}>Title</Text>
+            <Text style={AppStyle.inputHeaderText}>Title</Text>
             <Controller
                 control={control}
                 name="title"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={styles.input}
+                    style={AppStyle.input}
                     autoCapitalize="sentences"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}/>
                 )}
             />
-            {errors.title && (<Text style={styles.error}>{errors.title.message}</Text>)}
+            {errors.title && (<Text style={AppStyle.error}>{errors.title.message}</Text>)}
 
             {/* BugType */}
             <Controller
@@ -157,11 +151,11 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
                     <BugTypeSelector  value={value} onChange={onChange} />
                 )}
             />
-            {errors.bugType && (<Text style={styles.error}>{errors.bugType.message}</Text>)}
+            {errors.bugType && (<Text style={AppStyle.error}>{errors.bugType.message}</Text>)}
             
             {/* Description */}
             <View style={{flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "center", alignSelf: 'flex-start'}} >
-                <Text style={styles.inputHeaderText}>Description</Text>
+                <Text style={AppStyle.inputHeaderText}>Description</Text>
                 <Text style={[AppStyle.textRegular, {fontSize: 12, color: Colors.neonRed}]}>optional</Text>
             </View>
             <Controller
@@ -169,7 +163,7 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    style={[styles.input, {height: hp(25), paddingVertical: 10, textAlignVertical: 'top'}]}                    
+                    style={[AppStyle.input, {height: hp(25), paddingVertical: 10, textAlignVertical: 'top'}]}                    
                     multiline={true}
                     autoCapitalize="sentences"
                     onBlur={onBlur}
@@ -177,14 +171,14 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
                     value={value}/>
                 )}
             />
-            {errors.descr && (<Text style={styles.error}>{errors.descr.message}</Text>)}            
+            {errors.descr && (<Text style={AppStyle.error}>{errors.descr.message}</Text>)}            
     
             {/* Report Button */}
-            <Pressable onPress={handleSubmit(onSubmit)} style={styles.formButton} >
+            <Pressable onPress={handleSubmit(onSubmit)} style={[AppStyle.formButton, {backgroundColor: Colors.BugReportColor}]} >
                 {
                     isLoading ? 
                     <ActivityIndicator size={32} color={Colors.backgroundColor} /> :
-                    <Text style={styles.formButtonText} >Report</Text>
+                    <Text style={AppStyle.formButtonText} >Report</Text>
                 }
             </Pressable>
 
@@ -196,42 +190,3 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
 }
 
 export default BugReportForm
-
-const styles = StyleSheet.create({
-    input: {
-        backgroundColor: Colors.gray1,
-        borderRadius: 4,
-        height: 50,
-        fontSize: 18,
-        paddingHorizontal: 10,
-        color: Colors.white,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10,        
-    },
-    inputHeaderText: {
-        color: Colors.white,
-        fontSize: 20,
-        fontFamily: "LeagueSpartan_400Regular",
-        marginBottom: 10
-    },
-    error: {
-        color: Colors.neonRed,
-        alignSelf: "flex-start",
-        fontSize: 16,
-        fontFamily: "LeagueSpartan_200ExtraLight"
-    },
-    formButton: {
-        width: '100%',
-        marginTop: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        height: 50,
-        borderRadius: 4,
-        backgroundColor: Colors.BugReportColor
-    },
-    formButtonText: {
-        color: Colors.backgroundColor,
-        fontSize: 22,
-        fontFamily: "LeagueSpartan_400Regular",
-    }
-})

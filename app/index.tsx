@@ -19,22 +19,27 @@ import {
   LeagueSpartan_800ExtraBold,
   LeagueSpartan_900Black,
 } from '@expo-google-fonts/league-spartan';
-import { spFetchUser, spGetAllAppVersions, spGetSession } from '@/lib/supabase';
-import { AppStyle } from '@/styles/AppStyles';
-import { router } from 'expo-router';
-import { sleep } from '@/helpers/util';
-import { ToastNoInternet } from '@/helpers/ToastMessages';
+import { 
+  dbShouldUpdate, 
+  dbUpdateDatabase, 
+  dbPopulateReadingStatusTable, 
+  dbGetAppVersion 
+} from '@/lib/database';
+import { spFetchUser, spGetReleases, spGetSession, spUpdateUserLastLogin } from '@/lib/supabase';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { dbShouldUpdate, dbUpdateDatabase, dbPopulateReadingStatusTable, dbGetAppVersion } from '@/lib/database';
+import { useAppVersionState } from '@/store/appReleasesState';
+import { ToastNoInternet } from '@/helpers/ToastMessages';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
-import { useAppVersionState } from '@/store/appVersionState';
+import { sleep } from '@/helpers/util';
+import { router } from 'expo-router';
 
 
 const App = () => {
   
   const { login } = useAuthState()    
-  const { setLocalVersion, selAllVersions } = useAppVersionState()
+  const { setLocalVersion, setAllReleases } = useAppVersionState()
   const db: SQLiteDatabase = useSQLiteContext();
 
   let [fontsLoaded] = useFonts({
@@ -53,7 +58,7 @@ const App = () => {
     const session = await spGetSession()
     if (!session) { return }
 
-    spFetchUser(session.user.id)
+    await spFetchUser(session.user.id)
       .then(user => user ?
           login(user, session) :
           console.log("error fetching user", session.user.id)
@@ -71,9 +76,9 @@ const App = () => {
       return
     }
 
-    await initSession()
     await dbGetAppVersion(db).then(value => setLocalVersion(value))
-    spGetAllAppVersions().then(values => selAllVersions(values))
+    spGetReleases().then(values => setAllReleases(values))
+    await initSession()
     
     const shouldUpdate = await dbShouldUpdate(db, 'database')
     if (shouldUpdate) {

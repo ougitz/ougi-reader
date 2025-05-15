@@ -150,13 +150,14 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
 const Chapter = () => {
 
   const db = useSQLiteContext()
+  const params = useLocalSearchParams()
+  
   const { currentChapter, moveToNextChapter, moveToPreviousChapter  } = useReadingState()
   const [images, setImages] = useState<ChapterImage[]>([])
   const [loading, setLoading] = useState(false)
-  const params = useLocalSearchParams()
+  
   const manhwa_title: string = params.manhwa_title as any
   const flatListRef = useRef<FlatList>()
-
 
   const init = async () => {
     if (currentChapter) {
@@ -175,7 +176,6 @@ const Chapter = () => {
       )
     }
   }
-
 
   useEffect(
     () => {

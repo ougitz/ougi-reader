@@ -1,15 +1,15 @@
-import { SafeAreaView, StyleSheet, View } from 'react-native'
-import { AppStyle } from '@/styles/AppStyles'
-import React, { useCallback, useRef, useState } from 'react'
-import TopBar from '@/components/TopBar'
 import ReadingStatusPicker from '@/components/picker/ReadingStatusPicker'
-import { Manhwa } from '@/model/Manhwa'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
+import React, { useCallback, useRef, useState } from 'react'
 import { dbGetManhwasByReadingStatus } from '@/lib/database'
-import ManhwaList from '@/components/ManhwaList'
-import { useFocusEffect } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
+import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
+import { AppStyle } from '@/styles/AppStyles'
+import { useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
+import TopBar from '@/components/TopBar'
+import { Manhwa } from '@/model/Manhwa'
 
 
 const PAGE_LIMIT = 30
@@ -70,7 +70,7 @@ const Library = () => {
         <ReturnButton color={Colors.libraryColor} />
       </TopBar>
       <View style={{flex: 1, gap: 10}} >
-        <ReadingStatusPicker defaultValue='Reading' onChangeValue={onChangeValue} />
+        <ReadingStatusPicker onChangeValue={onChangeValue} />
         <ManhwaList
           manhwas={manhwas}
           loading={loading}          

@@ -13,7 +13,7 @@ interface ReadingStatusPickerProps {
 
 const ReadingStatusPicker = ({
     onChangeValue,
-    defaultValue = 'Completed'
+    defaultValue = 'Reading'
 }: ReadingStatusPickerProps) => {
 
     const [open, setOpen] = useState(false)

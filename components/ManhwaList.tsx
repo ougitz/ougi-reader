@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react'
 import { FlashList } from '@shopify/flash-list'
 import { Colors } from '@/constants/Colors'
 import { Manhwa } from '@/model/Manhwa'
-import ManhwaCover from './ManhwaCover'
+import ManhwaCard from './ManhwaCard'
 
 
 interface ManhwaListProps {
@@ -67,7 +67,7 @@ const ManhwaList = ({
                         numColumns={numColumns}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item, index}) => 
-                            <ManhwaCover 
+                            <ManhwaCard 
                                 showChaptersPreview={showChaptersPreview} 
                                 shouldShowChapterDate={shouldShowChapterDate} 
                                 width={width} 
@@ -98,7 +98,7 @@ const ManhwaList = ({
                         numColumns={numColumns}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item, index}) => 
-                            <ManhwaCover 
+                            <ManhwaCard 
                                 showChaptersPreview={showChaptersPreview} 
                                 shouldShowChapterDate={shouldShowChapterDate} 
                                 width={width} 

@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { getRelativeHeight, wp } from '@/helpers/util'
+import { Recommendation } from '@/helpers/types'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
-import { Recommendation } from '@/helpers/types'
 import { router } from 'expo-router'
 import { Image } from 'expo-image'
 import React from 'react'
@@ -11,7 +11,12 @@ import React from 'react'
 const WIDTH = wp(80)
 
 
-const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}) => {
+interface ManhwaRecommendationProps {
+    recommendation: Recommendation
+}
+
+
+const ManhwaCardBig = ({recommendation}: ManhwaRecommendationProps) => {
     
     const manhwaTitle = recommendation.manhwa.title
 
@@ -27,7 +32,7 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
             params: {
                 manhwa_id: recommendation.manhwa.manhwa_id
             }})
-    }
+    }    
         
     return (
         <Pressable
@@ -42,7 +47,22 @@ const ManhwaRecommendation = ({recommendation}: {recommendation: Recommendation}
     )
 }
 
-export default ManhwaRecommendation
+const areEqual = (
+  prevProps: Readonly<ManhwaRecommendationProps>,
+  nextProps: Readonly<ManhwaRecommendationProps>
+) => {
+  return (
+    prevProps.recommendation.image.image_url ===
+    nextProps.recommendation.image.image_url
+  )
+}
+
+
+export const ManhwaRecommendation = React.memo(
+  ManhwaCardBig,
+  areEqual
+)
+
 
 const styles = StyleSheet.create({
     container: {

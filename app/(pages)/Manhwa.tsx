@@ -5,8 +5,7 @@ import {
   Text, 
   StyleSheet, 
   View,
-  ActivityIndicator,
-  Pressable
+  ActivityIndicator
 } from 'react-native'
 import React, { 
   useCallback,
@@ -14,25 +13,24 @@ import React, {
   useRef,   
   useState
 } from 'react'
+import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
+import RandomManhwaButton from '@/components/RandomManhwaButton';
 import ManhwaChapterList from '@/components/ManhwaChapterList';
-import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
 import ManhwaAuthorsInfo from '@/components/ManhwaAuthorInfo';
+import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
+import { router, useLocalSearchParams } from 'expo-router';
+import BugReportButton from '@/components/BugReportButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import ReturnButton from '@/components/ReturnButton';
+import { wp, hp, isColorDark } from '@/helpers/util';
+import AddToLibray from '@/components/AddToLibray';
 import HomeButton from '@/components/HomeButton';
+import FastImage from 'react-native-fast-image';
+import { useSQLiteContext } from 'expo-sqlite';
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
-import { wp, hp, isColorDark } from '@/helpers/util';
-import { Image } from 'expo-image';
-import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
-import { router, useLocalSearchParams } from 'expo-router';
 import { Manhwa } from '@/model/Manhwa';
 import Toast from '@/components/Toast';
-import AddToLibray from '@/components/AddToLibray';
-import { useSQLiteContext } from 'expo-sqlite';
-import RandomManhwaButton from '@/components/RandomManhwaButton';
-import BugReportButton from '@/components/BugReportButton';
-import FastImage from 'react-native-fast-image';
 
 
 interface ItemProps {
@@ -110,7 +108,10 @@ const ManhwaPage = () => {
             {/* Manhwa Info */}
             <View style={styles.manhwaContainer}>
                 
-                <FastImage source={{uri: manhwa.cover_image_url, cache: 'web', priority: "high"}} resizeMode={FastImage.resizeMode.cover} style={styles.image} />
+                <FastImage
+                  source={{uri: manhwa.cover_image_url, priority: "high"}} 
+                  resizeMode={FastImage.resizeMode.cover} 
+                  style={styles.image} />
                 <View style={{alignSelf: "flex-start"}} >
                   <Text style={AppStyle.textManhwaTitle}>{manhwa!.title}</Text>
                   <Text style={AppStyle.textRegular}>{manhwa.descr}</Text>

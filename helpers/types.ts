@@ -87,7 +87,8 @@ export type DonateMethod = {
 }
 
 
-export type AppVersion = {
+export type AppRelease = {
     version: string
-    apk_url: string
+    url: string
+    descr: string | null
 }

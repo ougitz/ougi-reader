@@ -33,7 +33,7 @@ interface ManhwaCoverProps {
 }
 
 
-const ManhwaCover = ({
+const ManhwaCard = ({
     manhwa, 
     width = AppConstants.ManhwaCoverDimension.width, 
     height = AppConstants.ManhwaCoverDimension.height, 
@@ -75,9 +75,9 @@ const ManhwaCover = ({
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
             <FastImage
-                source={{uri: manhwa.cover_image_url, cache: 'web', priority: 'normal'}} 
+                source={{uri: manhwa.cover_image_url, priority: 'high'}} 
                 resizeMode={FastImage.resizeMode.cover}
-                style={[{borderRadius: 22, width, height}]}/>
+                style={[{borderRadius: 12, width, height}]}/>
             <View style={styles.container} >
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {
@@ -104,7 +104,7 @@ const ManhwaCover = ({
     )
 }
 
-export default ManhwaCover
+export default ManhwaCard
 
 const styles = StyleSheet.create({    
     container: {
@@ -112,12 +112,5 @@ const styles = StyleSheet.create({
         width: '100%',
         borderBottomLeftRadius: 4,
         borderBottomRightRadius: 4        
-    },
-    shadow: {
-        shadowColor: 'black',
-        shadowOffset: { width: 8, height: 8 },
-        shadowOpacity: 1,
-        shadowRadius: 20,
-        elevation: 5    
-    }
+    }    
 })

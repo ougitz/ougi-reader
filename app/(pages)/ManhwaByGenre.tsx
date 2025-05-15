@@ -1,13 +1,13 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { AppStyle } from '@/styles/AppStyles'
-import ManhwaList from '@/components/ManhwaList'
-import TopBar from '@/components/TopBar'
-import { useLocalSearchParams } from 'expo-router'
-import ReturnButton from '@/components/ReturnButton'
-import { Manhwa } from '@/model/Manhwa'
 import { dbReadManhwasByGenreId } from '@/lib/database'
+import { SafeAreaView, StyleSheet } from 'react-native'
+import ReturnButton from '@/components/ReturnButton'
+import { useLocalSearchParams } from 'expo-router'
+import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
+import { AppStyle } from '@/styles/AppStyles'
+import TopBar from '@/components/TopBar'
+import { Manhwa } from '@/model/Manhwa'
 
 
 const PAGE_LIMIT = 30

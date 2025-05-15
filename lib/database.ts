@@ -102,7 +102,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT INTO 
       app_info (name, value)
-    VALUES ('version', '0.1');
+    VALUES ('version', 'v1.0');
 
     INSERT INTO 
       update_history (name, refresh_cycle) 

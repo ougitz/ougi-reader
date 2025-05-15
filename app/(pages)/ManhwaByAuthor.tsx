@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { dbReadManhwasByAuthorId } from '@/lib/database'
 import { SafeAreaView, StyleSheet } from 'react-native'
-import { spFetchManhwasByAuthor } from '@/lib/supabase'
 import ReturnButton from '@/components/ReturnButton'
 import { useLocalSearchParams } from 'expo-router'
 import ManhwaList from '@/components/ManhwaList'
 import { AppStyle } from '@/styles/AppStyles'
+import { useSQLiteContext } from 'expo-sqlite'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/model/Manhwa'
-import { dbReadManhwasByAuthorId } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
 
 
 const ManhwaByAuthor = () => {

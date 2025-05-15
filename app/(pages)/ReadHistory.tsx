@@ -1,23 +1,23 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import { AppStyle } from '@/styles/AppStyles'
 import React, { useCallback, useEffect, useState, useRef} from 'react'
-import TopBar from '@/components/TopBar'
-import ReturnButton from '@/components/ReturnButton'
-import { dbGetUserReadHistory } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
-import { ChapterReadLog } from '@/helpers/types'
-import { FlashList } from '@shopify/flash-list'
-import { Colors } from '@/constants/Colors'
-import FastImage from 'react-native-fast-image'
 import { useReadingState } from '@/store/manhwaReadingState'
+import { dbGetUserReadHistory } from '@/lib/database'
+import ReturnButton from '@/components/ReturnButton'
 import { spFetchChapterList } from '@/lib/supabase'
-import { router } from 'expo-router'
-import { ActivityIndicator } from 'react-native'
-import { Image } from 'expo-image'
+import { ChapterReadLog } from '@/helpers/types'
 import { hp, isColorDark } from '@/helpers/util'
+import { ActivityIndicator } from 'react-native'
+import { FlashList } from '@shopify/flash-list'
+import { useSQLiteContext } from 'expo-sqlite'
+import { AppStyle } from '@/styles/AppStyles'
+import { Colors } from '@/constants/Colors'
+import TopBar from '@/components/TopBar'
+import { router } from 'expo-router'
+import { Image } from 'expo-image'
 
 
 const PAGE_LIMIT = 20
+
 
 interface HistoryChapterItemProps {
   chapter_num: number
@@ -25,6 +25,7 @@ interface HistoryChapterItemProps {
   textColor: string
   onPress: () => any
 }
+
 
 const HistoryChapterItem = ({chapter_num, backgroundColor, textColor, onPress}: HistoryChapterItemProps) => {
   return (
