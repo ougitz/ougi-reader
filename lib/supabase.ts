@@ -224,7 +224,7 @@ export async function spReportBug(title: string, descr: string | null, bug_type:
 export async function spGetDonationMethods(): Promise<DonateMethod[]> {
     const { data, error } = await supabase
         .from("donate_methods")
-        .select("method, value")
+        .select("method, value, action")
 
     if (error) {
         console.log("error spGetDonationMethods", error)

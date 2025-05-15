@@ -24,8 +24,9 @@ const ReleaseItem = ({release}: {release: AppRelease}) => {
         <Pressable onPress={openUrl} style={{width: '100%', padding: 10, paddingVertical: 12, borderRadius: 4, backgroundColor: Colors.gray}}>
             <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
                 <Text style={[AppStyle.textHeader, {color: Colors.releasesColor}]} >{release.version}</Text>
-                <Ionicons name='download-outline' size={28} color={Colors.releasesColor} />                
+                <Ionicons name='download-outline' size={28} color={Colors.releasesColor} />
             </View>            
+            {release.descr && <Text style={AppStyle.textRegular}>{release.descr}</Text>}            
         </Pressable>
     )
 }
@@ -45,7 +46,7 @@ const Releases = () => {
             {
                 allReleases.length == 0 ?
                 <ActivityIndicator size={32} color={Colors.releasesColor} /> :
-                <View style={{width: '100%', gap: 10, alignItems: "center", justifyContent: 'center'}} >
+                <View style={{width: '100%', gap: 20, alignItems: "center", justifyContent: 'center'}} >
                     {
                         allReleases.map((item, index) => <ReleaseItem release={item} key={index} />)
                     }

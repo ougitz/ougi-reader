@@ -41,3 +41,10 @@ export const ToastUpdateDatabase = (message: string = '') => Toast.show({
     message: message, 
     type: "info"
 })
+
+
+export const ToastThankYouMessage = () => Toast.show({
+    title: "Thanks ♥️",
+    message: '',
+    type: "success"
+})

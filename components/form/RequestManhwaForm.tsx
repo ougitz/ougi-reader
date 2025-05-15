@@ -20,6 +20,7 @@ import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
 import EmptyFooter from '../EmptyFooter';
+import { ToastThankYouMessage } from '@/helpers/ToastMessages';
 
 
 const schema = yup.object().shape({  
@@ -60,7 +61,7 @@ const RequestManhwaForm = () => {
         setLoading(true)
         const m = form_data.descr.trim() == '' ? null : form_data.descr.trim()
         await spRequestManhwa(form_data.manhwa_title, m)
-        Toast.show({title: "Thank You!", message: '', type: "success"})
+        ToastThankYouMessage()
         setLoading(false)
         router.back()
     };

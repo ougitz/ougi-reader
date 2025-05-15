@@ -15,6 +15,7 @@ import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
 import React, { useRef } from 'react'
 import { router } from 'expo-router'
+import Button from '@/components/Button'
 
 
 const MENU_WIDTH = wp(70)
@@ -79,13 +80,9 @@ const Home = () => {
             <TopBar title='Ougi' titleColor={Colors.orange} >
                 <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
                     <UpdateDatabase/>
-                    <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlop} >
-                        <Ionicons name='search-outline' size={28} color={'white'} />
-                    </Pressable>
+                    <Button iconName='search-outline' onPress={searchPress} />                    
                     <RandomManhwaButton color={Colors.white} size={28} />
-                    <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlop} >
-                        <Ionicons name='options-outline' size={28} color={'white'} />
-                    </Pressable>
+                    <Button iconName='options-outline' onPress={toggleMenu} />                    
                 </View>
             </TopBar>
 
@@ -97,7 +94,6 @@ const Home = () => {
                     <MostViewedManhwasComponent/>
                     <RandomManhwaGrid/>
                 </View>
-
                 <EmptyFooter/>
             </ScrollView>            
             

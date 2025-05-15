@@ -22,6 +22,7 @@ import { useState } from 'react'
 import Toast from '../Toast';
 import * as yup from 'yup';
 import React from 'react'
+import { ToastThankYouMessage } from '@/helpers/ToastMessages';
 
 
 
@@ -118,7 +119,7 @@ const BugReportForm = ({title}: {title: string | undefined | null}) => {
             form_data.descr.trim() == '' ? null : form_data.descr.trim(), 
             form_data.bugType
         )
-        Toast.show({title: "Thank You!", message: '', type: "success"})
+        ToastThankYouMessage()
         setLoading(false)
         router.back()
     };

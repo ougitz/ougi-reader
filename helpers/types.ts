@@ -99,6 +99,7 @@ export type ChapterReadLog = {
 export type DonateMethod = {
     method: string
     value: string
+    action: string
 }
 
 

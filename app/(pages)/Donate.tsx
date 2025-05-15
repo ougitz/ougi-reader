@@ -1,13 +1,14 @@
 import { 
   ActivityIndicator, 
   Pressable, 
-  SafeAreaView, 
-  StyleSheet, 
+  SafeAreaView,
+  Linking,
   Text, 
   View 
 } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { spGetDonationMethods } from '@/lib/supabase'
+import { ToastError } from '@/helpers/ToastMessages'
 import ReturnButton from '@/components/ReturnButton'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { DonateMethod } from '@/helpers/types'
@@ -25,13 +26,36 @@ const DonateMethodComponent = ({donateMethod}: {donateMethod: DonateMethod}) => 
     Toast.show({title: "Copied to clipboard!", message: "", type: "success"})
   }
 
+  const iconName = donateMethod.action == "copy" ? "copy-outline" : "globe-outline"
+
+  const openUrl = async () => {
+    try {
+        await Linking.openURL(donateMethod.value)
+    } catch (error) {
+      ToastError("Unable to open the browser")
+    }
+  };
+
+  const onPress = async () => {
+    switch (donateMethod.action) {
+      case "copy":
+        await copyToClipboard()
+        break
+      case "link":
+        await openUrl()
+        break
+      default:
+        break
+    }
+  }
+
   return (
-    <Pressable onPress={copyToClipboard} style={{gap: 10}} >
-      <View style={{width: "100%", flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "flex-start", alignSelf: "flex-start"}} >
-        <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>{donateMethod.method}</Text>
-        <Ionicons name='copy-outline' size={28} color={Colors.orange} />
+    <Pressable onPress={onPress} style={{maxWidth: '100%', padding: 10, borderRadius: 4, backgroundColor: Colors.donateColor, gap: 10}} >
+      <View style={{width: "100%", flexDirection: 'row', alignItems: "center", gap: 10, justifyContent: "space-between"}} >
+        <Text style={[AppStyle.textHeader, {color: Colors.backgroundColor}]}>{donateMethod.method}</Text>
+        <Ionicons name={iconName as any} size={28} color={Colors.backgroundColor} />
       </View>
-      <Text style={AppStyle.textRegular}>{donateMethod.value}</Text>
+      <Text adjustsFontSizeToFit={true} style={[AppStyle.textRegular, {color: Colors.backgroundColor}]}>{donateMethod.value}</Text>
     </Pressable>
   )
 }
@@ -69,9 +93,7 @@ const Donate = () => {
 
             {
               donateMethods.map((item, index) => <DonateMethodComponent key={index} donateMethod={item} />)
-            }
-
-            <View style={{width: '100%', height: 2, backgroundColor: Colors.donateColor}} />
+            }            
 
             <View style={{gap: 10}} >
               <Text style={AppStyle.textRegular} >
@@ -87,6 +109,7 @@ const Donate = () => {
                 Your support is completely optional, but any gift helps us keep delivering the best possible experience.
               </Text>
             </View>
+
           </View>
         }
 
@@ -95,5 +118,3 @@ const Donate = () => {
 }
 
 export default Donate
-
-const styles = StyleSheet.create({})
