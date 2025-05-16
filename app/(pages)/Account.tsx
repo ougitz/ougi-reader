@@ -1,6 +1,6 @@
 import ChangeProfileInfoForm from '@/components/form/ChangeProficleInfoForm'
 import { SafeAreaView, StyleSheet, View } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'

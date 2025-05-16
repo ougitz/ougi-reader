@@ -14,14 +14,14 @@ import React, {
   useState
 } from 'react'
 import { dbReadManhwaById, dbUpdateManhwaViews } from '@/lib/database';
-import RandomManhwaButton from '@/components/RandomManhwaButton';
+import RandomManhwaButton from '@/components/button/RandomManhwaButton';
+import BugReportButton from '@/components/button/BugReportButton';
 import ManhwaChapterList from '@/components/ManhwaChapterList';
 import ManhwaAuthorsInfo from '@/components/ManhwaAuthorInfo';
+import ReturnButton from '@/components/button/ReturnButton';
 import ManhwaGenreInfo from '@/components/ManhwaGenreInfo';
 import { router, useLocalSearchParams } from 'expo-router';
-import BugReportButton from '@/components/BugReportButton';
 import { LinearGradient } from 'expo-linear-gradient';
-import ReturnButton from '@/components/ReturnButton';
 import { wp, hp, isColorDark } from '@/helpers/util';
 import AddToLibray from '@/components/AddToLibray';
 import HomeButton from '@/components/HomeButton';

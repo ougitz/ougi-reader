@@ -9,7 +9,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import { spGetDonationMethods } from '@/lib/supabase'
 import { ToastError } from '@/helpers/ToastMessages'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { DonateMethod } from '@/helpers/types'
 import { AppStyle } from '@/styles/AppStyles'

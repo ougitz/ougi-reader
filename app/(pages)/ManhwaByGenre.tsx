@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { dbReadManhwasByGenreId } from '@/lib/database'
 import { SafeAreaView, StyleSheet } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { useLocalSearchParams } from 'expo-router'
 import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
@@ -76,5 +76,3 @@ const ManhwaByGenre = () => {
 
 
 export default ManhwaByGenre
-
-const styles = StyleSheet.create({})

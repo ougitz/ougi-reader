@@ -2,7 +2,7 @@ import ReadingStatusPicker from '@/components/picker/ReadingStatusPicker'
 import { SafeAreaView, StyleSheet, View } from 'react-native'
 import React, { useCallback, useRef, useState } from 'react'
 import { dbGetManhwasByReadingStatus } from '@/lib/database'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
@@ -88,5 +88,3 @@ const Library = () => {
 }
 
 export default Library
-
-const styles = StyleSheet.create({})

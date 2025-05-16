@@ -10,15 +10,18 @@ import { Colors } from "@/constants/Colors"
 import { router } from "expo-router"
 
 
+interface ChapterItemProps {
+  isReaded: boolean
+  manhwa_title: string
+  chapter: Chapter
+}
+
+
 const ChapterItem = ({
   isReaded, 
   manhwa_title, 
   chapter
-}: {
-  isReaded: boolean,
-  manhwa_title: string, 
-  chapter: Chapter
-}) => {
+}: ChapterItemProps) => {
 
   const { setChapterNum } = useReadingState()  
 
@@ -46,7 +49,10 @@ interface ManhwaChapterListProps {
 }
 
 
-const ManhwaChapterList = ({manhwa, textColor = Colors.backgroundColor}: ManhwaChapterListProps) => {
+const ManhwaChapterList = ({
+  manhwa, 
+  textColor = Colors.backgroundColor
+}: ManhwaChapterListProps) => {
   
   const db = useSQLiteContext()
   const [chapters, setChapters] = useState<Chapter[]>([])
@@ -57,12 +63,12 @@ const ManhwaChapterList = ({manhwa, textColor = Colors.backgroundColor}: ManhwaC
   
   const init = useCallback(async () => {
     setLoading(true)
-    await spFetchChapterList(manhwa.manhwa_id)
-    .then(values => {
-      setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
-      setChapters(values)
-    })
-    chapterAlreadyReaded.current = await dbGetMangaReadChapters(db, manhwa.manhwa_id)
+      await spFetchChapterList(manhwa.manhwa_id)
+        .then(values => {
+          setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
+          setChapters(values)
+        })    
+      chapterAlreadyReaded.current = await dbGetMangaReadChapters(db, manhwa.manhwa_id)
     setLoading(false)
   }, [manhwa])  
   

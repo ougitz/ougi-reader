@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { dbReadManhwasOrderedByViews } from '@/lib/database'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'

@@ -1,9 +1,9 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import ReturnButton from '@/components/button/ReturnButton'
 import { AppStyle } from '@/styles/AppStyles'
-import TopBar from '@/components/TopBar'
-import ReturnButton from '@/components/ReturnButton'
 import { Colors } from '@/constants/Colors'
+import TopBar from '@/components/TopBar'
+import React from 'react'
 
 
 const Term = ({term, meaning}: {term: string, meaning: string}) => {
@@ -14,6 +14,7 @@ const Term = ({term, meaning}: {term: string, meaning: string}) => {
         </View>
     )
 }
+
 
 const KoreanTerms = () => {
   return (
@@ -43,5 +44,3 @@ const KoreanTerms = () => {
 }
 
 export default KoreanTerms
-
-const styles = StyleSheet.create({})

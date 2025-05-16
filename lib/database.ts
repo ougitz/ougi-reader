@@ -736,11 +736,13 @@ export async function dbPopulateReadingStatusTable(
 ) {
   const sts: {manhwa_id: number, status: string}[] = await spFetchUserReadingStatus(user_id)
   if (sts.length == 0) { return }
+
   const placeholders = sts.map(() => '(?,?)').join(',');  
   const params = sts.flatMap(i => [
     i.manhwa_id, 
     i.status    
   ]);
+  
   await db.runAsync(`    
     INSERT OR REPLACE INTO reading_status (
       manhwa_id, 

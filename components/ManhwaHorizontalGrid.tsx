@@ -7,10 +7,6 @@ import { hp, wp } from '@/helpers/util'
 import React from 'react'
 
 
-const width: number = AppConstants.ManhwaCoverDimension.width
-const height: number = AppConstants.ManhwaCoverDimension.height
-
-
 interface ManhwaHorizontalGridProps {
     manhwas: Manhwa[]
 }
@@ -18,7 +14,7 @@ interface ManhwaHorizontalGridProps {
 
 const ManhwaHorizontalGrid = ({manhwas}: ManhwaHorizontalGridProps) => {
     return (
-        <View style={{alignItems: 'flex-start', height: height + 180, width: '100%'}}>
+        <View style={{alignItems: 'flex-start', height: AppConstants.ManhwaCoverDimension.height + 180, width: '100%'}}>
             <FlashList
                 data={manhwas}
                 horizontal={true}

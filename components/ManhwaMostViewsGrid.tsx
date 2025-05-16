@@ -10,7 +10,7 @@ import { router } from 'expo-router'
 import Title from './text/Title'
 
 
-const MostViewedManhwasComponent = () => {
+const ManhwaMostViewsGrid = () => {
     
     const db = useSQLiteContext()
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
@@ -44,6 +44,6 @@ const MostViewedManhwasComponent = () => {
     )
 }
 
-export default MostViewedManhwasComponent;
+export default ManhwaMostViewsGrid;
 
 const styles = StyleSheet.create({})

@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, View } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { dbSearchManhwas } from '@/lib/database'
 import ManhwaList from '@/components/ManhwaList'
 import { useSQLiteContext } from 'expo-sqlite'
@@ -93,5 +93,3 @@ const SearchManhwa = () => {
 }
 
 export default SearchManhwa
-
-const styles = StyleSheet.create({})

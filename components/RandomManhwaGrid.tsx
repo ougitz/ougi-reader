@@ -2,7 +2,7 @@ import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationState
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
 import { ManhwaRecommendation } from './ManhwaCardBig'
-import RotatingButton from './RotatingButton'
+import RotatingButton from './button/RotatingButton'
 import { FlatList, View } from 'react-native'
 import { debounce } from 'lodash'
 import Title from './text/Title'

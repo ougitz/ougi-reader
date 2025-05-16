@@ -1,6 +1,6 @@
 import { ActivityIndicator, Linking, Pressable, SafeAreaView, Text, View } from 'react-native'
 import { useAppVersionState } from '@/store/appReleasesState'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { ToastError } from '@/helpers/ToastMessages'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { AppStyle } from '@/styles/AppStyles'

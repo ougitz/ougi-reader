@@ -27,8 +27,6 @@ export const AppConstants = {
         'Re-Reading',
         'None'
     ],
-    GITHUB_URL: "https://github.com/VitorTz/ougi-reader",
-    PORNWHA_REDDIT_URL: "https://www.reddit.com/r/pornhwa/",
     RANDOM_COLORS: [
         "#FFFEE0",
         "#FAF8F6",

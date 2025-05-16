@@ -1,26 +1,25 @@
 import { 
     ActivityIndicator,
-    Linking, 
     Pressable, 
     ScrollView, 
     StyleSheet,
     Text, 
     View 
 } from 'react-native'
+import NewAppVersionButton from './button/NewAppVersionButton'
 import { AppConstants } from '@/constants/AppConstants'
+import { ToastSuccess } from '@/helpers/ToastMessages'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { supabase } from '@/lib/supabase'
 import { useAuthState } from '@/store/authState'
+import { useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
+import { dbClearTable } from '@/lib/database'
 import { Colors } from '@/constants/Colors'
+import { supabase } from '@/lib/supabase'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
-import { ToastSuccess } from '@/helpers/ToastMessages'
-import { dbClearTable } from '@/lib/database'
-import { useSQLiteContext } from 'expo-sqlite'
 import { wp } from '@/helpers/util'
-import NewAppVersionButton from '@/components/NewAppVersionButton'
 
 
 
@@ -90,11 +89,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
     const koreanTerms = () => {
         router.navigate("/KoreanTerms")
-    }
-
-    const openReddit = () => {
-        Linking.openURL(AppConstants.PORNWHA_REDDIT_URL)
-    }
+    }    
 
     const openDonate = () => {
         router.navigate("/(pages)/Donate")
@@ -168,14 +163,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
                     title='Korean Terms' 
                     iconName='language-outline'
                     iconColor={Colors.translationColor}
-                />
-                
-                <Option 
-                    onPress={openReddit} 
-                    title='Pornwha' 
-                    iconName='logo-reddit'
-                    iconColor={Colors.orange}
-                />                                
+                />                
 
                 <Option 
                     onPress={openDonate} 

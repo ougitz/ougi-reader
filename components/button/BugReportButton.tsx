@@ -2,7 +2,7 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { Pressable } from 'react-native'
 import { router } from 'expo-router'
-import BugIcon from './BugIcon'
+import BugIcon from '../BugIcon'
 import React from 'react'
 
 

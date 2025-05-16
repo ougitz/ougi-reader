@@ -1,6 +1,6 @@
 import BugReportForm from '@/components/form/BugReportForm'
 import { StyleSheet, SafeAreaView } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { useLocalSearchParams } from 'expo-router'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'

@@ -1,21 +1,19 @@
 import { SafeAreaView, Pressable, Animated, StyleSheet,View, ScrollView } from 'react-native'
-import MostViewedManhwasComponent from '@/components/ManhwaMostViewsGrid'
-import ManhwasLastUpdateGrid from '@/components/ManhwasLastUpdateGrid'
-import RandomManhwaButton from '@/components/RandomManhwaButton'
+import ManhwasLatestUpdateGrid from '@/components/ManhwasLatestUpdateGrid'
+import RandomManhwaButton from '@/components/button/RandomManhwaButton'
+import ManhwaMostViewsGrid from '@/components/ManhwaMostViewsGrid'
 import RandomManhwaGrid from '@/components/RandomManhwaGrid'
 import UpdateDatabase from '@/components/UpdateDatabase'
-import { AppConstants } from '@/constants/AppConstants'
 import LateralMenu from '@/components/LateralMenu'
 import EmptyFooter from '@/components/EmptyFooter'
-import Ionicons from '@expo/vector-icons/Ionicons'
 import GenreGrid from '@/components/GenreGrid'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
+import Button from '@/components/Button'
 import { hp, wp } from '@/helpers/util'
 import React, { useRef } from 'react'
 import { router } from 'expo-router'
-import Button from '@/components/Button'
 
 
 const MENU_WIDTH = wp(70)
@@ -31,10 +29,6 @@ const Home = () => {
 
     const menuVisible = useRef(false)
 
-    const searchPress = () => {
-        router.navigate("/(pages)/SearchManhwa")
-    }
-
     const openMenu = () => {
         Animated.timing(menuAnim, {
             toValue: 0,
@@ -47,9 +41,7 @@ const Home = () => {
             toValue: 0,
             duration: ANIMATION_TIME * 1.2,
             useNativeDriver: false
-        }).start(() => {
-            
-        })
+        }).start(() => {})
     }
 
     const closeMenu = () => {
@@ -64,10 +56,12 @@ const Home = () => {
             toValue: -SCREEN_WIDTH,
             duration: ANIMATION_TIME,
             useNativeDriver: false
-        }).start(() => {
-            
-        })
+        }).start(() => {})
     }  
+
+    const searchPress = () => {
+        router.navigate("/(pages)/SearchManhwa")
+    }
 
     const toggleMenu = () => {
         menuVisible.current ? closeMenu() : openMenu()
@@ -90,8 +84,8 @@ const Home = () => {
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} >
                 <GenreGrid/>
                 <View style={{width: '100%', gap: 20, marginTop: 20}} >
-                    <ManhwasLastUpdateGrid/>
-                    <MostViewedManhwasComponent/>
+                    <ManhwasLatestUpdateGrid/>
+                    <ManhwaMostViewsGrid/>
                     <RandomManhwaGrid/>
                 </View>
                 <EmptyFooter/>

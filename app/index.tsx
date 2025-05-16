@@ -1,9 +1,9 @@
 import React, { useEffect} from 'react'
 import {
   Text,
-  SafeAreaView,
-  StyleSheet,  
-  View 
+  SafeAreaView,  
+  View, 
+  ActivityIndicator
 } from 'react-native'
 import { useAuthState } from '@/store/authState'
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
@@ -25,15 +25,16 @@ import {
   dbPopulateReadingStatusTable, 
   dbGetAppVersion 
 } from '@/lib/database';
-import { spFetchUser, spGetReleases, spGetSession, spUpdateUserLastLogin } from '@/lib/supabase';
+import { spFetchUser, spGetReleases, spGetSession } from '@/lib/supabase';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { useAppVersionState } from '@/store/appReleasesState';
 import { ToastNoInternet } from '@/helpers/ToastMessages';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
-import { sleep } from '@/helpers/util';
 import { router } from 'expo-router';
+import { Image } from 'expo-image';
+import TopBar from '@/components/TopBar';
 
 
 const App = () => {
@@ -61,9 +62,8 @@ const App = () => {
     await spFetchUser(session.user.id)
       .then(user => user ?
           login(user, session) :
-          console.log("error fetching user", session.user.id)
-    )    
-    dbPopulateReadingStatusTable(db, session.user.id)
+          console.log("error fetching user", session.user.id))
+    await dbPopulateReadingStatusTable(db, session.user.id)
   }
 
   const init = async () => {    
@@ -72,7 +72,7 @@ const App = () => {
 
     if (!state.isConnected) {
       ToastNoInternet()
-      await sleep(1500)
+      router.replace("/(pages)/Home")
       return
     }
 
@@ -97,9 +97,9 @@ const App = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea} >      
-      <View style={{flex: 1, alignItems: "center", justifyContent: "center", gap: 20}}>
-        <Ionicons name='cloud-download-outline' size={64} color={Colors.white} />
-        <Text style={[AppStyle.textRegular, {fontSize: 22}]}>Downloading database...</Text>        
+      <View style={{flex: 1, alignItems: "center", justifyContent: "center", gap: 10}} >
+        <Ionicons name='cloud-download-outline' size={42} color={Colors.orange} />
+        <Text style={{fontSize: 16, color: Colors.orange}} >Downloading database...</Text>
       </View>
     </SafeAreaView>
   )
@@ -108,11 +108,3 @@ const App = () => {
 
 
 export default App
-
-const styles = StyleSheet.create({
-  image: {
-    width: 164,
-    height: 164,
-    borderRadius: 164
-  }
-})

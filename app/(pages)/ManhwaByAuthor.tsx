@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { dbReadManhwasByAuthorId } from '@/lib/database'
 import { SafeAreaView, StyleSheet } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { useLocalSearchParams } from 'expo-router'
 import ManhwaList from '@/components/ManhwaList'
 import { AppStyle } from '@/styles/AppStyles'
@@ -55,5 +55,3 @@ const ManhwaByAuthor = () => {
 
 
 export default ManhwaByAuthor
-
-const styles = StyleSheet.create({})

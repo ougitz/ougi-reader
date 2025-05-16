@@ -1,8 +1,8 @@
 import RequestManhwaForm from '@/components/form/RequestManhwaForm'
-import { SafeAreaView, StyleSheet } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
+import ReturnButton from '@/components/button/ReturnButton'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
+import { SafeAreaView } from 'react-native'
 import TopBar from '@/components/TopBar'
 import React from 'react'
 
@@ -18,6 +18,5 @@ const RequestManhwa = () => {
   )
 }
 
-export default RequestManhwa
 
-const styles = StyleSheet.create({})
+export default RequestManhwa
