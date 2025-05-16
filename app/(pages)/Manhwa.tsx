@@ -109,7 +109,7 @@ const ManhwaPage = () => {
             <View style={styles.manhwaContainer}>
                 
                 <FastImage
-                  source={{uri: manhwa.cover_image_url, priority: "high"}} 
+                  source={{uri: manhwa.cover_image_url, priority: "high", cache: 'immutable'}} 
                   resizeMode={FastImage.resizeMode.cover} 
                   style={styles.image} />
                 <View style={{alignSelf: "flex-start"}} >

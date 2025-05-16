@@ -1,7 +1,7 @@
-import { useManhwaRecommendationsState } from '@/store/manhwaRecommendationState'
+import { useManhwaRecommendationsState } from '@/store/manhwaRandomGridState'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
-import { ManhwaRecommendation } from './ManhwaCardBig'
+import { ManhwaCardBig } from './ManhwaCardBig'
 import RotatingButton from './button/RotatingButton'
 import { FlatList, View } from 'react-native'
 import { debounce } from 'lodash'
@@ -48,7 +48,7 @@ const RandomManhwaGrid = () => {
                 data={recommendations}
                 horizontal={true}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item, index}) => <ManhwaRecommendation recommendation={item} />}
+                renderItem={({item, index}) => <ManhwaCardBig recommendation={item} />}
             />
         </View> 
     )

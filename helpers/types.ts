@@ -37,7 +37,7 @@ export type Recommendation = {
     image: {
         width: number,
         height: number,
-        image_url: number
+        image_url: string,
         image_id: number
     }
 }

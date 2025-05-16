@@ -75,7 +75,7 @@ const ManhwaCard = ({
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
             <FastImage
-                source={{uri: manhwa.cover_image_url, priority: 'high'}} 
+                source={{uri: manhwa.cover_image_url, priority: 'high', cache: 'immutable'}}
                 resizeMode={FastImage.resizeMode.cover}
                 style={[{borderRadius: 12, width, height}]}/>
             <View style={styles.container} >

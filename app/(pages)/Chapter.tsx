@@ -210,7 +210,12 @@ const Chapter = () => {
           estimatedItemSize={hp(50)}
           drawDistance={hp(300)}
           ref={flatListRef as any}
-          renderItem={({item, index}) => <ManhwaImage imageUrl={item.image_url} originalWidth={item.width} originalHeight={item.height} />}
+          renderItem={({item, index}) => 
+            <ManhwaImage 
+              imageUrl={item.image_url} 
+              originalWidth={item.width} 
+              originalHeight={item.height} />
+          }
           ListEmptyComponent={<ActivityIndicator size={32} color={Colors.white} />}
         />
         <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >

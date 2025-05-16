@@ -6,6 +6,7 @@ import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import { Image } from 'expo-image'
 import React from 'react'
+import FastImage from 'react-native-fast-image'
 
 
 const WIDTH = wp(80)
@@ -16,7 +17,7 @@ interface ManhwaRecommendationProps {
 }
 
 
-const ManhwaCardBig = ({recommendation}: ManhwaRecommendationProps) => {
+const ManhwaCardBigComponent = ({recommendation}: ManhwaRecommendationProps) => {
     
     const manhwaTitle = recommendation.manhwa.title
 
@@ -38,7 +39,10 @@ const ManhwaCardBig = ({recommendation}: ManhwaRecommendationProps) => {
         <Pressable
             onPress={openManhwaPage}
             style={styles.container}>
-            <Image source={recommendation.image.image_url} style={[styles.image, {height}]} />
+            <FastImage 
+                source={{uri: recommendation.image.image_url, priority: 'normal', cache: 'immutable'}} 
+                style={[styles.image, {height}]}
+                resizeMode={FastImage.resizeMode.cover}/>
             <View 
                 style={styles.title} >
                 <Text style={AppStyle.textRegular}>{manhwaTitle}</Text>
@@ -58,8 +62,8 @@ const areEqual = (
 }
 
 
-export const ManhwaRecommendation = React.memo(
-  ManhwaCardBig,
+export const ManhwaCardBig = React.memo(
+  ManhwaCardBigComponent,
   areEqual
 )
 
