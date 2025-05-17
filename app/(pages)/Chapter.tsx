@@ -163,7 +163,6 @@ const Chapter = () => {
     if (currentChapter) {
       console.log("change chapter")
       setLoading(true)
-        await Image.clearDiskCache()
         await Image.clearMemoryCache()
         await spFetchChapterImages(currentChapter.chapter_id)
           .then(values => setImages([...values]))

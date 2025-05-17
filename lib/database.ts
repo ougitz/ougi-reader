@@ -1,6 +1,6 @@
 import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { spFetchUserReadingStatus, spGetManhwas } from './supabase';
-import { convertStringListToSet, secondsSince } from '@/helpers/util';
+import { convertStringListToSet, readJson, saveJson, secondsSince } from '@/helpers/util';
 import { Chapter } from '@/helpers/types';
 import { Manhwa } from '@/helpers/types'
 import * as SQLite from 'expo-sqlite';
@@ -102,7 +102,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT INTO 
       app_info (name, value)
-    VALUES ('version', 'v1.0');
+    VALUES ('version', 'v1.0');    
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
@@ -119,7 +119,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
 
 export async function dbClearTable(db: SQLite.SQLiteDatabase, name: string) {
-  await db.runAsync(`DELETE FROM ${name};`, [name]).catch(error => console.log("error dbClearTableerror", error))
+  await db.runAsync(`DELETE FROM ${name};`, [name]).catch(error => console.log("error dbClearTablError", name, error))
 }
 
 export async function dbClearDatabase(db: SQLite.SQLiteDatabase) {
@@ -416,6 +416,14 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   await dbUpsertManhwaGenres(db, manhwaGenres)
   await dbUpsertAuthors(db, authors)
   await dbUpsertManhwaAuthors(db, manhwaAuthors)
+  
+  const appInfo: any = readJson("@appInfo")
+  if (!appInfo || !appInfo.is_first_run) {
+    console.log("APP FIRST RUN")
+    await dbClearTable(db, "reading_status")
+    await dbClearTable(db, "reading_history")
+  }
+  saveJson("@appInfo", {is_first_run: true})
   
   const end = Date.now()
   console.log((end - start) / 1000)

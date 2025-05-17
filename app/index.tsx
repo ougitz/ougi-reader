@@ -1,12 +1,7 @@
-import React, { useEffect} from 'react'
-import {
-  Text,
-  SafeAreaView,  
-  View, 
-  ActivityIndicator
-} from 'react-native'
-import { useAuthState } from '@/store/authState'
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import { Text, SafeAreaView, View  } from 'react-native'
+import { useAuthState } from '@/store/authState'
+import React, { useEffect} from 'react'
 import {
   useFonts,
   LeagueSpartan_100Thin,
@@ -33,8 +28,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { Image } from 'expo-image';
-import TopBar from '@/components/TopBar';
 
 
 const App = () => {

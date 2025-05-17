@@ -1,4 +1,5 @@
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppConstants } from '../constants/AppConstants';
 import { Recommendation } from "./types";
 import { Dimensions } from "react-native";
@@ -139,4 +140,27 @@ export function isColorDark(hex: string): boolean {
   const luminance = (0.299 * r) + (0.587 * g) + (0.114 * b);
 
   return luminance < AppConstants.DARK_COLOR_THRESHOLD;
+}
+
+
+
+export async function saveJson(key: string, obj: any) {
+  try {
+    const jsonStr = JSON.stringify(obj, null, 2);
+    await AsyncStorage.setItem(key, jsonStr);
+  } catch (error) {
+    console.error('error saveJson:', error);
+    throw error;
+  }
+}
+
+
+export async function readJson(key: string): Promise<any | null> {
+  try {
+    const jsonStr = await AsyncStorage.getItem(key);
+    return jsonStr != null ? JSON.parse(jsonStr) : null;
+  } catch (error) {
+    console.error('error readJson:', error);
+    return null
+  }
 }

@@ -5,8 +5,7 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import { Image } from 'expo-image'
-import React from 'react'
-import FastImage from 'react-native-fast-image'
+import React, { useCallback, useEffect, useState } from 'react'
 
 
 const WIDTH = wp(80)
@@ -17,15 +16,14 @@ interface ManhwaRecommendationProps {
 }
 
 
-const ManhwaCardBigComponent = ({recommendation}: ManhwaRecommendationProps) => {
+const ManhwaCardBig = ({recommendation}: ManhwaRecommendationProps) => {
     
     const manhwaTitle = recommendation.manhwa.title
-
     const height = getRelativeHeight(
         WIDTH, 
         recommendation.image.width, 
         recommendation.image.height
-    )
+    )    
     
     const openManhwaPage = () => {
         router.navigate({
@@ -39,10 +37,11 @@ const ManhwaCardBigComponent = ({recommendation}: ManhwaRecommendationProps) => 
         <Pressable
             onPress={openManhwaPage}
             style={styles.container}>
-            <FastImage 
-                source={{uri: recommendation.image.image_url, priority: 'normal', cache: 'immutable'}} 
+            <Image 
+                source={recommendation.image.image_url}
                 style={[styles.image, {height}]}
-                resizeMode={FastImage.resizeMode.cover}/>
+                cachePolicy={'disk'}
+                contentFit='cover'/>
             <View 
                 style={styles.title} >
                 <Text style={AppStyle.textRegular}>{manhwaTitle}</Text>
@@ -51,21 +50,8 @@ const ManhwaCardBigComponent = ({recommendation}: ManhwaRecommendationProps) => 
     )
 }
 
-const areEqual = (
-  prevProps: Readonly<ManhwaRecommendationProps>,
-  nextProps: Readonly<ManhwaRecommendationProps>
-) => {
-  return (
-    prevProps.recommendation.image.image_url ===
-    nextProps.recommendation.image.image_url
-  )
-}
 
-
-export const ManhwaCardBig = React.memo(
-  ManhwaCardBigComponent,
-  areEqual
-)
+export default ManhwaCardBig
 
 
 const styles = StyleSheet.create({
@@ -77,7 +63,7 @@ const styles = StyleSheet.create({
     image: {
         alignSelf: "center",
         width: WIDTH,        
-        borderRadius: 20
+        borderRadius: 12
     },
     title: {
         position: 'absolute',

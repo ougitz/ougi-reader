@@ -1,9 +1,9 @@
 import { useManhwaRecommendationsState } from '@/store/manhwaRandomGridState'
 import { spFetchManhwaRecommendations } from '@/lib/supabase'
 import React, { useCallback, useEffect } from 'react'
-import { ManhwaCardBig } from './ManhwaCardBig'
 import RotatingButton from './button/RotatingButton'
 import { FlatList, View } from 'react-native'
+import ManhwaCardBig from './ManhwaCardBig'
 import { debounce } from 'lodash'
 import Title from './text/Title'
 
