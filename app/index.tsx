@@ -1,5 +1,5 @@
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
-import { Text, SafeAreaView, View  } from 'react-native'
+import { Text, SafeAreaView, View } from 'react-native'
 import { useAuthState } from '@/store/authState'
 import React, { useEffect} from 'react'
 import {
@@ -86,14 +86,14 @@ const App = () => {
       if (fontsLoaded) { init() }
     },
     [fontsLoaded]
-  )
+  )  
 
   return (
-    <SafeAreaView style={AppStyle.safeArea} >      
+    <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
       <View style={{flex: 1, alignItems: "center", justifyContent: "center", gap: 10}} >
-        <Ionicons name='cloud-download-outline' size={42} color={Colors.orange} />
-        <Text style={{fontSize: 16, color: Colors.orange}} >Downloading database...</Text>
-      </View>
+        <Ionicons name='cloud-download-outline' size={42} color={Colors.white} />
+        <Text style={{fontSize: 16, color: Colors.white}} >Downloading database...</Text>
+      </View>      
     </SafeAreaView>
   )
 

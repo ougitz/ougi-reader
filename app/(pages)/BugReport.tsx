@@ -11,7 +11,7 @@ import React from 'react'
 const BugReport = () => {
 
     const params = useLocalSearchParams()
-    const title = params.title as any
+    const title: string | undefined = params.title as any
 
     return (
         <SafeAreaView style={AppStyle.safeArea} >

@@ -24,7 +24,7 @@ const ManhwaImageComponent = ({originalWidth, originalHeight, imageUrl}: ManhwaI
         <Image
             style={{ width: width, height: height}}
             source={imageUrl}
-            contentFit='contain'/>
+            contentFit='cover'/>
     )
 }
 

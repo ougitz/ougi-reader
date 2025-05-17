@@ -1,4 +1,4 @@
-import { AppRelease, ChapterImage, DonateMethod, Genre, OugiUser, Recommendation } from '@/helpers/types'
+import { AppRelease, ChapterImage, DonateMethod, Genre, KoreanTerm, OugiUser, Recommendation } from '@/helpers/types'
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
@@ -258,4 +258,19 @@ export async function spGetReleases(): Promise<AppRelease[]> {
     }    
 
     return data as any
+}
+
+
+export async function spGetKoreanTerms(): Promise<KoreanTerm[]> {
+    const { data, error } = await supabase
+        .from("korean_terms")
+        .select("term, meaning")
+        .order("index", {ascending: true})
+    
+    if (error) {
+        console.log("error spGetKoreanTerms", error)
+        return []
+    }
+
+    return data    
 }

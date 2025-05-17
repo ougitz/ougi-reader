@@ -24,7 +24,7 @@ import ManhwaImage from '@/components/ManhwaImage'
 import { FlashList } from '@shopify/flash-list'
 import FastImage from 'react-native-fast-image'
 import { ChapterImage } from '@/helpers/types'
-import { useSQLiteContext } from 'expo-sqlite'
+import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import BugIcon from '@/components/BugIcon'
@@ -48,8 +48,8 @@ const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChap
   const reportTitle = `${manhwaTitle}/${currentChapter ? currentChapter.chapter_num: '?'}`
 
   const exitChapter = async () => {
-    await FastImage.clearDiskCache()
-    await FastImage.clearMemoryCache()
+    FastImage.clearDiskCache()
+    FastImage.clearMemoryCache()
     router.back()
   }
   
@@ -90,14 +90,14 @@ const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChap
 
 
 interface ChapterFooterProps {
-  manhwa_title: string
+  manwhaTitle: string
   loading: boolean
   goToPreviousChapter: () => void
   goToNextChapter: () => void
 }
 
 
-const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChapter }: ChapterFooterProps) => {
+const ChapterFooter = ({manwhaTitle: manhwa_title, loading, goToPreviousChapter, goToNextChapter }: ChapterFooterProps) => {
   
   const {  currentChapter } = useReadingState()
 
@@ -149,8 +149,8 @@ const ChapterFooter = ({manhwa_title, loading, goToPreviousChapter, goToNextChap
 
 const Chapter = () => {
 
-  const db = useSQLiteContext()
-  const params = useLocalSearchParams()
+  const db: SQLiteDatabase = useSQLiteContext()
+  const params: {manhwa_title: string} = useLocalSearchParams()
   
   const { currentChapter, moveToNextChapter, moveToPreviousChapter  } = useReadingState()
   const [images, setImages] = useState<ChapterImage[]>([])
@@ -203,7 +203,7 @@ const Chapter = () => {
         <FlashList
           data={images}
           ListHeaderComponent={<ChapterHeader manhwaTitle={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
-          ListFooterComponent={<ChapterFooter manhwa_title={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
+          ListFooterComponent={<ChapterFooter manwhaTitle={manhwa_title} loading={loading} goToNextChapter={goToNextChapter} goToPreviousChapter={goToPreviousChapter}/>}
           keyExtractor={(item, index) => item.image_url}          
           onEndReachedThreshold={3}
           estimatedItemSize={hp(50)}

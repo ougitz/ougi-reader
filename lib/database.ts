@@ -104,7 +104,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT INTO
       app_info (name, value)
-    VALUES ('first_run', '0')
+    VALUES ('first_run', '1')
     ON CONFLICT 
       (name) 
     DO NOTHING;
@@ -394,11 +394,10 @@ async function dbUpsertManhwaAuthors(db: SQLite.SQLiteDatabase, manhwaAuthors: M
   ).catch(error => console.log("error dbUpsertManhwaAuthors", error));
 }
 
-async function dbIsFirstRun(db: SQLite.SQLiteDatabase): Promise<boolean> {
-  const row: {value: string} | any = db.getFirstAsync<{value: string}>(
-    "SELECT value FROM app_info WHERE name = 'first_run';"
-  ).catch(error => console.log("error dbIsFirstRun", error))  
-
+export async function dbIsFirstRun(db: SQLite.SQLiteDatabase): Promise<boolean> {
+  const row: {value: string} | any = await db.getFirstAsync<{value: string}>(
+    "SELECT * FROM app_info WHERE name = ?;", ['first_run']
+  ).catch(error => console.log("error dbIsFirstRun", error))    
   return row ? row.value == '1' : false  
 }
 
@@ -434,7 +433,8 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   await dbUpsertAuthors(db, authors)
   await dbUpsertManhwaAuthors(db, manhwaAuthors)
   
-  if (await dbIsFirstRun(db)) {
+  const firstRun = await dbIsFirstRun(db)
+  if (firstRun) {
     console.log("APP FIRST RUN")
     await dbClearTable(db, "reading_status")
     await dbClearTable(db, "reading_history")

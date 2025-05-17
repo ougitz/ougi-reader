@@ -8,12 +8,14 @@ import React, { useState } from 'react'
 interface ReadingStatusPickerProps {
     onChangeValue: (v: any) => void
     defaultValue?: string
+    backgroundColor?: string
 }
 
 
 const ReadingStatusPicker = ({
     onChangeValue,
-    defaultValue = 'Reading'
+    defaultValue = 'Reading',
+    backgroundColor = Colors.libraryColor
 }: ReadingStatusPickerProps) => {
 
     const [open, setOpen] = useState(false)
@@ -25,12 +27,12 @@ const ReadingStatusPicker = ({
     return (
         <DropDownPicker
             open={open}
-            style={{height: 52, backgroundColor: Colors.libraryColor, borderRadius: 4}}
+            style={{height: 52, backgroundColor, borderRadius: 4}}
             dropDownContainerStyle={{backgroundColor: Colors.gray}}
             labelStyle={{color: Colors.backgroundColor}}                
             textStyle={{fontFamily: "LeagueSpartan_400Regular", fontSize: 18}}
             placeholder='Reading Status'
-            placeholderStyle={{color: Colors.backgroundColor, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
+            placeholderStyle={{color: Colors.white, fontSize: 18, fontFamily: "LeagueSpartan_400Regular"}}
             value={value as any}
             showArrowIcon={false}
             items={items}

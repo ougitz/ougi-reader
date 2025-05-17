@@ -115,3 +115,8 @@ export type Chapter = {
     chapter_num: number
     created_at: string
 }
+
+export type KoreanTerm = {
+    term: string
+    meaning: string
+}

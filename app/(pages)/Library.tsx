@@ -10,6 +10,8 @@ import { useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/helpers/types'
+import { hp, wp } from '@/helpers/util'
+import { LinearGradient } from 'expo-linear-gradient'
 
 
 const PAGE_LIMIT = 30
@@ -65,24 +67,26 @@ const Library = () => {
   }
 
   return (
-    <SafeAreaView style={AppStyle.safeArea} >
-      <TopBar title='Library' titleColor={Colors.libraryColor} >
-        <ReturnButton color={Colors.libraryColor} />
-      </TopBar>
-      <View style={{flex: 1, gap: 10}} >
-        <ReadingStatusPicker onChangeValue={onChangeValue} />
-        <ManhwaList
-          manhwas={manhwas}
-          loading={loading}          
-          numColumns={2}
-          estimatedItemSize={400}
-          hasResults={true}
-          showChaptersPreview={true}
-          shouldShowChapterDate={false}
-          onEndReached={onEndReached}
-          listMode='FlashList'
-        />
-      </View>
+    <SafeAreaView style={AppStyle.safeArea}>
+        <TopBar title='Library' titleColor={Colors.libraryColor} >
+          <ReturnButton color={Colors.libraryColor} />
+        </TopBar>
+        <View style={{flex: 1, gap: 10}} >
+          <ReadingStatusPicker 
+            onChangeValue={onChangeValue} 
+            />
+          <ManhwaList
+            manhwas={manhwas}
+            loading={loading}          
+            numColumns={2}
+            estimatedItemSize={400}
+            hasResults={true}
+            showChaptersPreview={true}
+            shouldShowChapterDate={false}
+            onEndReached={onEndReached}
+            listMode='FlashList'
+          />
+        </View>
     </SafeAreaView>
   )
 }
