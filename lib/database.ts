@@ -1,6 +1,6 @@
 import { Author, ChapterReadLog, Genre, ManhwaAuthor, ManhwaGenre } from '@/helpers/types';
 import { spFetchUserReadingStatus, spGetManhwas } from './supabase';
-import { convertStringListToSet, readJson, saveJson, secondsSince } from '@/helpers/util';
+import { convertStringListToSet, secondsSince } from '@/helpers/util';
 import { Chapter } from '@/helpers/types';
 import { Manhwa } from '@/helpers/types'
 import * as SQLite from 'expo-sqlite';
@@ -98,11 +98,16 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
     CREATE INDEX IF NOT EXISTS idx_reading_status_manhwa_id_status ON reading_status (manhwa_id, status);
     CREATE INDEX IF NOT EXISTS idx_reading_history_updated ON reading_history(manhwa_id, chapter_num, readed_at DESC);
 
-    DELETE FROM app_info;
-
-    INSERT INTO 
+    INSERT OR REPLACE INTO 
       app_info (name, value)
     VALUES ('version', 'v1.0');    
+
+    INSERT INTO
+      app_info (name, value)
+    VALUES ('first_run', '0')
+    ON CONFLICT 
+      (name) 
+    DO NOTHING;
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
@@ -389,6 +394,18 @@ async function dbUpsertManhwaAuthors(db: SQLite.SQLiteDatabase, manhwaAuthors: M
   ).catch(error => console.log("error dbUpsertManhwaAuthors", error));
 }
 
+async function dbIsFirstRun(db: SQLite.SQLiteDatabase): Promise<boolean> {
+  const row: {value: string} | any = db.getFirstAsync<{value: string}>(
+    "SELECT value FROM app_info WHERE name = 'first_run';"
+  ).catch(error => console.log("error dbIsFirstRun", error))  
+
+  return row ? row.value == '1' : false  
+}
+
+
+async function dbMarkFirstRun(db: SQLite.SQLiteDatabase) {
+  await db.runAsync("UPDATE app_info SET value = '1' WHERE name = 'first_run';")
+}
 
 export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   console.log('[UPDATING DATABASE]')
@@ -417,14 +434,13 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   await dbUpsertAuthors(db, authors)
   await dbUpsertManhwaAuthors(db, manhwaAuthors)
   
-  const appInfo: any = readJson("@appInfo")
-  if (!appInfo || !appInfo.is_first_run) {
+  if (await dbIsFirstRun(db)) {
     console.log("APP FIRST RUN")
     await dbClearTable(db, "reading_status")
     await dbClearTable(db, "reading_history")
+    dbMarkFirstRun(db)
   }
-  saveJson("@appInfo", {is_first_run: true})
-  
+
   const end = Date.now()
   console.log((end - start) / 1000)
   console.log("[DATABASE UPDATED]")
