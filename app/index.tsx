@@ -18,7 +18,8 @@ import {
   dbShouldUpdate, 
   dbUpdateDatabase, 
   dbPopulateReadingStatusTable, 
-  dbGetAppVersion 
+  dbGetAppVersion, 
+  dbClearTable
 } from '@/lib/database';
 import { spFetchUser, spGetReleases, spGetSession } from '@/lib/supabase';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
@@ -50,7 +51,11 @@ const App = () => {
 
   const initSession = async () => {
     const session = await spGetSession()
-    if (!session) { return }
+
+    if (!session) { 
+      await dbClearTable(db, 'reading_status')
+      return 
+    }
 
     const user = await spFetchUser(session.user.id)
     

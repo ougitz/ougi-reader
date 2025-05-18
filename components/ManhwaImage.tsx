@@ -1,4 +1,4 @@
-import { Platform } from 'react-native'
+import { Platform, View } from 'react-native'
 import { wp } from '@/helpers/util'
 import React, { memo } from 'react'
 import { Image } from 'expo-image'
@@ -20,10 +20,12 @@ const ManhwaImageComponent = ({originalWidth, originalHeight, imageUrl}: ManhwaI
     const height = width * (originalHeight / originalWidth)
     
     return (
-        <Image
-            style={{ width: width, height: height}}
-            source={imageUrl}
-            contentFit='cover'/>
+        <View style={{width, height}} >
+            <Image
+                style={{ width, height}}
+                source={imageUrl}
+                contentFit='cover'/>
+        </View>
     )
 }
 

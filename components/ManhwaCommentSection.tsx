@@ -137,7 +137,7 @@ const CommentList = ({loading, comments}: CommentListProps) => {
 
 interface UserCommentBoxProps {
     setComments: React.Dispatch<React.SetStateAction<Comment[]>>
-    manhwa_id: number   
+    manhwa_id: number    
 }
 
 const UserCommentBox = ({setComments, manhwa_id}: UserCommentBoxProps) => {
@@ -191,10 +191,6 @@ const UserCommentBox = ({setComments, manhwa_id}: UserCommentBoxProps) => {
         setText('')
     }
 
-    const goToLogin = () => {
-        router.navigate("/(auth)/SignIn")
-    }
-
     return (
         <View style={{width: '100%', gap: 20, alignItems: "center", justifyContent: "flex-start"}} >
             {
@@ -216,7 +212,7 @@ const UserCommentBox = ({setComments, manhwa_id}: UserCommentBoxProps) => {
                         />                
                         <View style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "flex-end"}} >
                             <Pressable onPress={clearText} hitSlop={AppConstants.hitSlop} style={styles.sendCommentButton} >
-                                <Ionicons name='close-circle' size={28} color={Colors.white} />
+                                <Ionicons name='close-circle-sharp' size={28} color={Colors.white} />
                             </Pressable>
                             {
                                 loading ?
@@ -224,7 +220,7 @@ const UserCommentBox = ({setComments, manhwa_id}: UserCommentBoxProps) => {
                                     <ActivityIndicator size={28} color={Colors.white} />
                                 </View> :
                                 <Pressable onPress={sendComment} style={styles.sendCommentButton} hitSlop={AppConstants.hitSlop} >
-                                    <Ionicons name='send' size={28} color={Colors.white} />
+                                    <Ionicons name='send-sharp' size={28} color={Colors.white} />
                                 </Pressable>
                             }
                         </View>
@@ -326,9 +322,6 @@ export default ManhwaCommentSection
 
 const styles = StyleSheet.create({
     sendCommentButton: {
-        padding: 10, 
-        alignSelf: "flex-end", 
-        borderRadius: 4, 
-        backgroundColor: Colors.gray
+        alignSelf: "flex-end"
     }
 })

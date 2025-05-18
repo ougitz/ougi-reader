@@ -13,6 +13,7 @@ import React, {
   useState 
 } from 'react'
 import BugReportButton from '@/components/button/BugReportButton'
+import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
 import { useReadingState } from '@/store/manhwaReadingState'
 import ReturnButton from '@/components/button/ReturnButton'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -24,7 +25,6 @@ import ManhwaImage from '@/components/ManhwaImage'
 import { FlashList } from '@shopify/flash-list'
 import FastImage from 'react-native-fast-image'
 import { ChapterImage } from '@/helpers/types'
-import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
 import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors'
 import BugIcon from '@/components/BugIcon'
@@ -166,13 +166,13 @@ const Chapter = () => {
         await Image.clearMemoryCache()
         await spFetchChapterImages(currentChapter.chapter_id)
           .then(values => setImages([...values]))
+        dbUpsertReadingHistory(
+          db, 
+          currentChapter.manhwa_id, 
+          currentChapter.chapter_id,
+          currentChapter.chapter_num
+        )
       setLoading(false)
-      dbUpsertReadingHistory(
-        db, 
-        currentChapter.manhwa_id, 
-        currentChapter.chapter_id,
-        currentChapter.chapter_num
-      )
     }
   }
 

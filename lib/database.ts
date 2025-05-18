@@ -100,14 +100,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT OR REPLACE INTO 
       app_info (name, value)
-    VALUES ('version', 'v1.0');    
-
-    INSERT INTO
-      app_info (name, value)
-    VALUES ('first_run', '1')
-    ON CONFLICT 
-      (name) 
-    DO NOTHING;
+    VALUES ('version', 'v1.0');
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
@@ -116,7 +109,6 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
       (name) 
     DO UPDATE SET 
       refresh_cycle = EXCLUDED.refresh_cycle;
-
   `
   ).catch(error => console.log("DATABASE MIGRATION ERROR", error));
   console.log("[DATABASE MIGRATION END]")
@@ -432,14 +424,6 @@ export async function dbUpdateDatabase(db: SQLite.SQLiteDatabase) {
   await dbUpsertManhwaGenres(db, manhwaGenres)
   await dbUpsertAuthors(db, authors)
   await dbUpsertManhwaAuthors(db, manhwaAuthors)
-  
-  const firstRun = await dbIsFirstRun(db)
-  if (firstRun) {
-    console.log("APP FIRST RUN")
-    await dbClearTable(db, "reading_status")
-    await dbClearTable(db, "reading_history")
-    dbMarkFirstRun(db)
-  }
 
   const end = Date.now()
   console.log((end - start) / 1000)
