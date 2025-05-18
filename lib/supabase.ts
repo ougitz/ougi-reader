@@ -1,4 +1,4 @@
-import { AppRelease, ChapterImage, DonateMethod, Genre, KoreanTerm, OugiUser, Recommendation } from '@/helpers/types'
+import { AppRelease, ChapterImage, Comment, DonateMethod, KoreanTerm, OugiUser, Recommendation } from '@/helpers/types'
 import { createClient, Session, AuthError } from '@supabase/supabase-js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from 'react-native'
@@ -57,12 +57,17 @@ export async function spFetchUser(
 
     const { data, error } = await supabase
         .from("users")
-        .select("username, image_id, images (width, height, image_url)")
+        .select("username, avatars (image_url)")
         .eq("user_id", user_id)
         .single()
 
     if (error) {
         console.log("error spFetchUser", error)
+        return null
+    }
+
+    if (!data) {
+        console.log("no user found", user_id)
         return null
     }
 
@@ -72,27 +77,35 @@ export async function spFetchUser(
 
     return {
         username: data.username,
-        image: data.images ? {
-            image_id: data.image_id,
-            width: (data.images as any).width,
-            height: (data.images as any).height,
-            image_url: (data.images as any).image_url
-        } : null,
-        user_id
+        user_id,
+        image_url: data.avatars ? (data.avatars as any).image_url : null
     }
 }
+
 
 export async function spCreateUser(
     email: string, 
     password: string, 
     username: string
-): Promise<AuthError | null> {
-    const { error } = await supabase.auth.signUp({
+): Promise<{
+    user: OugiUser | null, 
+    session: Session | null,
+    error: AuthError | null
+}> {
+    const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { username } }
     })
-    return error
+
+    if (error) {
+        console.log("error spCreateUser", error)
+        return {user: null, session: null, error}
+    }    
+
+    const user = await spFetchUser(data.session!.user.id)
+
+    return {user, error, session: data.session}
 }
 
 
@@ -273,4 +286,85 @@ export async function spGetKoreanTerms(): Promise<KoreanTerm[]> {
     }
 
     return data    
+}
+
+
+export async function spCreateComment(
+    user_id: string, 
+    comment: string,
+    manhwa_id: number, 
+    parent_comment_id: string | null = null
+): Promise<number | null> {
+    
+    const { data, error } = await supabase
+        .from("comments")
+        .insert([{user_id, comment, manhwa_id, parent_comment_id}])
+        .select("comment_id")
+        .single()
+
+    if (error) {
+        console.log("error spCreateComment", error)
+        return null
+    }
+
+    return data.comment_id
+}
+
+
+export async function spGetComments(p_manhwa_id: number, p_offset: number = 0, p_limit: number = 30): Promise<Comment[]> {
+    const { data, error } = await supabase
+        .rpc("fn_get_comments_by_manhwa", {p_manhwa_id, p_offset, p_limit})    
+
+    if (error) {
+        console.log("error spGetComments", error)
+        return []
+    } 
+
+    return data
+}
+
+
+export async function spCheckUserVote(user_id: string, comment_id: number): Promise<{voted: boolean, voteUp: boolean}> {
+    const { data, error } = await supabase
+        .from("comment_likes")
+        .select("vote_up")
+        .eq("user_id", user_id)
+        .eq("comment_id", comment_id)
+        
+    if (error) {
+        console.log("error spUserHasVotedInComment", error)
+        return {voted: false, voteUp: false}
+    }    
+
+    return {
+        voted: data && data.length != 0, 
+        voteUp: data && data.length > 0 && data[0].vote_up
+    }
+}
+
+
+async function spIncrementVoteLike(p_comment_id: number, p_increment: number = 1 ): Promise<boolean> {
+    const { error } = await supabase
+        .rpc("fn_increment_comment_likes",  {p_comment_id, p_increment })
+    
+    if (error) {
+        console.log("error spIncrementVoteLike", error)
+        return false
+    }
+
+    return true
+}
+
+export async function spVoteComment(user_id: string, comment_id: number, increment: number): Promise<boolean> {
+    const { data, error } = await supabase
+        .from("comment_likes")
+        .upsert({user_id, comment_id, vote_up: increment > 0})
+    
+    if (error) {
+        console.log("error spVotedComment", error)
+        return false
+    }
+
+    const s = await spIncrementVoteLike(comment_id, increment)
+    return s
 }

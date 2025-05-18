@@ -49,14 +49,14 @@ const Option = ({onPress, title, iconName, iconColor = Colors.white}: OptionProp
             onPress={p} 
             style={styles.link} 
             hitSlop={AppConstants.hitSlop} >
-            <View style={{padding: 3, backgroundColor: iconColor, borderRadius: 4}} >
+            <View style={{padding: 5, backgroundColor: iconColor, borderRadius: 4}} >
                 {
                     loading ?
                         <ActivityIndicator size={ICON_SIZE} color={Colors.backgroundColor} /> :
                         <Ionicons name={iconName as any} size={ICON_SIZE} color={Colors.backgroundColor} />
                 }
             </View>
-            <Text style={[AppStyle.textRegular]}>{title}</Text>
+            <Text style={[[AppStyle.textRegular, {fontSize: 16}]]}>{title}</Text>
         </Pressable>
     )
 }

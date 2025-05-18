@@ -77,12 +77,7 @@ export type Genre = {
 export type OugiUser = {
     username: string
     user_id: string
-    image: {
-        image_id: number,
-        width: number,
-        height: number,
-        image_url: string
-    } | null
+    image_url: string
 }
 
 
@@ -119,4 +114,16 @@ export type Chapter = {
 export type KoreanTerm = {
     term: string
     meaning: string
+}
+
+export type Comment = {
+    comment_id: number
+    user_id: string
+    comment: string
+    parent_comment_id: number | null
+    manhwa_id: number
+    likes: number
+    thread: Comment[]
+    image_url: string
+    username: string
 }

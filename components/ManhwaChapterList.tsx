@@ -13,14 +13,14 @@ import { router } from "expo-router"
 interface ChapterItemProps {
   isReaded: boolean
   manhwa_title: string
-  chapter: Chapter
+  chapter: Chapter  
 }
 
 
 const ChapterItem = ({
   isReaded, 
   manhwa_title, 
-  chapter
+  chapter  
 }: ChapterItemProps) => {
 
   const { setChapterNum } = useReadingState()  
@@ -37,7 +37,7 @@ const ChapterItem = ({
     <Pressable       
       onPress={onPress}
       style={[styles.chapterItem, {backgroundColor: bColor}]} >
-        <Text style={[AppStyle.textRegular, {color: tColor}]}>{chapter.chapter_num}</Text>
+        <Text style={[AppStyle.textRegular, {color: tColor, fontSize: 14}]}>{chapter.chapter_num}</Text>
     </Pressable>
   )
 }
@@ -61,15 +61,19 @@ const ManhwaChapterList = ({
   
   const chapterAlreadyReaded = useRef<Set<number>>(new Set())
   
-  const init = useCallback(async () => {
+  const init = useCallback(async () => {    
     setLoading(true)
-      await spFetchChapterList(manhwa.manhwa_id)
-        .then(values => {
-          setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
-          setChapters(values)
-        })    
-      chapterAlreadyReaded.current = await dbGetMangaReadChapters(db, manhwa.manhwa_id)
-    setLoading(false)
+    dbGetMangaReadChapters(db, manhwa.manhwa_id).then(s => chapterAlreadyReaded.current = s)
+      .then(
+        v => {
+          spFetchChapterList(manhwa.manhwa_id)
+            .then(values => {
+              setChapterMap(new Map(values.map(i => [i.chapter_num, i])))
+              setChapters(values)
+              setLoading(false)
+            }).catch(error => console.log("error spFetchChapterList", error))
+        }
+      )
   }, [manhwa])  
   
   useEffect(
@@ -110,10 +114,10 @@ const ManhwaChapterList = ({
                 <Text style={[AppStyle.textRegular, {color: textColor}]}>Read Last</Text>
               </Pressable>
             </View>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, alignItems: "center", justifyContent: "center"}} >
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, alignItems: "center", justifyContent: "center"}} >
               {
                 chapters.map((item, index) => 
-                  <ChapterItem 
+                  <ChapterItem                    
                     isReaded={chapterAlreadyReaded.current.has(item.chapter_num)}
                     manhwa_title={manhwa.title} 
                     key={item.chapter_id} 
@@ -131,10 +135,10 @@ export default ManhwaChapterList;
 
 const styles = StyleSheet.create({
   chapterItem: {    
-    width: 48, 
-    height: 48, 
+    width: 42, 
+    height: 42, 
     borderRadius: 4, 
     alignItems: "center", 
-    justifyContent: "center"
+    justifyContent: "center"    
   }
 })

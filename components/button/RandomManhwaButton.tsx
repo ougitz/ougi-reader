@@ -24,7 +24,7 @@ const RandomManhwaButton = ({size = 28, color = Colors.white}: RandomManhwaButto
         setLoading(true)
         const m: Manhwa[] = await dbReadRandomManhwa(db, 1)
         if (m.length == 0) {
-            ToastError("No manhwas!")
+            ToastError("No manhwas! Try update the database")
             setLoading(false)
             return
         }
@@ -33,7 +33,6 @@ const RandomManhwaButton = ({size = 28, color = Colors.white}: RandomManhwaButto
             pathname: '/(pages)/Manhwa', 
             params: {manhwa_id: m[0].manhwa_id}
         })
-    
     }
 
     return (

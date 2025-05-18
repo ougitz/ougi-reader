@@ -17,8 +17,7 @@ const MAX_WIDTH = Platform.OS === "web" ? wp(50) : wp(100)
 const ManhwaImageComponent = ({originalWidth, originalHeight, imageUrl}: ManhwaImageProps) => {
     
     const width = originalWidth < MAX_WIDTH ? originalWidth : MAX_WIDTH
-    const height = width * (originalHeight / originalWidth)    
-    console.log(imageUrl)
+    const height = width * (originalHeight / originalWidth)
     
     return (
         <Image

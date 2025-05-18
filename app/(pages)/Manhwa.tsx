@@ -31,6 +31,7 @@ import { AppStyle } from '@/styles/AppStyles'
 import { Colors } from '@/constants/Colors';
 import { Manhwa } from '@/helpers/types'
 import Toast from '@/components/Toast';
+import ManhwaCommentSection from '@/components/ManhwaCommentSection';
 
 
 interface ItemProps {
@@ -88,7 +89,7 @@ const ManhwaPage = () => {
 
   return (
     <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]} >
-      <ScrollView style={{flex: 1}} >
+      <ScrollView style={{flex: 1}} keyboardShouldPersistTaps={'always'} >
         {
           manhwa ?
           <>
@@ -127,6 +128,7 @@ const ManhwaPage = () => {
                 </View>
 
                 <ManhwaChapterList textColor={textColor.current} manhwa={manhwa} />
+                <ManhwaCommentSection manhwa={manhwa} />
             </View>
           </>
 
@@ -148,8 +150,7 @@ const styles = StyleSheet.create({
   linearBackground: {
     position: 'absolute',
     width: wp(100),
-    left: 0,
-    right: 0,
+    left: 0,    
     top: 0,
     height: hp(80)
   },

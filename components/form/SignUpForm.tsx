@@ -18,6 +18,7 @@ import { router } from 'expo-router';
 import { useState } from 'react'
 import * as yup from 'yup';
 import React from 'react'
+import { useAuthState } from '@/store/authState';
 
 
 const schema = yup.object().shape({  
@@ -48,8 +49,9 @@ interface FormData {
 }
 
 
-const SignUpForm = () => {
+const SignUpForm = () => {  
 
+    const { login, logout } = useAuthState()
     const [isLoading, setLoading] = useState(false)
     
     const {
@@ -69,12 +71,12 @@ const SignUpForm = () => {
     const onSubmit = async (form_data: FormData) => {
         setLoading(true)
 
-        const error = await spCreateUser(
+        const { user, session ,error } = await spCreateUser(
             form_data.email.trim(),
             form_data.password.trim(),
             form_data.name.trim()
         )
-
+        
         if (error) {
             console.log(error, error.code)
             switch (error.code) {
@@ -85,13 +87,21 @@ const SignUpForm = () => {
                     ToastError(error.message)
                     break
             }
-        } else {
-            ToastSuccess()
-            router.replace("/(auth)/SignIn")
+            setLoading(false)
+            return
         }
 
-        await supabase.auth.signOut()
-        
+        if (user && session) {
+            login(user!, session)
+            setLoading(false)
+            ToastSuccess()
+            router.replace("/(pages)/Home")
+            return
+        } else {
+            logout()
+            await supabase.auth.signOut()
+        }
+
         setLoading(false)
     };
 

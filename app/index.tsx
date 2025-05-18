@@ -32,7 +32,7 @@ import { router } from 'expo-router';
 
 const App = () => {
   
-  const { login } = useAuthState()    
+  const { login, logout } = useAuthState()    
   const { setLocalVersion, setAllReleases } = useAppVersionState()
   const db: SQLiteDatabase = useSQLiteContext();
 
@@ -52,10 +52,15 @@ const App = () => {
     const session = await spGetSession()
     if (!session) { return }
 
-    await spFetchUser(session.user.id)
-      .then(user => user ?
-          login(user, session) :
-          console.log("error fetching user", session.user.id))
+    const user = await spFetchUser(session.user.id)
+    
+    if (user) {
+      login(user, session)
+    } else {
+      console.log("error fetching user", session.user.id)
+      logout()
+    }
+    
     await dbPopulateReadingStatusTable(db, session.user.id)
   }
 

@@ -111,7 +111,7 @@ export async function dbMigrate(db: SQLite.SQLiteDatabase) {
 
     INSERT INTO 
       update_history (name, refresh_cycle) 
-    VALUES ('database', 60 * 5)
+    VALUES ('database', 60 * 3)
     ON CONFLICT 
       (name) 
     DO UPDATE SET 
