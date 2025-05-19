@@ -48,8 +48,7 @@ const ChapterHeader = ({ manhwaTitle, loading, goToPreviousChapter, goToNextChap
   const reportTitle = `${manhwaTitle}/${currentChapter ? currentChapter.chapter_num: '?'}`
 
   const exitChapter = async () => {
-    FastImage.clearDiskCache()
-    FastImage.clearMemoryCache()
+    Image.clearDiskCache()
     router.back()
   }
   

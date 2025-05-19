@@ -154,11 +154,12 @@ const UserCommentBox = ({setComments, manhwa_id}: UserCommentBoxProps) => {
 
         setLoading(true)
             const t = text.trim()
-            if (t.length > 1024) {
-                ToastError("Max 1024 characters")
+
+            if (t.length > 1024 || t.length < 3) {
+                ToastError("Max 1024 characters and min 3 characters")
                 setLoading(false)
                 return
-            }
+            }            
 
             const comment_id: number | null = await spCreateComment(session.user.id, t, manhwa_id)
 

@@ -29,6 +29,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppStyle } from '@/styles/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
+import { Image } from 'expo-image';
 
 
 const App = () => {
@@ -71,6 +72,7 @@ const App = () => {
 
   const init = async () => {    
 
+    Image.clearDiskCache()
     const state: NetInfoState = await NetInfo.fetch()
 
     if (!state.isConnected) {
