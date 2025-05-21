@@ -1,4 +1,3 @@
-import { Platform, View } from 'react-native'
 import { wp } from '@/helpers/util'
 import React, { memo } from 'react'
 import { Image } from 'expo-image'
@@ -11,7 +10,7 @@ interface ManhwaImageProps {
 }
 
 
-const MAX_WIDTH = Platform.OS === "web" ? wp(50) : wp(100)
+const MAX_WIDTH = wp(100)
 
 
 const ManhwaImageComponent = ({originalWidth, originalHeight, imageUrl}: ManhwaImageProps) => {
@@ -20,12 +19,10 @@ const ManhwaImageComponent = ({originalWidth, originalHeight, imageUrl}: ManhwaI
     const height = width * (originalHeight / originalWidth)
     
     return (
-        <View style={{width, height}} >
-            <Image
-                style={{ width, height}}
-                source={imageUrl}
-                contentFit='cover'/>
-        </View>
+        <Image
+            style={{ width, height}}
+            source={imageUrl}
+            contentFit='cover'/>
     )
 }
 
